@@ -367,7 +367,6 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <button class="nav-btn admin-only" onclick="showSection('formations')" id="nav-formations">📚 Formations</button>
     <button class="nav-btn admin-only" onclick="showSection('rapport')" id="nav-rapport">📊 Rapports</button>
     <button class="nav-btn admin-only" onclick="showSection('users')" id="nav-users">👥 Utilisateurs</button>
-    <button class="nav-btn" onclick="showSection('parametres')" id="nav-parametres">⚙️ Paramètres</button>
   </nav>
   <div class="header-right">
     <span class="hdr-badge" id="date-badge"></span>
@@ -378,13 +377,13 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       <div class="user-chip-ico" id="user-ico">?</div>
       <span id="user-role-lbl"></span>
     </div>
-    <div class="action-menu admin-only" id="action-menu">
+    <div class="action-menu" id="action-menu" style="display:none;">
       <button class="hdr-btn" onclick="toggleActions()" title="Actions système">⚙️</button>
       <div class="action-dropdown" id="action-dropdown">
         <div class="action-section-label">Données</div>
-        <button class="action-item" onclick="exportExcel();toggleActions()">📤 Exporter en Excel</button>
-        <button class="action-item" onclick="importExcel();toggleActions()">📥 Importer depuis Excel</button>
+        <button class="action-item" onclick="toggleBackupPanel();toggleActions()">💾 Backup &amp; Restauration</button>
         <input type="file" id="import-file" accept=".xlsx,.json" style="display:none" onchange="doImport(event)">
+        <input type="file" id="backup-import-file" accept=".xlsx,.json" style="display:none" onchange="doBackupImport(event)">
         <div class="action-sep"></div>
         <div class="action-section-label">Application</div>
         <button class="action-item" onclick="triggerInstallFromMenu();toggleActions()" id="pwa-menu-install-btn" style="display:none">📲 Installer l'application</button>
@@ -394,7 +393,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
         <button class="action-item" onclick="toggleDark();toggleActions()">🌙 Mode sombre / clair</button>
         <button class="action-item" onclick="toggleFullscreen();toggleActions()">⛶ Plein écran</button>
         <div class="action-sep"></div>
-        <button class="action-item danger" onclick="confirmClear();toggleActions()">🗑️ Vider toutes les données</button>
+        <button class="action-item danger admin-only" id="btn-vider-donnees" onclick="confirmClear();toggleActions()">🗑️ Vider toutes les données</button>
       </div>
     </div>
     <button class="hdr-btn non-admin-only" onclick="toggleDark()" title="Mode sombre/clair">🌙</button>
@@ -415,10 +414,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()">📚 Formations</button>
     <button class="nav-btn admin-only" onclick="showSection('rapport');closeDrawerAll()">📊 Rapports</button>
     <button class="nav-btn admin-only" onclick="showSection('users');closeDrawerAll()">👥 Utilisateurs</button>
-    <button class="nav-btn" onclick="showSection('parametres');closeDrawerAll()">⚙️ Paramètres</button>
     <div style="height:1px;background:rgba(255,255,255,.1);margin:6px 4px;"></div>
-    <button class="nav-btn admin-only" onclick="exportExcel();closeDrawerAll()">📤 Exporter Excel</button>
-    <button class="nav-btn admin-only" onclick="importExcel();closeDrawerAll()">📥 Importer Excel</button>
     <button class="nav-btn" onclick="toggleDark();closeDrawerAll()">🌙 Mode sombre</button>
     <button class="nav-btn" onclick="toggleFullscreen();closeDrawerAll()">⛶ Plein écran</button>
     <button class="nav-btn admin-only" style="color:var(--danger)" onclick="confirmClear();closeDrawerAll()">🗑️ Vider données</button>
@@ -655,162 +651,31 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     </div>
   </div>
 
-  <!-- PARAMÈTRES -->
-  <div class="section" id="sec-parametres">
-    <!-- Bloc installation PWA -->
-    <div class="card" style="margin-bottom:12px;">
-      <div class="card-header">
-        <span class="card-title">📲 Installation de l'Application</span>
-        <span class="badge b-teal" style="font-size:10px;">PWA</span>
-      </div>
-      <div style="padding:16px;">
-        <!-- Statut installation -->
-        <div id="pwa-status-block" style="margin-bottom:16px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;gap:12px;">
-          <div style="font-size:28px;" id="pwa-status-icon">📱</div>
-          <div style="flex:1;">
-            <div style="font-weight:700;font-size:13px;" id="pwa-status-title">Vérification du statut…</div>
-            <div style="font-size:11px;color:var(--text-m);margin-top:2px;" id="pwa-status-desc"></div>
-          </div>
-          <div id="pwa-install-zone"></div>
-        </div>
-
-        <!-- Guides par plateforme -->
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;">
-          <!-- Android / Chrome -->
-          <div style="border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--surface);">
-            <div style="font-weight:700;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-              <span style="font-size:20px;">🤖</span> Android (Chrome)
-            </div>
-            <ol style="font-size:11px;color:var(--text-m);padding-left:16px;line-height:1.8;">
-              <li>Ouvrir l'app dans Chrome</li>
-              <li>Menu <strong>⋮</strong> → <strong>Ajouter à l'écran d'accueil</strong></li>
-              <li>Confirmer → <strong>Ajouter</strong></li>
-            </ol>
-            <div style="margin-top:8px;font-size:10px;color:var(--teal);font-weight:600;">✅ Installation automatique disponible ci-dessus</div>
-          </div>
-          <!-- iOS Safari -->
-          <div style="border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--surface);">
-            <div style="font-weight:700;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-              <span style="font-size:20px;">🍎</span> iPhone / iPad (Safari)
-            </div>
-            <ol style="font-size:11px;color:var(--text-m);padding-left:16px;line-height:1.8;">
-              <li>Ouvrir dans <strong>Safari</strong> (pas Chrome)</li>
-              <li>Appuyer sur <strong>⎙ Partager</strong> (bas de l'écran)</li>
-              <li>Choisir <strong>Sur l'écran d'accueil</strong></li>
-              <li>Confirmer → <strong>Ajouter</strong></li>
-            </ol>
-            <div style="margin-top:8px;font-size:10px;color:var(--warning);font-weight:600;">⚠️ Uniquement via Safari (pas Chrome iOS)</div>
-          </div>
-          <!-- PC / Windows -->
-          <div style="border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--surface);">
-            <div style="font-weight:700;font-size:12px;margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-              <span style="font-size:20px;">💻</span> PC / Windows (Edge ou Chrome)
-            </div>
-            <ol style="font-size:11px;color:var(--text-m);padding-left:16px;line-height:1.8;">
-              <li>Ouvrir l'app dans Edge ou Chrome</li>
-              <li>Cliquer sur l'icône <strong>⊕</strong> dans la barre d'adresse</li>
-              <li>Ou menu <strong>⋮</strong> → <strong>Installer l'application</strong></li>
-            </ol>
-            <div style="margin-top:8px;font-size:10px;color:var(--teal);font-weight:600;">✅ Installation automatique disponible ci-dessus</div>
-          </div>
-        </div>
-
-        <!-- Avantages hors-ligne -->
-        <div style="margin-top:14px;padding:11px 14px;background:var(--info-bg);border:1px solid var(--info);border-radius:8px;font-size:12px;">
-          <div style="font-weight:700;color:var(--info);margin-bottom:4px;">ℹ️ Une fois installée, l'application fonctionne 100% hors connexion</div>
-          <div style="color:var(--text-m);line-height:1.7;">
-            Toutes les données sont stockées localement (IndexedDB). Pas de serveur requis. 
-            Les données persistent même sans internet.
-          </div>
-        </div>
-      </div>
+  <!-- BACKUP PANEL (inline, toggle) -->
+  <div id="backup-panel" style="display:none;position:fixed;top:52px;right:0;width:520px;max-width:98vw;max-height:calc(100vh - 52px);background:var(--surface);border-left:2px solid var(--teal);border-bottom:2px solid var(--teal);border-bottom-left-radius:14px;box-shadow:var(--shadow-lg);z-index:300;flex-direction:column;overflow:hidden;">
+    <div style="background:var(--navy);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:9px;flex-shrink:0;">
+      <span style="font-size:16px;">💾</span>
+      <span style="font-weight:700;font-size:13px;flex:1;">Backup &amp; Restauration</span>
+      <button onclick="toggleBackupPanel()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
     </div>
-
-    <!-- Bloc apparence -->
-    <div class="card" style="margin-bottom:12px;">
-      <div class="card-header">
-        <span class="card-title">🎨 Apparence</span>
-      </div>
-      <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);">
-          <div>
-            <div style="font-weight:600;font-size:13px;">Mode sombre</div>
-            <div style="font-size:11px;color:var(--text-m);">Basculer entre thème clair et sombre</div>
-          </div>
-          <button class="btn-secondary" onclick="toggleDark()" style="min-width:100px;" id="theme-toggle-btn">🌙 Sombre</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);">
-          <div>
-            <div style="font-weight:600;font-size:13px;">Plein écran</div>
-            <div style="font-size:11px;color:var(--text-m);">Mode immersif sans barre de navigation</div>
-          </div>
-          <button class="btn-secondary" onclick="toggleFullscreen()" style="min-width:100px;">⛶ Activer</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);">
-          <div>
-            <div style="font-weight:600;font-size:13px;">Indicateurs KPI</div>
-            <div style="font-size:11px;color:var(--text-m);">Afficher ou masquer les statistiques du haut</div>
-          </div>
-          <button class="btn-secondary" onclick="toggleKPI()" style="min-width:100px;">📊 Masquer</button>
-        </div>
-      </div>
+    <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;">
+      <button class="btn-primary" onclick="document.getElementById('backup-new-file').click()" style="gap:5px;">✚ New</button>
+      <input type="file" id="backup-new-file" accept=".xlsx,.json" style="display:none" onchange="doBackupUpload(event)">
+      <button class="btn-teal" onclick="exportExcelBackup()" style="gap:5px;">📊 Excel</button>
+      <button class="btn-secondary" onclick="exportJSONBackup()" style="gap:5px;">{ } JSON</button>
     </div>
-
-    <!-- Bloc données (Admin seulement) -->
-    <div class="card admin-only" style="margin-bottom:12px;">
-      <div class="card-header">
-        <span class="card-title">💾 Données</span>
-      </div>
-      <div style="padding:16px;display:flex;flex-direction:column;gap:10px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);">
-          <div>
-            <div style="font-weight:600;font-size:13px;">Exporter en Excel</div>
-            <div style="font-size:11px;color:var(--text-m);">Sauvegarder toutes les données en .xlsx</div>
-          </div>
-          <button class="btn-teal" onclick="exportExcel()">📤 Exporter</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);">
-          <div>
-            <div style="font-weight:600;font-size:13px;">Importer depuis Excel</div>
-            <div style="font-size:11px;color:var(--text-m);">Restaurer les données depuis un fichier .xlsx</div>
-          </div>
-          <button class="btn-primary" onclick="importExcel()">📥 Importer</button>
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--danger-bg);border:1px solid var(--danger);border-radius:8px;background:var(--danger-bg);">
-          <div>
-            <div style="font-weight:600;font-size:13px;color:var(--danger);">Vider toutes les données</div>
-            <div style="font-size:11px;color:var(--danger);opacity:.7;">Action irréversible — toutes les données seront supprimées</div>
-          </div>
-          <button class="btn-save" style="background:var(--danger);" onclick="confirmClear()">🗑️ Vider</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Info version -->
-    <div class="card">
-      <div class="card-header">
-        <span class="card-title">ℹ️ À propos</span>
-      </div>
-      <div style="padding:16px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px;">
-          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
-            <div style="color:var(--text-m);font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Version</div>
-            <div style="font-weight:700;">ComFormation v8</div>
-          </div>
-          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
-            <div style="color:var(--text-m);font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Stockage</div>
-            <div style="font-weight:700;">IndexedDB (local)</div>
-          </div>
-          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
-            <div style="color:var(--text-m);font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Mode</div>
-            <div style="font-weight:700;">PWA — Hors ligne ✅</div>
-          </div>
-          <div style="padding:8px 12px;background:var(--bg);border-radius:8px;border:1px solid var(--border);">
-            <div style="color:var(--text-m);font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">Service Worker</div>
-            <div style="font-weight:700;" id="sw-status-lbl">Chargement…</div>
-          </div>
-        </div>
-      </div>
+    <div style="flex:1;overflow-y:auto;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="background:var(--bg);">
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;border-bottom:1px solid var(--border);">Fichier</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;border-bottom:1px solid var(--border);">Date</th>
+            <th style="padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;border-bottom:1px solid var(--border);">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-backups"></tbody>
+      </table>
+      <div class="empty" id="backup-empty" style="display:none;"><div class="e-ico">💾</div><p>Aucun backup enregistré.</p></div>
     </div>
   </div>
 
@@ -1023,7 +888,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-pay"> 💰 Enregistrer paiement</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> ✚ Ajouter dépense</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit"> ✏️ Modifier ses entrées</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-del"> 🗑️ Supprimer ses entrées</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-del"> 🗑️ Supprimer ses entrées</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-system"> ⚙️ Accès Action Système</label>
         </div>
       </div>
       <div style="padding:0 12px 10px;">
@@ -1439,8 +1305,12 @@ if(!isAdmin){
 }
   // 👆 FIN DES LIGNES À AJOUTER 👆
 
-  // Mise à jour chip utilisateur
-  document.getElementById('user-ico').textContent = isAdmin ? 'A' : 'U';
+  // — Action Système : visible pour admin OU user avec perm actSystem
+  const actionMenu = document.getElementById('action-menu');
+  if(actionMenu){
+    const canSystem = isAdmin || (perms.actSystem === true);
+    actionMenu.style.display = canSystem ? '' : 'none';
+  }
   document.getElementById('user-role-lbl').textContent = (u&&u.login) ? u.login : (currentRole||'');
 
   if(!isAdmin){
@@ -1483,7 +1353,7 @@ function hasPermission(key){
 }
 function getPermDef(u){
   // Renvoie les permissions par défaut si absentes
-  return u.perms || {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,sesAccess:[]};
+  return u.perms || {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
 }
 function togglePermFields(){
   const role=document.getElementById('user-role').value;
@@ -1511,6 +1381,7 @@ function readPermsFromForm(){
     actAddDep: document.getElementById('perm-act-add-dep')?.checked||false,
     actEdit: document.getElementById('perm-act-edit')?.checked||false,
     actDel: document.getElementById('perm-act-del')?.checked||false,
+    actSystem: document.getElementById('perm-act-system')?.checked||false,
     sesAccess: [...document.querySelectorAll('.perm-ses-chk:checked')].map(c=>Number(c.value))
   };
 }
@@ -1522,6 +1393,7 @@ function applyPermsToForm(perms){
   set('perm-sec-dashboard',perms.secDashboard);
   set('perm-act-add-etu',perms.actAddEtu); set('perm-act-pay',perms.actPay);
   set('perm-act-add-dep',perms.actAddDep); set('perm-act-edit',perms.actEdit); set('perm-act-del',perms.actDel);
+  set('perm-act-system',perms.actSystem);
   // Sessions
   const sesIds=perms.sesAccess||[];
   document.querySelectorAll('.perm-ses-chk').forEach(c=>{ c.checked=sesIds.includes(Number(c.value)); });
@@ -1582,8 +1454,7 @@ function showSection(id){
     formations: renderFormations, users: renderUsers,
     disponibilite: renderDisponibilite,
     dashboard: renderDashboard,
-    rapport: () => { populateRapportFilters(); renderRapport(); },
-    parametres: updatePwaSettingsBlock
+    rapport: () => { populateRapportFilters(); renderRapport(); }
   };
   if(map[id]) map[id]();
   updateStats();
@@ -3251,7 +3122,173 @@ function verifierRappelsQuotidiens() {
         SS('derniere_verif_rappel', aujourdhui);
     }
 }
-/* BOOT — async : attend le chargement IndexedDB avant d'initialiser */
+/* ================================================================
+   BACKUP & RESTAURATION
+   ================================================================ */
+let backups = JSON.parse(localStorage.getItem('cf_backups')||'[]');
+let backupPanelOpen = false;
+
+function saveBackupsLS(){ localStorage.setItem('cf_backups', JSON.stringify(backups)); }
+
+function toggleBackupPanel(){
+  const panel = document.getElementById('backup-panel');
+  if(!panel) return;
+  backupPanelOpen = !backupPanelOpen;
+  panel.style.display = backupPanelOpen ? 'flex' : 'none';
+  if(backupPanelOpen) renderBackups();
+}
+
+function renderBackups(){
+  const tbody = document.getElementById('tbody-backups');
+  const empty = document.getElementById('backup-empty');
+  if(!tbody) return;
+  if(!backups.length){ tbody.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  tbody.innerHTML = backups.slice().reverse().map(b=>`<tr>
+    <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;max-width:180px;">
+      <div style="font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${esc(b.name)}">${esc(b.name)}</div>
+      <div style="font-size:10px;margin-top:2px;">
+        <span class="badge ${b.type==='Excel'?'b-success':'b-info'}" style="font-size:9px;">${b.type||'JSON'}</span>
+      </div>
+    </td>
+    <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-m);white-space:nowrap;">${b.date||'—'}</td>
+    <td style="padding:8px 12px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;gap:4px;">
+        <button class="act-btn ab-del" title="Supprimer ce backup" onclick="deleteBackup('${b.id}')">🗑️</button>
+        <button class="act-btn ab-edit" title="Renommer le fichier" onclick="renameBackup('${b.id}')">✏️</button>
+        <button class="act-btn" title="Importer ce fichier dans l'application" onclick="syncBackup('${b.id}')" style="color:var(--teal);border-color:var(--teal);">🔄</button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function fmtDateTime(){ const d=new Date(); return d.toLocaleDateString('fr-FR')+" "+d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+
+function getAppSnapshot(){ return { etudiants, paiements, depenses, sessions, formations, disponibilites }; }
+
+/* NEW — téléverser un fichier Excel ou JSON dans le tableau */
+function doBackupUpload(ev){
+  const file = ev.target.files[0]; if(!file){ ev.target.value=''; return; }
+  const name = file.name;
+  const ext = name.split('.').pop().toLowerCase();
+  if(!['xlsx','json'].includes(ext)){ alert('Format non supporté. Utilisez .xlsx ou .json'); ev.target.value=''; return; }
+  const r = new FileReader();
+  r.onload = e => {
+    try{
+      const id = 'bk_'+Date.now();
+      const rawData = e.target.result;
+      if(ext==='json'){
+        JSON.parse(rawData); // validation structurelle
+        backups.push({id, name, date:fmtDateTime(), type:'JSON', data:rawData});
+      } else {
+        // Stocker le binaire Excel en base64
+        const b64 = btoa(rawData);
+        backups.push({id, name, date:fmtDateTime(), type:'Excel', data:b64});
+      }
+      saveBackupsLS(); renderBackups();
+    }catch(err){ alert('Fichier invalide : '+err.message); }
+  };
+  if(ext==='json') r.readAsText(file); else r.readAsBinaryString(file);
+  ev.target.value='';
+}
+
+function deleteBackup(id){
+  if(!confirm('Supprimer ce backup ?')) return;
+  backups = backups.filter(b=>b.id!==id);
+  saveBackupsLS(); renderBackups();
+}
+
+function renameBackup(id){
+  const b = backups.find(x=>x.id===id); if(!b) return;
+  const name = prompt('Nouveau nom :', b.name);
+  if(!name) return;
+  b.name = name;
+  saveBackupsLS(); renderBackups();
+}
+
+/* SYNC — importe le fichier de la ligne vers l'application */
+function syncBackup(id){
+  const b = backups.find(x=>x.id===id); if(!b) return;
+  if(!b.data){ alert('Ce fichier ne contient pas de données restaurables.\n(Export Excel sans contenu stocké)'); return; }
+  if(!confirm('Importer "'+b.name+'" vers l\'application ?\n\nCeci remplacera toutes les données actuelles.')) return;
+  try{
+    if(b.type==='JSON'){
+      const data = JSON.parse(b.data);
+      if(data.sessions){ sessions=data.sessions; sessions.forEach(s=>{if(s.closed===undefined)s.closed=false;}); }
+      if(data.formations){ formations=data.formations; formations.forEach(f=>{if(!f.label)f.label=f.intitule||f.int||'';}); }
+      if(data.etudiants) etudiants=data.etudiants;
+      if(data.paiements) paiements=data.paiements;
+      if(data.depenses) depenses=data.depenses;
+      if(data.disponibilites) disponibilites=data.disponibilites;
+    } else {
+      // Excel — décoder depuis base64
+      if(typeof XLSX==='undefined'){ alert('Librairie XLSX non disponible.'); return; }
+      const binary = atob(b.data);
+      const wb = XLSX.read(binary, {type:'binary', cellDates:true, dateNF:'YYYY-MM-DD'});
+      const parseDate = v=>{ if(!v) return ''; if(v instanceof Date) return v.toISOString().split('T')[0]; const d=new Date(v); return isNaN(d)?String(v):d.toISOString().split('T')[0]; };
+      if(wb.SheetNames.includes('Sessions')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Sessions']); sessions=[]; let n=1; rows.forEach(r=>{ const i=n++; sessions.push({id:i,code:r.Code||'S'+String(i).padStart(2,'0'),det:r.Detail||'',closed:r.Cloturee==='Oui'}); }); nSes=n; }
+      if(wb.SheetNames.includes('Formations')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Formations']); formations=[]; let n=1; rows.forEach(r=>{ const label=r.Formation||''; formations.push({id:n++,label,intitule:label}); }); nForm=n; }
+      if(wb.SheetNames.includes('Etudiants')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Etudiants']); etudiants=[]; let n=1; rows.forEach(r=>{ const ses=sessions.find(s=>s.code===(r.Session||'')); const frm=formations.find(f=>(f.label||f.intitule)===(r.Formation||'')); const i=n++; etudiants.push({id:i,mat:r.Matricule||'MAT-'+String(i).padStart(5,'0'),nom:r.Nom||'',prenom:r.Prenom||'',contact:r.Contact||'',cout:parseFloat(r.Cout_Total)||0,date:parseDate(r.Date),sesId:ses?ses.id:'',formId:frm?frm.id:'',photo:null}); }); nEtu=n; }
+      if(wb.SheetNames.includes('Paiements')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Paiements']); paiements=[]; let n=1; rows.forEach(r=>{ const etu=etudiants.find(e=>e.mat===(r.Matricule||'')); const ses=sessions.find(s=>s.code===(r.Session||'')); const frm=formations.find(f=>(f.label||f.intitule)===(r.Formation||'')); paiements.push({id:n++,etuId:etu?etu.id:null,nom:r.Etudiant||'',mat:r.Matricule||'',montant:parseFloat(r.Montant)||0,date:parseDate(r.Date),sesId:ses?ses.id:(etu?etu.sesId:''),formId:frm?frm.id:(etu?etu.formId:'')}); }); nPay=n; }
+      if(wb.SheetNames.includes('Depenses')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Depenses']); depenses=[]; let n=1; rows.forEach(r=>{ const ses=sessions.find(s=>s.code===(r.Session||'')); depenses.push({id:n++,lib:r.Libelle||'',montant:parseFloat(r.Montant)||0,det:r.Detail||'',date:parseDate(r.Date),sesId:ses?ses.id:''}); }); nDep=n; }
+      if(wb.SheetNames.includes('Disponibilite')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Disponibilite']); disponibilites=[]; let n=1; rows.forEach(r=>{ disponibilites.push({id:r.ID||n++,responsable:r.Responsable||'',montant:parseFloat(r.Montant)||0,detail:r.Detail||'',date:r.Date||''}); }); nDispo=Math.max(...disponibilites.map(d=>d.id),0)+1; }
+    }
+    recalcCounters(); saveAll(); populateSelects();
+    renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
+    alert('✅ Import réussi depuis "'+b.name+'"');
+  }catch(err){ alert('Erreur import : '+err.message); }
+}
+
+function exportExcelBackup(){
+  if(typeof XLSX==='undefined'){ alert('La librairie XLSX n\'est pas disponible.'); return; }
+  try{
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(etudiants.map(e=>({
+      Matricule:e.mat||'',Nom:e.nom||'',Prenom:e.prenom||'',Contact:e.contact||'',
+      Session:getSesLabel(e.sesId),Formation:getFormLabel(e.formId),
+      Cout_Total:Number(e.cout)||0,Paye:getPaye(e.id),Reste:Math.max(0,Number(e.cout||0)-getPaye(e.id)),
+      Statut:getStatut(getPaye(e.id),e.cout).l,Date:e.date||''
+    }))),'Etudiants');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(paiements.map(p=>({ID:p.id,Etudiant:p.nom||'',Matricule:p.mat||'',Montant:Number(p.montant)||0,Date:p.date||'',Session:getSesLabel(p.sesId),Formation:getFormLabel(p.formId)}))),'Paiements');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(depenses.map(d=>({ID:d.id,Libelle:d.lib||'',Montant:Number(d.montant)||0,Detail:d.det||'',Date:d.date||'',Session:getSesLabel(d.sesId)}))),'Depenses');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sessions.map(s=>({Code:s.code||'',Detail:s.det||'',Cloturee:s.closed?'Oui':'Non'}))),'Sessions');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(formations.map(f=>({Formation:f.label||f.intitule||''}))),'Formations');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(disponibilites.map(d=>({ID:d.id,Responsable:d.responsable||'',Montant:Number(d.montant)||0,Detail:d.detail||'',Date:d.date||''}))),'Disponibilite');
+    const d=new Date();
+    const fn=`ComFormation_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.xlsx`;
+    // Générer le binaire et le stocker en base64 pour permettre le sync ultérieur
+    const wbout = XLSX.write(wb, {bookType:'xlsx', type:'binary'});
+    const b64 = btoa(wbout);
+    XLSX.writeFile(wb, fn);
+    const id='bk_'+Date.now();
+    backups.push({id, name:fn, date:fmtDateTime(), type:'Excel', data:b64});
+    saveBackupsLS(); renderBackups();
+  }catch(err){ alert('Erreur export : '+err.message); }
+}
+
+function exportJSONBackup(){
+  const snap=getAppSnapshot();
+  const json=JSON.stringify(snap,null,2);
+  const d=new Date();
+  const fn=`ComFormation_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.json`;
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
+  const id='bk_'+Date.now();
+  backups.push({id, name:fn, date:fmtDateTime(), type:'JSON', data:json});
+  saveBackupsLS(); renderBackups();
+}
+
+// Ferme le panneau backup si on clique ailleurs
+document.addEventListener('click', e => {
+  const panel = document.getElementById('backup-panel');
+  const actionMenu = document.getElementById('action-menu');
+  if(panel && backupPanelOpen && !panel.contains(e.target) && !(actionMenu&&actionMenu.contains(e.target))){
+    backupPanelOpen=false; panel.style.display='none';
+  }
+});
+
+/* ================================================================
+   BOOT — async : attend le chargement IndexedDB avant d'initialiser */
 (async function boot() {
   /* Affiche un écran de chargement minimal le temps d'ouvrir IDB */
   const loginScreen = document.getElementById('login-screen');
