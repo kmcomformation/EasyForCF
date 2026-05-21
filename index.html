@@ -2314,6 +2314,9 @@ async function doLogin(){
       });
       if (res.ok) {
         const data = await res.json();
+        if (data.user && data.user.id) {
+          data.user.id = isNaN(Number(data.user.id)) ? data.user.id : Number(data.user.id);
+        }
         localStorage.setItem('cf_token', data.token);
         localStorage.setItem('cf_user', JSON.stringify(data.user));
         loggedUser = data.user;
@@ -2338,7 +2341,7 @@ async function doLogin(){
     const u = users.find(x => x.login === email && verifyPassword(pwd, x.pwd));
     if (u) {
       loggedUser = {
-        id: u.id,
+        id: isNaN(Number(u.id)) ? u.id : Number(u.id),
         login: u.login,
         role: u.role,
         perms: u.perms || {}
@@ -2361,7 +2364,7 @@ async function doLogin(){
 
   // Vérification de compte désactivé
   if (loginSuccess && loggedUser) {
-    const localU = users.find(x => x.id === loggedUser.id);
+    const localU = users.find(x => Number(x.id) === Number(loggedUser.id));
     if (localU && localU.active === false) {
       showLoginError('<i class="fas fa-user-slash"></i> Ce compte est désactivé.');
       localStorage.removeItem('cf_token');
@@ -2373,7 +2376,7 @@ async function doLogin(){
 
   loginAttempts = 0;
   currentRole = loggedUser.role;
-  currentUserId = loggedUser.id;
+  currentUserId = loggedUser.id ? (isNaN(Number(loggedUser.id)) ? loggedUser.id : Number(loggedUser.id)) : null;
 
   // Gestion de "Se souvenir de moi"
   const rememberCheckbox = document.getElementById('login-remember');
@@ -4979,6 +4982,7 @@ document.addEventListener('click', e => {
       try {
         const loggedUser = JSON.parse(storedUser);
         if (loggedUser && loggedUser.role && loggedUser.id) {
+          loggedUser.id = isNaN(Number(loggedUser.id)) ? loggedUser.id : Number(loggedUser.id);
           currentRole = loggedUser.role;
           currentUserId = loggedUser.id;
           if (loginScreen) loginScreen.style.display = 'none';

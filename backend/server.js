@@ -142,7 +142,7 @@ app.post('/api/login', async (req, res) => {
     res.json({
       token,
       user: {
-        id: u.id,
+        id: Number(u.id),
         login: u.login,
         role: u.role,
         perms: u.perms ? (typeof u.perms === 'string' ? JSON.parse(u.perms) : u.perms) : {}
@@ -164,7 +164,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
     }
     const u = rows[0];
     res.json({
-      id: u.id,
+      id: Number(u.id),
       login: u.login,
       role: u.role,
       perms: u.perms ? JSON.parse(u.perms) : {}
