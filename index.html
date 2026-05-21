@@ -80,21 +80,43 @@ button{cursor:pointer;font-family:inherit;}
 input,select,textarea{font-family:inherit;font-size:14px;}
 a{text-decoration:none;}
 
-/* LOGIN */
-#login-screen{position:fixed;inset:0;background:linear-gradient(135deg,var(--navy) 0%,#1a3a72 50%,#0e4d8c 100%);display:flex;align-items:center;justify-content:center;z-index:2000;}
-.login-box{background:var(--surface);border-radius:var(--radius-xl);padding:44px 40px;width:380px;box-shadow:var(--shadow-lg);text-align:center;border:1px solid rgba(255,255,255,.08);}
+/* LOGIN ULTRA PREMIUM GLASSMORPHIC */
+#login-screen{position:fixed;inset:0;background:#060b13;display:flex;align-items:center;justify-content:center;z-index:2000;overflow:hidden;}
+.login-bg-orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:0.4;z-index:1;animation:orbFloat 10s infinite alternate ease-in-out;}
+.orb-1{width:350px;height:350px;background:var(--teal);top:-50px;left:-50px;}
+.orb-2{width:400px;height:400px;background:var(--blue);bottom:-100px;right:-50px;animation-delay:-5s;}
+@keyframes orbFloat{
+  0%{transform:translate(0,0) scale(1);}
+  100%{transform:translate(50px,40px) scale(1.15);}
+}
+.login-box{background:rgba(255,255,255,0.06);backdrop-filter:blur(25px);-webkit-backdrop-filter:blur(25px);border-radius:24px;padding:48px 40px;width:400px;box-shadow:0 30px 60px rgba(0,0,0,0.4),inset 0 1px 1px rgba(255,255,255,0.1);text-align:center;border:1px solid rgba(255,255,255,0.1);position:relative;z-index:2;transition:all 0.3s ease;color:#fff;}
+[data-theme="light"] .login-box{background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.5);box-shadow:0 20px 50px rgba(15,34,72,0.15),inset 0 1px 1px rgba(255,255,255,0.8);color:#0f2248;}
 .login-logo-wrap{margin:0 auto 20px;display:flex;align-items:center;justify-content:center;}
-.login-logo-img{height:52px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(43,191,155,.3));}
-.login-box h2{font-size:20px;font-weight:700;color:var(--navy);margin-bottom:4px;}
-.login-box p{font-size:13px;color:var(--text-m);margin-bottom:24px;}
-.login-field{position:relative;margin-bottom:12px;}
-.login-field input{width:100%;padding:13px 16px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;color:var(--text);background:var(--bg);outline:none;transition:border .2s,box-shadow .2s;letter-spacing:3px;text-align:center;}
-.login-field input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,78,184,.1);}
-.btn-login{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;letter-spacing:.3px;transition:opacity .2s,transform .1s;margin-top:4px;}
-.btn-login:hover{opacity:.9;}
-.btn-login:active{transform:scale(.99);}
-.login-err{color:var(--danger);font-size:12px;margin-top:10px;display:none;background:var(--danger-bg);padding:8px 12px;border-radius:7px;}
-.login-badge{display:inline-block;background:var(--teal);color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:16px;letter-spacing:.5px;}
+.login-logo-svg{width:200px;height:auto;filter:drop-shadow(0 4px 12px rgba(43,191,155,0.25));}
+.login-box h2{font-size:24px;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-0.5px;}
+[data-theme="light"] .login-box h2{color:var(--navy);}
+.login-box p{font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:28px;}
+[data-theme="light"] .login-box p{color:var(--text-m);}
+.login-field{position:relative;margin-bottom:16px;text-align:left;}
+.login-field i.field-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,0.4);font-size:16px;transition:color .2s;pointer-events:none;}
+[data-theme="light"] .login-field i.field-icon{color:var(--text-m);}
+.login-field input{width:100%;padding:14px 16px 14px 46px;border:1.5px solid rgba(255,255,255,0.1);border-radius:12px;font-size:15px;color:#fff;background:rgba(255,255,255,0.05);outline:none;transition:all 0.25s ease;}
+[data-theme="light"] .login-field input{border:1.5px solid var(--border);color:var(--text);background:rgba(240,244,251,0.7);}
+.login-field input::placeholder{color:rgba(255,255,255,0.4);}
+[data-theme="light"] .login-field input::placeholder{color:var(--text-s);}
+.login-field input:focus{border-color:var(--teal);background:rgba(255,255,255,0.08);box-shadow:0 0 0 4px rgba(43,191,155,0.25);}
+[data-theme="light"] .login-field input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 4px rgba(26,78,184,0.15);}
+.login-field input:focus ~ i.field-icon{color:var(--teal);}
+[data-theme="light"] .login-field input:focus ~ i.field-icon{color:var(--blue);}
+.pwd-toggle-btn{position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.4);font-size:16px;cursor:pointer;padding:4px;display:flex;align-items:center;justify-content:center;transition:color 0.2s;}
+[data-theme="light"] .pwd-toggle-btn{color:var(--text-m);}
+.pwd-toggle-btn:hover{color:#fff;}
+[data-theme="light"] .pwd-toggle-btn:hover{color:var(--navy);}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,var(--blue) 0%,#10419b 100%);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;letter-spacing:.5px;transition:all 0.25s ease;margin-top:10px;box-shadow:0 6px 20px rgba(26,78,184,0.35);display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-login:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(26,78,184,0.45);}
+.btn-login:active{transform:translateY(1px);}
+.login-err{color:#ff6b6b;font-size:13px;margin-top:12px;display:none;background:rgba(220,38,38,0.15);padding:10px 14px;border-radius:10px;border:1px solid rgba(220,38,38,0.25);text-align:left;align-items:center;gap:8px;}
+.login-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(43,191,155,0.15);color:var(--teal);font-size:10px;font-weight:700;padding:6px 14px;border-radius:20px;margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(43,191,155,0.25);}
 
 /* APP */
 .app{display:flex;flex-direction:column;min-height:100vh;}
@@ -102,7 +124,7 @@ a{text-decoration:none;}
 /* HEADER */
 .header{background:var(--hbg);padding:0 16px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--teal);box-shadow:0 2px 20px rgba(0,0,0,.3);}
 .logo{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none;}
-.logo-img{height:32px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.9;}
+.logo-img{height:32px;width:auto;object-fit:contain;opacity:.95;}
 .logo-text{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.3px;}
 .logo-sep{width:1px;height:20px;background:rgba(255,255,255,.15);margin:0 4px;}
 .nav{display:flex;gap:1px;flex:1;overflow:hidden;}
@@ -326,15 +348,50 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   .stats-grid{grid-template-columns:repeat(3,1fr);}
   .nav{display:none;}
   .hamburger{display:flex;}
-  .hdr-badge{display:none;}
+  #date-badge{display:none !important;}
   .logo-text{display:none;}
 }
 @media(max-width:620px){
+  html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    width: 100% !important;
+  }
   .stats-grid{grid-template-columns:1fr 1fr;}
-  main{padding:10px;}
+  main{padding:10px !important; width: 100% !important; max-width: 100vw !important; overflow-x: hidden !important;}
   .form-grid{grid-template-columns:1fr;}
+  
+  /* En-tête mobile compact et aligné */
+  .logo-sep { display: none !important; }
+  #date-badge { display: none !important; }
+  #kpi-toggle-btn { display: none !important; }
+  .user-dashboard-only { display: none !important; }
+  #user-role-lbl { display: none !important; }
+  .sync-text { display: none !important; }
+  .user-chip { padding: 3px !important; margin: 0 !important; }
+  #sync-badge { padding: 4px 6px !important; margin-right: 4px !important; }
+  
+  .header {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding: 0 8px !important;
+    gap: 4px !important;
+  }
+  
+  /* Affichage complet et défilement du tableau */
+  .table-wrap {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: var(--radius);
+  }
+  table {
+    width: 100% !important;
+    min-width: 700px !important;
+  }
 }
-@media(max-width:380px){.stats-grid{grid-template-columns:1fr;}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr;}}
 @media print{.header,.nav-drawer,.overlay{display:none!important;}main{padding:0!important;}}
 
 /* ============================================================
@@ -370,16 +427,25 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 
 <!-- LOGIN -->
 <div id="login-screen">
+  <div class="login-bg-orb orb-1"></div>
+  <div class="login-bg-orb orb-2"></div>
   <div class="login-box">
-    <div class="login-logo-wrap"><img class="login-logo-img" id="login-logo-img" src="" alt="ComFormation"></div>
+    <div class="login-logo-wrap" style="text-align: center; margin-bottom: 25px;">
+      <img src="logo.jpeg" alt="ComFormation Logo" style="max-height: 90px; width: auto; max-width: 100%; border-radius: 14px; object-fit: contain; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 2px solid rgba(255,255,255,0.4); padding: 2px; background: rgba(255,255,255,0.85); transition: transform 0.3s ease;">
+    </div>
     <div class="login-badge"><i class="fas fa-graduation-cap"></i> CENTRE DE FORMATION</div>
     <h2>Connexion sécurisée</h2>
     <p>Entrez vos identifiants pour accéder au système</p>
     <div class="login-field">
-      <input type="email" id="login-email" placeholder="Adresse email" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="email" style="letter-spacing:normal;">
+      <i class="fas fa-envelope field-icon"></i>
+      <input type="email" id="login-email" placeholder="Adresse email" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="email">
     </div>
     <div class="login-field">
+      <i class="fas fa-lock field-icon"></i>
       <input type="password" id="login-pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password">
+      <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Afficher le mot de passe">
+        <i class="fas fa-eye"></i>
+      </button>
     </div>
     <button class="btn-login" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i> Se connecter</button>
     <div class="login-err" id="login-err"><i class="fas fa-circle-xmark"></i> Mot de passe incorrect. Accès refusé.</div>
@@ -409,7 +475,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <button class="nav-btn admin-only" onclick="showSection('users')" id="nav-users"><i class="fas fa-users"></i> Utilisateurs</button>
   </nav>
   <div class="header-right">
-    <span class="hdr-badge" id="sync-badge" style="background:rgba(43,191,155,.2);color:var(--teal);border:1px solid rgba(43,191,155,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;white-space:nowrap;margin-right:2px;display:none;"><i class="fas fa-cloud"></i> Synchronisé</span>
+    <span class="hdr-badge" id="sync-badge" style="background:rgba(43,191,155,.2);color:var(--teal);border:1px solid rgba(43,191,155,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;white-space:nowrap;margin-right:2px;display:none;"><i class="fas fa-cloud"></i> <span class="sync-text">Synchronisé</span></span>
     <span class="hdr-badge" id="date-badge"></span>
     <!-- KPI Toggle Button -->
     <button class="hdr-btn" id="kpi-toggle-btn" onclick="toggleKPI()" title="Masquer/Afficher les indicateurs"><i class="fas fa-chart-bar"></i></button>
@@ -445,11 +511,11 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <!-- Mobile Drawer -->
 <div class="nav-drawer" id="nav-drawer" onclick="closeDrawerOutside(event)">
   <div class="nav-drawer-inner">
-    <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()"><i class="fas fa-graduation-cap"></i> Étudiants</button>
-    <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()"><i class="fas fa-credit-card"></i> Paiements</button>
-    <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
-    <button class="nav-btn" onclick="showSection('disponibilite');closeDrawerAll()"><i class="fas fa-wallet"></i> Disponibilité</button>
-    <button class="nav-btn" onclick="showSection('dashboard');closeDrawerAll()"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
+    <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()" id="nav-m-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
+    <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()" id="nav-m-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
+    <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()" id="nav-m-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
+    <button class="nav-btn" onclick="showSection('disponibilite');closeDrawerAll()" id="nav-m-disponibilite"><i class="fas fa-wallet"></i> Disponibilité</button>
+    <button class="nav-btn" onclick="showSection('dashboard');closeDrawerAll()" id="nav-m-dashboard"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
     <button class="nav-btn admin-only" onclick="showSection('sessions');closeDrawerAll()"><i class="fas fa-calendar-days"></i> Sessions</button>
     <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()"><i class="fas fa-book-open"></i> Formations</button>
     <button class="nav-btn admin-only" onclick="showSection('rapport');closeDrawerAll()"><i class="fas fa-chart-pie"></i> Rapports</button>
@@ -1037,26 +1103,21 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
    LOGO
    ================================================================ */
 (function(){
-  const svgLogin = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" width="200" height="70">
-    <rect x="2" y="2" width="196" height="66" rx="12" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
-    <text x="100" y="26" font-family="Georgia,serif" font-size="11" font-weight="400" fill="#64748b" text-anchor="middle" letter-spacing="3">CENTRE DE FORMATION</text>
-    <text x="100" y="52" font-family="Georgia,serif" font-size="24" font-weight="700" fill="#0f2248" text-anchor="middle" letter-spacing="0.5">ComFormation</text>
-    <line x1="30" y1="60" x2="170" y2="60" stroke="#2bbf9b" stroke-width="2.5" stroke-linecap="round"/>
-  </svg>`;
   const svgHeader = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36">
-    <rect width="36" height="36" rx="8" fill="#2bbf9b"/>
-    <text x="18" y="14" font-family="Georgia,serif" font-size="7" font-weight="700" fill="rgba(255,255,255,0.8)" text-anchor="middle" letter-spacing="0.3">COM</text>
-    <text x="18" y="27" font-family="Georgia,serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" letter-spacing="-0.3">CF</text>
+    <defs>
+      <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#2bbf9b" />
+        <stop offset="100%" stop-color="#1b9a7a" />
+      </linearGradient>
+    </defs>
+    <rect width="36" height="36" rx="10" fill="url(#headerLogoGrad)"/>
+    <path d="M18 9 L28 14 L18 19 L8 14 Z" fill="#ffffff"/>
+    <path d="M28 14 L28 20 M13 18 L13 23 Q18 26 23 23 L23 18" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>`;
-  const toDataURI = svg => 'data:image/svg+xml;base64,' + btoa(svg);
-  const li = document.getElementById('login-logo-img');
+  const toDataURI = svg => 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
   const hi = document.getElementById('header-logo-img');
-  if(li) li.src = toDataURI(svgLogin);
-  if(hi) hi.src = toDataURI(svgHeader);
-  window.LOGO_RECU = toDataURI(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 50" width="160" height="50">
-    <text x="80" y="18" font-family="Georgia,serif" font-size="9" font-weight="400" fill="rgba(255,255,255,0.65)" text-anchor="middle" letter-spacing="2">CENTRE DE FORMATION</text>
-    <text x="80" y="40" font-family="Georgia,serif" font-size="20" font-weight="700" fill="#2bbf9b" text-anchor="middle">ComFormation</text>
-  </svg>`);
+  if(hi) hi.src = 'logo.jpeg';
+  window.LOGO_RECU = 'logo.jpeg';
 })();
 
 /* ================================================================
@@ -1259,29 +1320,29 @@ function updateSyncBadge(queueLength = null) {
 
   if (!navigator.onLine) {
     if (queueLength > 0) {
-      badge.innerHTML = `<i class="fas fa-circle-exclamation"></i> Hors-ligne (Attente : ${queueLength})`;
+      badge.innerHTML = `<i class="fas fa-circle-exclamation"></i> <span class="sync-text">Hors-ligne (Attente : ${queueLength})</span>`;
       badge.style.background = 'rgba(245, 158, 11, 0.15)';
       badge.style.color = '#f59e0b';
       badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
     } else {
-      badge.innerHTML = '<i class="fas fa-circle-exclamation"></i> Hors-ligne';
+      badge.innerHTML = '<i class="fas fa-circle-exclamation"></i> <span class="sync-text">Hors-ligne</span>';
       badge.style.background = 'rgba(107, 114, 128, 0.15)';
       badge.style.color = '#9ca3af';
       badge.style.borderColor = 'rgba(107, 114, 128, 0.3)';
     }
   } else {
     if (isSyncing) {
-      badge.innerHTML = '<i class="fas fa-arrows-rotate fa-spin"></i> Synchronisation...';
+      badge.innerHTML = '<i class="fas fa-arrows-rotate fa-spin"></i> <span class="sync-text">Synchronisation...</span>';
       badge.style.background = 'rgba(59, 130, 246, 0.15)';
       badge.style.color = '#3b82f6';
       badge.style.borderColor = 'rgba(59, 130, 246, 0.3)';
     } else if (queueLength > 0) {
-      badge.innerHTML = `<i class="fas fa-clock"></i> Sync en attente (${queueLength})`;
+      badge.innerHTML = `<i class="fas fa-clock"></i> <span class="sync-text">Sync en attente (${queueLength})</span>`;
       badge.style.background = 'rgba(245, 158, 11, 0.15)';
       badge.style.color = '#f59e0b';
       badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
     } else {
-      badge.innerHTML = '<i class="fas fa-cloud"></i> Synchronisé';
+      badge.innerHTML = '<i class="fas fa-cloud"></i> <span class="sync-text">Synchronisé</span>';
       badge.style.background = 'rgba(43, 191, 155, 0.2)';
       badge.style.color = 'var(--teal)';
       badge.style.borderColor = 'rgba(43, 191, 155, 0.3)';
@@ -1492,6 +1553,21 @@ function initUsers(){
 let loginAttempts = 0;
 let loginLockUntil = 0;
 
+function togglePasswordVisibility(){
+  const pwdInput = document.getElementById('login-pwd');
+  const toggleBtn = document.querySelector('.pwd-toggle-btn i');
+  const btn = document.querySelector('.pwd-toggle-btn');
+  if(pwdInput.type === 'password'){
+    pwdInput.type = 'text';
+    toggleBtn.className = 'fas fa-eye-slash';
+    btn.setAttribute('aria-label', 'Masquer le mot de passe');
+  } else {
+    pwdInput.type = 'password';
+    toggleBtn.className = 'fas fa-eye';
+    btn.setAttribute('aria-label', 'Afficher le mot de passe');
+  }
+}
+
 async function doLogin(){
   const now = Date.now();
   if(now < loginLockUntil){
@@ -1609,30 +1685,11 @@ function doLogout(){
 function applyRoleUI(){
   const isAdmin = currentRole === 'Admin';
   const u = users.find(x=>x.id===currentUserId);
-  const perms = (u&&u.perms) ? u.perms : {};
+  const perms = getPermDef(u);
 
   // Affiche/masque les éléments admin-only
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
   document.querySelectorAll('.non-admin-only').forEach(el => el.style.display = isAdmin ? 'none' : '');
-
-  // <i class="fas fa-arrow-down"></i> AJOUTE CES LIGNES SI ELLES NE SONT PAS DÉJÀ PRÉSENTES <i class="fas fa-arrow-down"></i>
-  // Gestion des éléments user-dashboard-only (tableau de bord) - toujours visible pour les Users
-if(!isAdmin){
-  // S'assurer que le bouton dashboard est toujours visible pour les Users
-  document.querySelectorAll('.user-dashboard-only').forEach(el => el.style.display = '');
-  // Forcer l'affichage du bouton dashboard dans la nav desktop
-  const dashBtn = document.getElementById('nav-dashboard');
-  if(dashBtn) dashBtn.style.display = '';
-  // Forcer l'affichage dans le drawer mobile
-  const mobileDashBtn = document.querySelector('#nav-drawer .nav-btn[onclick*="dashboard"]');
-  if(mobileDashBtn) mobileDashBtn.style.display = '';
-} else {
-  // Admin: cacher le bouton dashboard user car il a ses propres rapports
-  document.querySelectorAll('.user-dashboard-only').forEach(el => el.style.display = 'none');
-  const dashBtn = document.getElementById('nav-dashboard');
-  if(dashBtn) dashBtn.style.display = 'none';
-}
-  // <i class="fas fa-arrow-up"></i> FIN DES LIGNES À AJOUTER <i class="fas fa-arrow-up"></i>
 
   // — Action Système : visible pour admin OU user avec perm actSystem
   const actionMenu = document.getElementById('action-menu');
@@ -1655,31 +1712,58 @@ if(!isAdmin){
 
   if(!isAdmin){
     // — Dashboard user
-    const hasDash = perms.secDashboard !== false;
+    const hasDash = perms.secDashboard === true;
     document.querySelectorAll('.user-dashboard-only').forEach(el => el.style.display = hasDash ? '' : 'none');
+
+    // Desktop Dashboard Button
+    const dashBtn = document.getElementById('nav-dashboard');
+    if(dashBtn) dashBtn.style.display = hasDash ? '' : 'none';
+
+    // Mobile Drawer Dashboard Button
+    const mobileDashBtn = document.getElementById('nav-m-dashboard');
+    if(mobileDashBtn) mobileDashBtn.style.display = hasDash ? '' : 'none';
 
     // — Sections accessibles
     const sections = ['etudiants','paiements','depenses','disponibilite'];
     const permMap = {etudiants:'secEtudiants',paiements:'secPaiements',depenses:'secDepenses',disponibilite:'secDisponibilite'};
     sections.forEach(s=>{
+      const hasAccess = perms[permMap[s]] === true;
       const navBtn = document.getElementById('nav-'+s);
-      const hasAccess = perms[permMap[s]] !== false;
       if(navBtn) navBtn.style.display = hasAccess ? '' : 'none';
+
+      const mobileNavBtn = document.getElementById('nav-m-'+s);
+      if(mobileNavBtn) mobileNavBtn.style.display = hasAccess ? '' : 'none';
     });
 
-    // — Disponibilité: visible selon permission
-    const navDispo = document.getElementById('nav-disponibilite');
-    if(navDispo) navDispo.style.display = (perms.secDisponibilite !== false) ? '' : 'none';
-
-    // Si la section active n'est plus accessible, rediriger
-    const active = document.querySelector('.section.active');
-    if(active && active.classList.contains('admin-only')) showSection('etudiants');
+    // Si la section active n'est plus accessible, rediriger vers la première section accessible
+    const activeSection = document.querySelector('.section.active');
+    if (activeSection) {
+      const activeId = activeSection.id.replace('sec-', '');
+      const activePermKey = permMap[activeId];
+      if (activeSection.classList.contains('admin-only') || (activePermKey && perms[activePermKey] !== true) || (activeId === 'dashboard' && !hasDash)) {
+        // Rediriger vers la première section autorisée
+        if (perms.secEtudiants) showSection('etudiants');
+        else if (perms.secPaiements) showSection('paiements');
+        else if (perms.secDepenses) showSection('depenses');
+        else if (hasDash) showSection('dashboard');
+      }
+    }
   } else {
-    // Admin : masquer le bouton dashboard user
+    // Admin: cacher le bouton dashboard user car il a ses propres rapports
     document.querySelectorAll('.user-dashboard-only').forEach(el => el.style.display = 'none');
-    // Admin : afficher disponibilité
-    const navDispo = document.getElementById('nav-disponibilite');
-    if(navDispo) navDispo.style.display = '';
+    const dashBtn = document.getElementById('nav-dashboard');
+    if(dashBtn) dashBtn.style.display = 'none';
+    const mobileDashBtn = document.getElementById('nav-m-dashboard');
+    if(mobileDashBtn) mobileDashBtn.style.display = 'none';
+
+    // Admin : afficher disponibilité et toutes les sections
+    const sections = ['etudiants','paiements','depenses','disponibilite'];
+    sections.forEach(s=>{
+      const navBtn = document.getElementById('nav-'+s);
+      if(navBtn) navBtn.style.display = '';
+      const mobileNavBtn = document.getElementById('nav-m-'+s);
+      if(mobileNavBtn) mobileNavBtn.style.display = '';
+    });
   }
 }
 /* ================================================================
@@ -1688,12 +1772,15 @@ if(!isAdmin){
 function hasPermission(key){
   if(currentRole==='Admin') return true;
   const u=users.find(x=>x.id===currentUserId);
-  if(!u||!u.perms) return false; // User sans perms = accès minimal
-  return u.perms[key] === true || u.perms[key] === undefined; // undefined = non configuré = refusé sauf défauts
+  if(!u) return false;
+  const perms = getPermDef(u);
+  return perms[key] === true;
 }
 function getPermDef(u){
-  // Renvoie les permissions par défaut si absentes
-  return u.perms || {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
+  if(!u || !u.perms || Object.keys(u.perms).length === 0) {
+    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
+  }
+  return u.perms;
 }
 function togglePermFields(){
   const role=document.getElementById('user-role').value;
@@ -1741,8 +1828,9 @@ function applyPermsToForm(perms){
 function canUserAccessSes(sesId){
   if(currentRole==='Admin') return true;
   const u=users.find(x=>x.id===currentUserId);
-  if(!u||!u.perms) return false;
-  const allowed=u.perms.sesAccess||[];
+  if(!u) return false;
+  const perms = getPermDef(u);
+  const allowed = perms.sesAccess||[];
   return allowed.length===0||allowed.includes(Number(sesId));
 }
 
@@ -1994,9 +2082,9 @@ function renderEtudiants(){
   empty.style.display='none';
   const isAdmin=currentRole==='Admin';
   const u=users.find(x=>x.id===currentUserId);
-  const canEdit=isAdmin||(u&&u.perms&&u.perms.actEdit);
-  const canDel=isAdmin||(u&&u.perms&&u.perms.actDel);
-  const canPay=isAdmin||(u&&u.perms&&u.perms.actPay);
+  const canEdit=hasPermission('actEdit');
+  const canDel=hasPermission('actDel');
+  const canPay=hasPermission('actPay');
   let totalCout=0,totalPaye=0;
   tbody.innerHTML=data.map(e=>{
     const paye=getPaye(e.id); const st=getStatut(paye,Number(e.cout));
@@ -2032,7 +2120,7 @@ function renderEtudiants(){
     
 return `<tr class="${closed?'row-closed':''}">
     <td><span class="matricule">${esc(e.mat)}</span></td>
-    <td><strong>${esc(e.nom)}</strong> ${esc(e.prenom)}</td>
+    <td><strong>${esc(sanitize(e.nom))}</strong> ${esc(sanitize(e.prenom))}</td>
     <td>${tel}</td>
     <td>${esc(getSesLabel(e.sesId))}${closedBadge}</td>
     <td>${esc(getFormLabel(e.formId))}</td>
@@ -2055,10 +2143,7 @@ return `<tr class="${closed?'row-closed':''}">
 
 // BOTH Admin AND User (si permission) peuvent ouvrir ce modal
 function openModalEtu(){
-    if(currentRole!=='Admin'){
-        const u=users.find(x=>x.id===currentUserId);
-        if(!u||!u.perms||!u.perms.actAddEtu){ alert('Accès refusé — vous n\'avez pas la permission d\'ajouter des étudiants.'); return; }
-    }
+    if(!hasPermission('actAddEtu')){ alert('Accès refusé — vous n\'avez pas la permission d\'ajouter des étudiants.'); return; }
     editEtuId=null;
     document.getElementById('etu-mtitle').textContent='Ajouter un Étudiant';
     document.getElementById('etu-mat').value='MAT-'+String(nEtu).padStart(5,'0');
@@ -2070,7 +2155,7 @@ function openModalEtu(){
     openModal('etu');
 }
 function editEtudiantF(id){
-    if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+    if(!hasPermission('actEdit')){ alert('Accès refusé.'); return; }
     const e=etudiants.find(x=>x.id===id);
     if(!e) return;
     if(isSesClosed(e.sesId)){ alert('Session clôturée. Impossible de modifier.'); return; }
@@ -2114,9 +2199,14 @@ function saveEtudiant(){
     }
     
     // Vérification des droits pour la modification
-    if(editEtuId !== null && currentRole !== 'Admin'){ 
-        alert('Modification réservée aux administrateurs.'); 
+    if(editEtuId !== null && !hasPermission('actEdit')){ 
+        alert('Modification non autorisée.'); 
         return; 
+    }
+    // Vérification des droits pour l'ajout
+    if(editEtuId === null && !hasPermission('actAddEtu')){
+        alert('Ajout non autorisé.');
+        return;
     }
     
     // Sauvegarde sans photo
@@ -2168,7 +2258,7 @@ function saveEtudiant(){
     closeModal('etu');
 }
 function delEtudiant(id){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actDel')){ alert('Accès refusé.'); return; }
   const e=etudiants.find(x=>x.id===id);
   if(!e) return;
   if(isSesClosed(e.sesId)){ alert('Session clôturée. Suppression impossible.'); return; }
@@ -2184,6 +2274,7 @@ function delEtudiant(id){
    PAIEMENTS
    ================================================================ */
 function openPaiement(etuId){
+  if(!hasPermission('actPay')){ alert('Accès refusé — vous n\'avez pas la permission d\'enregistrer un paiement.'); return; }
   const e=etudiants.find(x=>x.id===etuId);
   if(!e) return;
   if(isSesClosed(e.sesId)){ alert('Session clôturée — paiements bloqués.'); return; }
@@ -2213,6 +2304,7 @@ function updatePayBar(){
   document.getElementById('pay-pct-lbl').textContent=pct+'%';
 }
 function savePaiement(){
+  if(!hasPermission('actPay')){ alert('Opération non autorisée — permission d\'enregistrement de paiement manquante.'); return; }
   const m=parseFloat(document.getElementById('pay-montant').value);
   const date=document.getElementById('pay-date').value;
   if(!m||m<=0){ alert('Montant invalide.'); return; }
@@ -2269,7 +2361,7 @@ function renderPaiements(){
   empty.style.display='none'; tot.style.display='flex';
   tot.textContent='Total affiché : '+fmtM(data.reduce((a,p)=>a+Number(p.montant||0),0))+' FC';
   tbody.innerHTML=data.map((p,i)=>`<tr>
-    <td>${i+1}</td><td><strong>${esc(p.nom)}</strong></td>
+    <td>${i+1}</td><td><strong>${esc(sanitize(p.nom))}</strong></td>
     <td><span class="matricule">${esc(p.mat)}</span></td>
     <td style="color:var(--success);font-weight:700">${fmtM(p.montant)} FC</td>
     <td>${fmtDate(p.date)}</td><td>${esc(getSesLabel(p.sesId))}</td><td>${esc(getFormLabel(p.formId))}</td>
@@ -2347,13 +2439,10 @@ function printRecu(){
    DÉPENSES — User CAN add, only Admin can edit/delete
    ================================================================ */
 function openModalDep(id){
-  // Edit: admin ou user avec permission actEdit
   if(id){
-    const u=users.find(x=>x.id===currentUserId);
-    if(currentRole!=='Admin'&&!(u&&u.perms&&u.perms.actEdit)){ alert('Modification réservée aux utilisateurs autorisés.'); return; }
+    if(!hasPermission('actEdit')){ alert('Modification réservée aux utilisateurs autorisés.'); return; }
   } else {
-    const u=users.find(x=>x.id===currentUserId);
-    if(currentRole!=='Admin'&&!(u&&u.perms&&u.perms.actAddDep)){ alert('Accès refusé — vous n\'avez pas la permission d\'ajouter des dépenses.'); return; }
+    if(!hasPermission('actAddDep')){ alert('Accès refusé — vous n\'avez pas la permission d\'ajouter des dépenses.'); return; }
   }
   editDepId=id||null;
   populateSelects();
@@ -2380,8 +2469,11 @@ function openModalDep(id){
 }
 
 function saveDepense(){
-  // Edit: admin only
-  if(editDepId!==null && currentRole!=='Admin'){ alert('Modification réservée aux administrateurs.'); return; }
+  if(editDepId!==null){
+    if(!hasPermission('actEdit')){ alert('Modification non autorisée.'); return; }
+  } else {
+    if(!hasPermission('actAddDep')){ alert('Ajout non autorisé.'); return; }
+  }
   const lib=sanitize(document.getElementById('dep-lib').value,120);
   const montant=Math.max(0,parseFloat(document.getElementById('dep-mont').value)||0);
   const date=document.getElementById('dep-date').value;
@@ -2429,8 +2521,8 @@ function saveDepense(){
 function renderDepenses(){
   const isAdmin=currentRole==='Admin';
   const u=users.find(x=>x.id===currentUserId);
-  const canEdit=isAdmin||(u&&u.perms&&u.perms.actEdit);
-  const canDel=isAdmin||(u&&u.perms&&u.perms.actDel);
+  const canEdit=hasPermission('actEdit');
+  const canDel=hasPermission('actDel');
   const q=(document.getElementById('dep-search').value||'').toLowerCase();
   const fs=document.getElementById('dep-f-ses').value;
   const dateFrom=document.getElementById('dep-date-from').value;
@@ -2477,7 +2569,7 @@ function renderDepenses(){
 }
 
 function delDepense(id){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actDel')){ alert('Accès refusé.'); return; }
   const d=depenses.find(x=>x.id===id);
   if(d&&isSesClosed(d.sesId)){ alert('Session clôturée. Suppression impossible.'); return; }
   showConfirm('Supprimer cette dépense ?', async ()=>{
@@ -2494,7 +2586,25 @@ function openModalSession(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   editSesId=id||null;
   if(id){ const s=sessions.find(x=>x.id===id); if(!s) return; document.getElementById('ses-mtitle').textContent='Modifier Session'; document.getElementById('ses-code').value=s.code||''; document.getElementById('ses-det').value=s.det||''; }
-  else { document.getElementById('ses-mtitle').textContent='Nouvelle Session'; document.getElementById('ses-code').value='S'+String(nSes).padStart(2,'0'); document.getElementById('ses-det').value=''; }
+  else {
+    let nextNum = 1;
+    if (sessions.length > 0) {
+      const numbers = sessions
+        .map(s => {
+          const match = s.code ? s.code.match(/^S(\d+)$/i) : null;
+          return match ? parseInt(match[1], 10) : 0;
+        })
+        .filter(num => num > 0 && num < 1000);
+      
+      if (numbers.length > 0) {
+        nextNum = Math.max(...numbers) + 1;
+      }
+    }
+    const code = 'S' + String(nextNum).padStart(3, '0');
+    document.getElementById('ses-mtitle').textContent='Nouvelle Session';
+    document.getElementById('ses-code').value=code;
+    document.getElementById('ses-det').value='';
+  }
   openModal('session');
 }
 function saveSession(){
@@ -2510,21 +2620,7 @@ function saveSession(){
     }
   } else {
     const id=generateId();
-    // Calculer le prochain numéro de session sous la forme S001, S002, etc. (en excluant les anciens IDs géants de type S1714)
-    let nextNum = 1;
-    if (sessions.length > 0) {
-      const numbers = sessions
-        .map(s => {
-          const match = s.code ? s.code.match(/^S(\d+)$/i) : null;
-          return match ? parseInt(match[1], 10) : 0;
-        })
-        .filter(num => num > 0 && num < 1000);
-      
-      if (numbers.length > 0) {
-        nextNum = Math.max(...numbers) + 1;
-      }
-    }
-    const code = 'S' + String(nextNum).padStart(3, '0');
+    const code = document.getElementById('ses-code').value || 'S001';
     const newSes = {id,code,det,closed:false};
     sessions.push(newSes);
     saveAll();
@@ -3084,7 +3180,13 @@ function doImport(ev){
   ev.target.value='';
 }
 function recalcCounters(){
-  nSes=(sessions.length?Math.max(...sessions.map(s=>s.id)):0)+1;
+  const sCodes = sessions
+    .map(s => {
+      const match = s.code ? s.code.match(/^S(\d+)$/i) : null;
+      return match ? parseInt(match[1], 10) : 0;
+    })
+    .filter(num => num > 0 && num < 1000);
+  nSes = (sCodes.length ? Math.max(...sCodes) : 0) + 1;
   nForm=(formations.length?Math.max(...formations.map(f=>f.id)):0)+1;
   nEtu=(etudiants.length?Math.max(...etudiants.map(e=>e.id)):0)+1;
   nPay=(paiements.length?Math.max(...paiements.map(p=>p.id)):0)+1;
@@ -3419,85 +3521,11 @@ let pwaInstallEvent = null;
   if(link) link.href = 'data:application/manifest+json;charset=utf-8,' + encodeURIComponent(JSON.stringify(manifest));
 })();
 
-/* ---- Service Worker Blob (cache offline) ---- */
+/* ---- Service Worker (cache offline) ---- */
 if ('serviceWorker' in navigator) {
-  const swCode = `
-const CACHE_NAME = 'comformation-v10';
-let appURL = '';
-
-self.addEventListener('message', e => {
-  if (e.data && e.data.type === 'SET_URL') {
-    appURL = e.data.url;
-    /* Met en cache l'URL de l'app immédiatement */
-    caches.open(CACHE_NAME).then(c => c.add(appURL)).catch(()=>{});
-  }
-});
-
-self.addEventListener('install', e => {
-  self.skipWaiting();
-  e.waitUntil(
-    (async () => {
-      const cache = await caches.open(CACHE_NAME);
-      const external = [
-        'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap',
-        'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
-      ];
-      for (const url of external) {
-        try { await cache.add(url); } catch(_) {}
-      }
-    })()
-  );
-});
-
-self.addEventListener('activate', e => {
-  e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  const url = new URL(e.request.url);
-  /* Stratégie : Cache-first pour fonts/JS externes, Network-first pour l'app */
-  const isExternal = url.origin !== self.location.origin ||
-                     url.hostname === 'fonts.googleapis.com' ||
-                     url.hostname === 'fonts.gstatic.com' ||
-                     url.hostname === 'cdnjs.cloudflare.com';
-  if (isExternal) {
-    /* Cache-first pour ressources externes */
-    e.respondWith(
-      caches.match(e.request).then(cached => {
-        if (cached) return cached;
-        return fetch(e.request).then(resp => {
-          if (resp && resp.status === 200) {
-            const clone = resp.clone();
-            caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-          }
-          return resp;
-        }).catch(() => cached);
-      })
-    );
-  } else {
-    /* Network-first pour l'app principale (données toujours fraîches) */
-    e.respondWith(
-      fetch(e.request).then(resp => {
-        if (resp && resp.status === 200 && resp.type === 'basic') {
-          const clone = resp.clone();
-          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
-        }
-        return resp;
-      }).catch(() => caches.match(e.request))
-    );
-  }
-});
-`;
-  const blob  = new Blob([swCode], { type: 'application/javascript' });
-  const swURL = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swURL, { scope: './' })
+  navigator.serviceWorker.register('/sw.js', { scope: '/' })
     .then(reg => {
-      console.log('[SW] Enregistré, scope:', reg.scope);
+      console.log('[SW] Enregistré statiquement, scope:', reg.scope);
       /* Envoie l'URL de l'app au SW pour le cache */
       const sw = reg.active || reg.waiting || reg.installing;
       if (sw) sw.postMessage({ type: 'SET_URL', url: location.href });
@@ -3681,9 +3709,9 @@ function renderDashboard(){
   // Table des opérations
   const filterType=(document.getElementById('dash-filter-type')?.value)||'';
   let ops=[];
-  if(!filterType||filterType==='etudiant') mesEtu.forEach(e=>ops.push({type:'etudiant',label:'<i class="fas fa-graduation-cap"></i> '+e.nom+' '+e.prenom,montant:Number(e.cout||0),date:e.date,sesId:e.sesId}));
-  if(!filterType||filterType==='paiement') mesPay.forEach(p=>ops.push({type:'paiement',label:'<i class="fas fa-credit-card"></i> '+p.nom,montant:Number(p.montant||0),date:p.date,sesId:p.sesId}));
-  if(!filterType||filterType==='depense') mesDep.forEach(d=>ops.push({type:'depense',label:'<i class="fas fa-arrow-trend-down"></i> '+d.lib,montant:Number(d.montant||0),date:d.date,sesId:d.sesId}));
+  if(!filterType||filterType==='etudiant') mesEtu.forEach(e=>ops.push({type:'etudiant',label:e.nom+' '+e.prenom,montant:Number(e.cout||0),date:e.date,sesId:e.sesId}));
+  if(!filterType||filterType==='paiement') mesPay.forEach(p=>ops.push({type:'paiement',label:p.nom,montant:Number(p.montant||0),date:p.date,sesId:p.sesId}));
+  if(!filterType||filterType==='depense') mesDep.forEach(d=>ops.push({type:'depense',label:d.lib,montant:Number(d.montant||0),date:d.date,sesId:d.sesId}));
   ops.sort((a,b)=>(b.date||'')>=(a.date||'')?1:-1);
 
   const tbody=document.getElementById('tbody-dashboard');
@@ -3693,7 +3721,7 @@ function renderDashboard(){
   if(tbody) tbody.innerHTML=ops.map((o,i)=>`<tr>
     <td>${i+1}</td>
     <td><span class="badge ${o.type==='etudiant'?'b-info':o.type==='paiement'?'b-success':'b-danger'}" style="font-size:9px">${o.type}</span></td>
-    <td>${esc(o.label)}</td>
+    <td>${esc(sanitize(o.label))}</td>
     <td style="font-weight:700;color:${o.type==='depense'?'var(--danger)':'var(--success)'}">${fmtM(o.montant)} FC</td>
     <td>${fmtDate(o.date)}</td>
     <td>${esc(getSesLabel(o.sesId))}</td>
