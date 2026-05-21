@@ -55,6 +55,44 @@ function verifyPassword(pwd, stored) {
 // ROUTES API
 // -------------------------------------------------------------
 
+// Route de diagnostic de la base de données
+app.get('/api/health', async (req, res) => {
+  try {
+    const [rows] = await pool.query('SELECT 1 + 1 AS result');
+    const [tables] = await pool.query('SHOW TABLES');
+    
+    let userCount = 0;
+    try {
+      const [userRows] = await pool.query('SELECT COUNT(*) AS count FROM users');
+      userCount = userRows[0].count;
+    } catch (err) {
+      userCount = `Table users manquante ou erreur: ${err.message}`;
+    }
+
+    res.json({
+      status: 'success',
+      database: {
+        host: process.env.DB_HOST,
+        name: process.env.DB_NAME,
+        connection: 'OK',
+        test_query: rows[0].result
+      },
+      tables: tables.map(t => Object.values(t)[0]),
+      users_in_db: userCount
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      database: {
+        host: process.env.DB_HOST,
+        name: process.env.DB_NAME,
+        connection: 'FAILED'
+      },
+      error: err.message
+    });
+  }
+});
+
 // Connexion avec email et mot de passe (mécanisme ComFormation)
 app.post('/api/login', async (req, res) => {
   const { email, pwd } = req.body;
