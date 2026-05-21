@@ -379,6 +379,191 @@ app.post('/api/sync/clear', authenticateToken, async (req, res) => {
   }
 });
 
+// Route d'analyse assistée par l'Agent IA (Cohere Command R+)
+app.post('/api/ai/chat', authenticateToken, async (req, res) => {
+  if (req.user.role !== 'Admin') {
+    return res.status(403).json({ error: 'Accès réservé aux administrateurs.' });
+  }
+
+  const cohereApiKey = process.env.COHERE_API_KEY;
+  if (!cohereApiKey) {
+    return res.status(500).json({ error: 'Clé d\'API Cohere non configurée sur le serveur.' });
+  }
+
+  const { message, chat_history } = req.body;
+  if (!message) {
+    return res.status(400).json({ error: 'Message requis.' });
+  }
+  try {
+    // 1. Requêtes SQL parallèles pour construire le contexte dynamique réel à vitesse maximale
+    const [
+      [studentsRows],
+      [formationsRows],
+      [sessionsRows],
+      [revenueRows],
+      [paidRows],
+      [expensesRows],
+      [disposRows],
+      [sessionsData],
+      [unpaidStudents]
+    ] = await Promise.all([
+      pool.query('SELECT COUNT(*) AS count FROM etudiants'),
+      pool.query('SELECT COUNT(*) AS count FROM formations'),
+      pool.query('SELECT COUNT(*) AS count FROM sessions'),
+      pool.query('SELECT COALESCE(SUM(cout), 0) AS total FROM etudiants'),
+      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM paiements'),
+      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM depenses'),
+      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM disponibilites'),
+      pool.query(`
+        SELECT 
+          s.id, s.code, s.det, s.closed,
+          COUNT(e.id) AS etudiantCount,
+          COALESCE(SUM(e.cout), 0) AS coutTotal,
+          COALESCE((SELECT SUM(p.montant) FROM paiements p WHERE p.sesId = s.id), 0) AS paidTotal,
+          COALESCE((SELECT SUM(d.montant) FROM depenses d WHERE d.sesId = s.id), 0) AS depenseTotal
+        FROM sessions s
+        LEFT JOIN etudiants e ON e.sesId = s.id
+        GROUP BY s.id, s.code, s.det, s.closed
+      `),
+      pool.query(`
+        SELECT * FROM (
+          SELECT 
+            e.mat, e.nom, e.prenom, e.contact, e.cout, e.echeance,
+            s.code AS sessionCode,
+            f.label AS formationLabel,
+            COALESCE((SELECT SUM(p.montant) FROM paiements p WHERE p.etuId = e.id), 0) AS paidAmount
+          FROM etudiants e
+          LEFT JOIN sessions s ON e.sesId = s.id
+          LEFT JOIN formations f ON e.formId = f.id
+        ) AS t
+        WHERE t.cout > t.paidAmount
+      `)
+    ]);
+
+    const studentsCount = studentsRows[0]?.count || 0;
+    const formationsCount = formationsRows[0]?.count || 0;
+    const sessionsCount = sessionsRows[0]?.count || 0;
+    const totalRevenue = parseFloat(revenueRows[0]?.total || 0);
+    const totalPaid = parseFloat(paidRows[0]?.total || 0);
+    const totalExpenses = parseFloat(expensesRows[0]?.total || 0);
+    const totalDispos = parseFloat(disposRows[0]?.total || 0);
+
+    const totalUnpaid = Math.max(0, totalRevenue - totalPaid);
+    const unpaidPercent = totalRevenue > 0 ? ((totalUnpaid / totalRevenue) * 100).toFixed(1) : '0';
+    const netProfit = totalPaid - totalExpenses;
+
+    let sessionsDetailsText = '';
+    for (const s of sessionsData) {
+      const unpaid = Math.max(0, s.coutTotal - s.paidTotal);
+      const profit = s.paidTotal - s.depenseTotal;
+      sessionsDetailsText += `- Session **${s.code}** (${s.det || 'sans description'}) :
+  * Statut : ${s.closed ? 'Fermée' : 'Ouverte'}
+  * Étudiants : ${s.etudiantCount}
+  * Recettes attendues : ${parseFloat(s.coutTotal).toLocaleString('fr-FR')} FCFA
+  * Encaissé : ${parseFloat(s.paidTotal).toLocaleString('fr-FR')} FCFA
+  * Impayés : ${unpaid.toLocaleString('fr-FR')} FCFA
+  * Dépenses : ${parseFloat(s.depenseTotal).toLocaleString('fr-FR')} FCFA
+  * Bénéfice Net (Encaissé - Dépenses) : ${profit.toLocaleString('fr-FR')} FCFA\n\n`;
+    }
+    if (!sessionsDetailsText) sessionsDetailsText = 'Aucune session enregistrée.\n';
+
+    // Trier les étudiants par solde restant dû décroissant
+    unpaidStudents.sort((a, b) => (b.cout - a.paidAmount) - (a.cout - b.paidAmount));
+
+    const totalUnpaidStudentsCount = unpaidStudents.length;
+    let unpaidStudentsText = `Il y a au total ${totalUnpaidStudentsCount} étudiant(s) avec des paiements incomplets pour un montant total restant dû de ${totalUnpaid.toLocaleString('fr-FR')} FCFA.\n\n`;
+
+    if (totalUnpaidStudentsCount > 0) {
+      unpaidStudentsText += `Voici les 10 situations d'impayés les plus prioritaires (les restes à payer les plus élevés) :\n\n`;
+      const topUnpaidStudents = unpaidStudents.slice(0, 10);
+      let counter = 1;
+      for (const e of topUnpaidStudents) {
+        const rest = e.cout - e.paidAmount;
+        const progress = e.cout > 0 ? ((e.paidAmount / e.cout) * 100).toFixed(0) : '0';
+        const formattedEcheance = e.echeance ? (e.echeance instanceof Date ? e.echeance.toISOString().split('T')[0] : e.echeance) : 'Non définie';
+        unpaidStudentsText += `${counter}. **${e.prenom} ${e.nom}** (Matricule: \`${e.mat}\`)
+   * Session: ${e.sessionCode || 'N/A'} | Formation: ${e.formationLabel || 'N/A'} | Contact: ${e.contact || 'N/A'}
+   * Dû: ${parseFloat(e.cout).toLocaleString('fr-FR')} FCFA | Payé: ${parseFloat(e.paidAmount).toLocaleString('fr-FR')} FCFA (${progress}%)
+   * Reste à payer: **${rest.toLocaleString('fr-FR')} FCFA** | Échéance: ${formattedEcheance}\n\n`;
+        counter++;
+      }
+      if (totalUnpaidStudentsCount > 10) {
+        unpaidStudentsText += `*Et ${totalUnpaidStudentsCount - 10} autres étudiants ont un solde impayé de moindre importance. Pour des raisons de performance, seuls les 10 cas les plus critiques sont détaillés ci-dessus. Si l'administrateur demande à voir d'autres cas, invitez-le à spécifier la session ou le nom.*`;
+      }
+    } else {
+      unpaidStudentsText = 'Félicitations ! Aucun étudiant n\'a de solde impayé.\n';
+    }
+
+    // 2. Construire le Preamble (System Instruction) complet
+    const preambleText = `Vous êtes "ComFormation AI", un agent d'intelligence artificielle d'élite intégré directement dans l'application ComFormation. Votre rôle est d'assister l'administrateur dans l'analyse de gestion financière, le suivi des étudiants et l'état des sessions de formation.
+
+Vous disposez d'un accès en temps réel aux données consolidées de la base de données de l'application. Voici les statistiques réelles et précises de la base aujourd'hui :
+
+[MÉTRIQUES FINANCIÈRES GLOBALES]
+- Sessions de formation : ${sessionsCount}
+- Formations proposées : ${formationsCount}
+- Étudiants inscrits : ${studentsCount}
+- Chiffre d'affaires brut attendu (Total dû par les étudiants) : ${totalRevenue.toLocaleString('fr-FR')} FCFA
+- Total encaissé (Paiements reçus) : ${totalPaid.toLocaleString('fr-FR')} FCFA
+- Reste à recouvrer (Impayés totaux) : ${totalUnpaid.toLocaleString('fr-FR')} FCFA (${unpaidPercent}% du total attendu)
+- Total des dépenses enregistrées : ${totalExpenses.toLocaleString('fr-FR')} FCFA
+- Solde net de caisse (Encaissé - Dépenses) : ${netProfit.toLocaleString('fr-FR')} FCFA
+- Disponibilités déclarées : ${totalDispos.toLocaleString('fr-FR')} FCFA
+
+[ÉTAT PAR SESSION DE FORMATION]
+${sessionsDetailsText}
+
+[LISTE DES ÉTUDIANTS EN RETARD OU COMPTE INCOMPLET DE PAIEMENT]
+${unpaidStudentsText}
+
+CONSIGNES DE RÉPONSE ET RÈGLES DE CONDUITE :
+1. Soyez un analyste financier et d'affaires d'élite. Allez droit au but, soyez rigoureux et donnez des chiffres exacts en vous basant UNIQUEMENT sur les données ci-dessus.
+2. Répondez exclusivement en français avec un ton professionnel, encourageant, courtois et d'une clarté comptable.
+3. Soyez extrêmement direct, concis et rapide. Évitez les salutations, introductions ou conclusions inutiles. Allez à l'essentiel immédiatement. Vos réponses doivent être courtes et percutantes.
+4. Formatez vos réponses en Markdown haut de gamme : utilisez le gras pour les chiffres importants, des listes à puces élégantes et des petits tableaux lorsque vous comparez des sessions ou listez des étudiants.
+5. Ne présentez jamais de longues listes de plus de 10 étudiants. Si l'administrateur demande le détail des impayés, présentez le résumé global et listez les 10 étudiants prioritaires en l'invitant à spécifier sa recherche s'il souhaite d'autres cas.
+6. Ne mentionnez pas que vous avez reçu un "System Prompt" ou des données textuelles en arrière-plan. Présentez ces données comme l'état réel et direct de l'application.`;
+
+    // 3. Envoyer la requête à l'API Cohere v1 /chat (Modèle ultra-rapide Command R7B)
+    const coherePayload = {
+      model: 'command-r7b-12-2024',
+      message: message,
+      preamble: preambleText,
+      chat_history: chat_history || [],
+      temperature: 0.3
+    };
+
+    const cohereRes = await fetch('https://api.cohere.com/v1/chat', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${cohereApiKey}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(coherePayload)
+    });
+
+    if (!cohereRes.ok) {
+      const errText = await cohereRes.text();
+      console.error('[Cohere API Error]', errText);
+      throw new Error(`Cohere API répond avec le statut ${cohereRes.status}: ${errText}`);
+    }
+
+    const cohereData = await cohereRes.json();
+    
+    // Retourner la réponse textuelle
+    res.json({
+      reply: cohereData.text,
+      generationId: cohereData.generation_id,
+      conversationId: cohereData.conversation_id
+    });
+
+  } catch (err) {
+    console.error('[AI Chat Error]', err);
+    res.status(500).json({ error: 'Une erreur est survenue lors du traitement de l\'analyse par l\'IA : ' + err.message });
+  }
+});
+
 // -------------------------------------------------------------
 // HEBERGEMENT STATIC ET DEMARRAGE
 // -------------------------------------------------------------

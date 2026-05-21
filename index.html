@@ -118,6 +118,35 @@ a{text-decoration:none;}
 .login-err{color:#ff6b6b;font-size:13px;margin-top:12px;display:none;background:rgba(220,38,38,0.15);padding:10px 14px;border-radius:10px;border:1px solid rgba(220,38,38,0.25);text-align:left;align-items:center;gap:8px;}
 .login-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(43,191,155,0.15);color:var(--teal);font-size:10px;font-weight:700;padding:6px 14px;border-radius:20px;margin-bottom:20px;letter-spacing:1px;text-transform:uppercase;border:1px solid rgba(43,191,155,0.25);}
 
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 13px;
+  width: 100%;
+}
+.login-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.7);
+  user-select: none;
+}
+[data-theme="light"] .login-options label {
+  color: var(--text-m);
+}
+.login-options a {
+  color: var(--teal) !important;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+.login-options a:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 /* APP */
 .app{display:flex;flex-direction:column;min-height:100vh;}
 
@@ -545,6 +574,561 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   padding:7px 10px;font-size:12px;cursor:pointer;transition:background .15s;
 }
 .pwa-btn-dismiss:hover { background:rgba(255,255,255,.2); }
+
+/* AI CHATBOT WIDGET PREMIUM STYLES */
+#cf-ai-chat-bubble {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal), #18987b);
+  color: #fff;
+  display: none; /* Affiché dynamiquement pour l'Admin */
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 8px 32px rgba(43, 191, 155, 0.3);
+  z-index: 500;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#cf-ai-chat-bubble:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 12px 40px rgba(43, 191, 155, 0.5);
+}
+#cf-ai-chat-bubble.pulse::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid var(--teal);
+  animation: bubblePulse 2s infinite;
+  opacity: 0;
+}
+@keyframes bubblePulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(1.3); opacity: 0; }
+}
+
+#cf-ai-chat-container {
+  /* Variables par défaut : Thème Clair (Blanc) */
+  --ai-bg: #ffffff !important;
+  --ai-text: #000000 !important;
+  --ai-header-bg: #ffffff !important;
+  --ai-border: #cbd5e1 !important;
+  --ai-bubble-bg: #ffffff !important;
+  --ai-bubble-text: #000000 !important;
+  --ai-bubble-border: #cbd5e1 !important;
+  --ai-input-bg: #ffffff !important;
+  --ai-input-text: #000000 !important;
+  --ai-input-border: #cbd5e1 !important;
+  --ai-input-placeholder: #64748b !important;
+  --ai-suggestions-bg: #ffffff !important;
+  --ai-suggestions-chip-bg: #f8fafc !important;
+  --ai-suggestions-chip-border: #cbd5e1 !important;
+  --ai-input-bar-bg: #ffffff !important;
+  --ai-scrollbar-thumb: #cbd5e1 !important;
+  --ai-history-item-hover: #f1f5f9 !important;
+  --ai-history-header-bg: #f8fafc !important;
+
+  position: fixed;
+  bottom: 96px;
+  right: 24px;
+  width: 380px;
+  height: 520px;
+  border-radius: 16px;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  z-index: 500;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  transform: translateY(20px) scale(0.95);
+  opacity: 0;
+  color: #000000 !important;
+}
+
+/* Surcharges du Thème Sombre (Dark) */
+[data-theme="dark"] #cf-ai-chat-container {
+  --ai-bg: #161b22 !important;
+  --ai-text: #ffffff !important;
+  --ai-header-bg: #0d1117 !important;
+  --ai-border: #30363d !important;
+  --ai-bubble-bg: #0d1117 !important;
+  --ai-bubble-text: #e6edf3 !important;
+  --ai-bubble-border: #30363d !important;
+  --ai-input-bg: #0d1117 !important;
+  --ai-input-text: #ffffff !important;
+  --ai-input-border: #30363d !important;
+  --ai-input-placeholder: #484f58 !important;
+  --ai-suggestions-bg: #161b22 !important;
+  --ai-suggestions-chip-bg: rgba(43, 191, 155, 0.1) !important;
+  --ai-suggestions-chip-border: rgba(43, 191, 155, 0.3) !important;
+  --ai-input-bar-bg: #161b22 !important;
+  --ai-scrollbar-thumb: #30363d !important;
+  --ai-history-item-hover: #21262d !important;
+  --ai-history-header-bg: #0d1117 !important;
+
+  background: #161b22 !important;
+  color: #ffffff !important;
+  border-color: #30363d !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#cf-ai-chat-container.open {
+  display: flex;
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+#cf-ai-chat-header {
+  padding: 14px 18px;
+  background: var(--ai-header-bg) !important;
+  border-bottom: 1px solid var(--ai-border) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cf-ai-header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cf-ai-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ai-border) !important;
+}
+.cf-ai-avatar i {
+  color: var(--teal) !important;
+  font-size: 18px;
+}
+.cf-ai-avatar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--success);
+  border: 2px solid var(--ai-bg) !important;
+}
+.cf-ai-title-group {
+  display: flex;
+  flex-direction: column;
+}
+.cf-ai-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ai-text) !important;
+}
+.cf-ai-subtitle {
+  font-size: 10px;
+  color: var(--ai-text) !important;
+  opacity: 0.7 !important;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cf-ai-subtitle::before {
+  content: '';
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--success);
+}
+.cf-ai-header-btn {
+  background: none;
+  border: none;
+  color: var(--ai-text) !important;
+  opacity: 0.6;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 6px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cf-ai-header-btn:hover {
+  opacity: 1;
+  background: var(--ai-history-item-hover) !important;
+}
+.cf-ai-close {
+  background: none;
+  border: none;
+  color: var(--ai-text) !important;
+  opacity: 0.6;
+  font-size: 16px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  padding: 4px;
+  border-radius: 6px;
+}
+.cf-ai-close:hover {
+  opacity: 1;
+  background: var(--ai-history-item-hover) !important;
+}
+
+#cf-ai-chat-messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: var(--ai-bg) !important;
+}
+#cf-ai-chat-messages::-webkit-scrollbar {
+  width: 4px;
+}
+#cf-ai-chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+#cf-ai-chat-messages::-webkit-scrollbar-thumb {
+  background: var(--ai-scrollbar-thumb) !important;
+  border-radius: 4px;
+}
+
+.cf-ai-msg {
+  max-width: 85%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 1.45;
+  word-wrap: break-word;
+  animation: msgFadeIn 0.3s ease forwards;
+}
+@keyframes msgFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.cf-ai-msg.ai {
+  align-self: flex-start;
+  background: var(--ai-bubble-bg) !important;
+  border: 1px solid var(--ai-bubble-border) !important;
+  color: var(--ai-bubble-text) !important;
+  border-bottom-left-radius: 2px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+#cf-ai-chat-container .cf-ai-msg.ai p,
+#cf-ai-chat-container .cf-ai-msg.ai li,
+#cf-ai-chat-container .cf-ai-msg.ai td,
+#cf-ai-chat-container .cf-ai-msg.ai th,
+#cf-ai-chat-container .cf-ai-msg.ai strong,
+#cf-ai-chat-container .cf-ai-msg.ai span,
+#cf-ai-chat-container .cf-ai-msg.ai div,
+#cf-ai-chat-container .cf-ai-msg.ai ul,
+#cf-ai-chat-container .cf-ai-msg.ai ol,
+#cf-ai-chat-container .cf-ai-msg.ai em,
+#cf-ai-chat-container .cf-ai-msg.ai code {
+  color: var(--ai-bubble-text) !important;
+}
+.cf-ai-msg.ai p { margin: 0 0 6px 0; }
+.cf-ai-msg.ai p:last-child { margin-bottom: 0; }
+.cf-ai-msg.ai ul, .cf-ai-msg.ai ol { margin: 6px 0; padding-left: 20px; }
+.cf-ai-msg.ai li { margin-bottom: 4px; }
+.cf-ai-msg.ai table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8px 0;
+  font-size: 11px;
+}
+.cf-ai-msg.ai th, .cf-ai-msg.ai td {
+  padding: 6px 8px;
+  border: 1px solid var(--ai-bubble-border) !important;
+  text-align: left;
+  color: var(--ai-bubble-text) !important;
+}
+.cf-ai-msg.ai th {
+  background: rgba(128, 128, 128, 0.1);
+  font-weight: 700;
+}
+
+.cf-ai-msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--teal), #1a967c) !important;
+  color: #fff !important;
+  border-bottom-right-radius: 2px;
+  box-shadow: 0 4px 12px rgba(43, 191, 155, 0.15);
+}
+#cf-ai-chat-container .cf-ai-msg.user * {
+  color: #ffffff !important;
+}
+
+.cf-ai-typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 10px 14px;
+  background: var(--ai-bubble-bg) !important;
+  border: 1px solid var(--ai-bubble-border) !important;
+  border-radius: 12px;
+  border-bottom-left-radius: 2px;
+  align-self: flex-start;
+  align-items: center;
+  width: fit-content;
+}
+.cf-ai-typing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ai-text) !important;
+  opacity: 0.6;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+.cf-ai-typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.cf-ai-typing-dot:nth-child(2) { animation-delay: -0.16s; }
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+#cf-ai-chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--ai-suggestions-bg) !important;
+  border-top: 1px solid var(--ai-border) !important;
+}
+.cf-ai-chip {
+  background: var(--ai-suggestions-chip-bg) !important;
+  color: var(--teal) !important;
+  border: 1px solid var(--ai-suggestions-chip-border) !important;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.cf-ai-chip:hover {
+  background: var(--teal) !important;
+  color: #fff !important;
+  border-color: var(--teal) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(43, 191, 155, 0.25);
+}
+
+#cf-ai-chat-input-bar {
+  padding: 12px 16px;
+  border-top: 1px solid var(--ai-border) !important;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--ai-input-bar-bg) !important;
+}
+#cf-ai-chat-input {
+  flex: 1;
+  background: var(--ai-input-bg) !important;
+  border: 1px solid var(--ai-input-border) !important;
+  border-radius: 20px;
+  padding: 8px 16px;
+  color: var(--ai-input-text) !important;
+  font-size: 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+#cf-ai-chat-input:focus {
+  border-color: var(--teal) !important;
+}
+#cf-ai-chat-input::placeholder {
+  color: var(--ai-input-placeholder) !important;
+}
+#cf-ai-send-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--teal) !important;
+  color: #fff !important;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#cf-ai-send-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 3px 10px rgba(43, 191, 155, 0.3);
+}
+#cf-ai-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* styles du panneau coulissant d'historique */
+#cf-ai-history-panel {
+  position: absolute;
+  top: 67px; /* Pile sous le header */
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--ai-bg) !important;
+  z-index: 600;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(100%);
+  border-top: 1px solid var(--ai-border) !important;
+}
+#cf-ai-history-panel.open {
+  transform: translateX(0);
+}
+.cf-ai-history-header {
+  padding: 10px 16px;
+  background: var(--ai-history-header-bg) !important;
+  border-bottom: 1px solid var(--ai-border) !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ai-text) !important;
+}
+.cf-ai-history-header button {
+  background: none;
+  border: none;
+  color: var(--ai-text) !important;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  padding: 4px;
+  border-radius: 4px;
+}
+.cf-ai-history-header button:hover {
+  opacity: 1;
+  background: var(--ai-history-item-hover) !important;
+}
+.cf-ai-history-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cf-ai-history-list::-webkit-scrollbar {
+  width: 4px;
+}
+.cf-ai-history-list::-webkit-scrollbar-thumb {
+  background: var(--ai-scrollbar-thumb) !important;
+  border-radius: 4px;
+}
+.cf-ai-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ai-border) !important;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--ai-bg) !important;
+}
+.cf-ai-history-item:hover {
+  background: var(--ai-history-item-hover) !important;
+  border-color: var(--teal) !important;
+}
+.cf-ai-history-item.active {
+  border-color: var(--teal) !important;
+  background: var(--ai-suggestions-chip-bg) !important;
+}
+.cf-ai-history-item-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  overflow: hidden;
+  margin-right: 8px;
+}
+.cf-ai-history-item-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ai-text) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cf-ai-history-item-date {
+  font-size: 9px;
+  color: var(--ai-text) !important;
+  opacity: 0.5;
+}
+.cf-ai-history-item-delete {
+  background: none;
+  border: none;
+  color: var(--danger) !important;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+.cf-ai-history-item-delete:hover {
+  opacity: 1;
+  background: var(--danger-bg) !important;
+}
+.cf-ai-history-empty {
+  text-align: center;
+  padding: 24px;
+  font-size: 11px;
+  color: var(--ai-text) !important;
+  opacity: 0.6;
+  font-style: italic;
+}
+.cf-ai-history-footer {
+  padding: 12px;
+  border-top: 1px solid var(--ai-border) !important;
+  display: flex;
+  justify-content: center;
+}
+.cf-ai-clear-btn {
+  background: var(--danger-bg) !important;
+  color: var(--danger) !important;
+  border: 1px solid rgba(220, 38, 38, 0.2) !important;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.cf-ai-clear-btn:hover {
+  background: var(--danger) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.2);
+}
+
+@media (max-width: 480px) {
+  #cf-ai-chat-container {
+    width: calc(100% - 32px);
+    height: calc(100% - 100px);
+    bottom: 80px;
+    right: 16px;
+  }
+  #cf-ai-chat-bubble {
+    bottom: 16px;
+    right: 16px;
+  }
+}
 </style>
 </head>
 <body>
@@ -570,6 +1154,13 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility()" aria-label="Afficher le mot de passe">
         <i class="fas fa-eye"></i>
       </button>
+    </div>
+    <div class="login-options">
+      <label>
+        <input type="checkbox" id="login-remember">
+        Se souvenir de moi
+      </label>
+      <a href="javascript:void(0)" onclick="handleForgotPassword()">Mot de passe oublié ?</a>
     </div>
     <button class="btn-login" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i> Se connecter</button>
     <div class="login-err" id="login-err"><i class="fas fa-circle-xmark"></i> Mot de passe incorrect. Accès refusé.</div>
@@ -1783,6 +2374,15 @@ async function doLogin(){
   loginAttempts = 0;
   currentRole = loggedUser.role;
   currentUserId = loggedUser.id;
+
+  // Gestion de "Se souvenir de moi"
+  const rememberCheckbox = document.getElementById('login-remember');
+  if (rememberCheckbox && rememberCheckbox.checked) {
+    localStorage.setItem('cf_remember_me', 'true');
+  } else {
+    localStorage.removeItem('cf_remember_me');
+  }
+
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
   document.getElementById('login-email').value = '';
@@ -1802,11 +2402,18 @@ function doLogout(){
   currentRole = null; currentUserId = null;
   localStorage.removeItem('cf_token');
   localStorage.removeItem('cf_user');
+  localStorage.removeItem('cf_remember_me');
+  const rememberCheckbox = document.getElementById('login-remember');
+  if (rememberCheckbox) rememberCheckbox.checked = false;
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
   document.getElementById('login-email').value = '';
   document.getElementById('login-pwd').value = '';
   document.getElementById('login-err').style.display = 'none';
+  if (typeof checkAIChatbotVisibility === 'function') checkAIChatbotVisibility();
+}
+function handleForgotPassword() {
+  alert("🔑 Pour réinitialiser votre mot de passe, veuillez contacter l'administrateur du centre ComFormation.");
 }
 
 function applyRoleUI(){
@@ -1892,7 +2499,9 @@ function applyRoleUI(){
       if(mobileNavBtn) mobileNavBtn.style.display = '';
     });
   }
+  if (typeof checkAIChatbotVisibility === 'function') checkAIChatbotVisibility();
 }
+
 /* ================================================================
    PERMISSIONS HELPER
    ================================================================ */
@@ -4356,11 +4965,560 @@ document.addEventListener('click', e => {
   if(loginScreen) loginScreen.style.display = '';
 
   initUsers();
+
+  // Initialise l'état de la case à cocher "Se souvenir de moi"
+  const rememberCheckbox = document.getElementById('login-remember');
+  if (rememberCheckbox) {
+    rememberCheckbox.checked = localStorage.getItem('cf_remember_me') === 'true';
+  }
+
+  // Tente de restaurer la session si "Se souvenir de moi" est activé
+  if (localStorage.getItem('cf_remember_me') === 'true') {
+    const storedUser = localStorage.getItem('cf_user');
+    if (storedUser) {
+      try {
+        const loggedUser = JSON.parse(storedUser);
+        if (loggedUser && loggedUser.role && loggedUser.id) {
+          currentRole = loggedUser.role;
+          currentUserId = loggedUser.id;
+          if (loginScreen) loginScreen.style.display = 'none';
+          document.getElementById('app').style.display = 'flex';
+          applyRoleUI();
+          initApp();
+          triggerSync();
+          if (typeof checkAIChatbotVisibility === 'function') checkAIChatbotVisibility();
+        }
+      } catch (e) {
+        console.error('[Boot] Auto-login error:', e);
+      }
+    }
+  } else {
+    // Si l'utilisateur n'a pas coché "Se souvenir de moi", on vide la session à chaque rechargement
+    localStorage.removeItem('cf_token');
+    localStorage.removeItem('cf_user');
+  }
+
   (function loadXLSX(){ if(typeof XLSX!=='undefined') return; const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onerror=()=>console.warn('XLSX library not loaded'); document.head.appendChild(s); })();
 
   // Lancer la synchronisation périodique Snappy en temps réel (toutes les 3 secondes)
   setInterval(pullLatestDataFromServer, 3000);
 })();
+
+/* ================================================================
+   LOGIQUE DE L'AGENT IA ASSISTANT (COHERE)
+   ================================================================ */
+let cfAiChats = [];
+let cfAiCurrentChatId = null;
+let cfAiChatHistory = [];
+let cfAiChatOpen = false;
+
+// Initialisation de la session de chat IA
+function initAIChatSession() {
+  try {
+    const savedChats = localStorage.getItem('cf_ai_chats');
+    cfAiChats = savedChats ? JSON.parse(savedChats) : [];
+  } catch (e) {
+    console.error('[AI Chat Init Error] Failed to parse chats', e);
+    cfAiChats = [];
+  }
+
+  cfAiCurrentChatId = localStorage.getItem('cf_ai_current_chat_id');
+  
+  if (cfAiCurrentChatId) {
+    const activeChat = cfAiChats.find(c => c.id === cfAiCurrentChatId);
+    if (activeChat) {
+      loadAIChat(cfAiCurrentChatId, false);
+      return;
+    }
+  }
+  
+  // Si aucune session active valide, démarrer une nouvelle session à blanc
+  startNewAIChat(false);
+}
+
+function checkAIChatbotVisibility() {
+  const bubble = document.getElementById('cf-ai-chat-bubble');
+  const container = document.getElementById('cf-ai-chat-container');
+  const isAdmin = currentRole === 'Admin';
+
+  if (bubble) {
+    bubble.style.display = isAdmin ? 'flex' : 'none';
+    if (isAdmin) {
+      bubble.classList.add('pulse');
+      initAIChatSession();
+    } else {
+      bubble.classList.remove('pulse');
+    }
+  }
+  if (!isAdmin && container) {
+    container.classList.remove('open');
+    cfAiChatOpen = false;
+  }
+}
+
+function toggleAIChat() {
+  const container = document.getElementById('cf-ai-chat-container');
+  const bubble = document.getElementById('cf-ai-chat-bubble');
+  if (!container) return;
+
+  cfAiChatOpen = !cfAiChatOpen;
+  if (cfAiChatOpen) {
+    container.classList.add('open');
+    if (bubble) bubble.classList.remove('pulse');
+    
+    const messagesArea = document.getElementById('cf-ai-chat-messages');
+    if (messagesArea && messagesArea.children.length === 0) {
+      initAIChatSession();
+    }
+    
+    setTimeout(() => {
+      const input = document.getElementById('cf-ai-chat-input');
+      if (input) input.focus();
+    }, 300);
+  } else {
+    container.classList.remove('open');
+  }
+}
+
+function startNewAIChat(closeHistory = true) {
+  if (closeHistory) {
+    const historyPanel = document.getElementById('cf-ai-history-panel');
+    if (historyPanel) historyPanel.classList.remove('open');
+  }
+
+  // Générer un nouvel ID unique
+  cfAiCurrentChatId = Date.now().toString();
+  cfAiChatHistory = [];
+  localStorage.setItem('cf_ai_current_chat_id', cfAiCurrentChatId);
+
+  // Vider la zone des messages
+  const messagesArea = document.getElementById('cf-ai-chat-messages');
+  if (messagesArea) {
+    messagesArea.innerHTML = '';
+  }
+  
+  // Message de bienvenue par défaut
+  appendAIChatBubble("ai", "Bonjour ! Je suis **ComFormation AI**, votre assistant d'analyse financière et de gestion. 🚀\n\nQue souhaitez-vous analyser aujourd'hui ? Cliquez sur une suggestion rapide ci-dessous ou posez-moi directement votre question.");
+
+  // Mettre à jour l'historique de rendu si visible
+  const historyPanel = document.getElementById('cf-ai-history-panel');
+  if (historyPanel && historyPanel.classList.contains('open')) {
+    renderAIChatHistoryList();
+  }
+}
+
+function toggleAIChatHistory() {
+  const historyPanel = document.getElementById('cf-ai-history-panel');
+  if (!historyPanel) return;
+
+  historyPanel.classList.toggle('open');
+  if (historyPanel.classList.contains('open')) {
+    renderAIChatHistoryList();
+  }
+}
+
+function renderAIChatHistoryList() {
+  const listArea = document.getElementById('cf-ai-history-list');
+  if (!listArea) return;
+
+  listArea.innerHTML = '';
+
+  if (cfAiChats.length === 0) {
+    listArea.innerHTML = '<div class="cf-ai-history-empty">Aucune discussion enregistrée</div>';
+    return;
+  }
+
+  // Trier du plus récent au plus ancien
+  const sortedChats = [...cfAiChats].sort((a, b) => b.id - a.id);
+
+  sortedChats.forEach(chat => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = `cf-ai-history-item${chat.id === cfAiCurrentChatId ? ' active' : ''}`;
+    itemDiv.onclick = () => loadAIChat(chat.id);
+
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'cf-ai-history-item-details';
+
+    const titleDiv = document.createElement('div');
+    titleDiv.className = 'cf-ai-history-item-title';
+    titleDiv.textContent = chat.title || 'Discussion sans titre';
+
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'cf-ai-history-item-date';
+    try {
+      const dateObj = new Date(chat.createdAt || parseInt(chat.id));
+      dateDiv.textContent = dateObj.toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' });
+    } catch(e) {
+      dateDiv.textContent = 'Date inconnue';
+    }
+
+    detailsDiv.appendChild(titleDiv);
+    detailsDiv.appendChild(dateDiv);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'cf-ai-history-item-delete';
+    deleteBtn.title = 'Supprimer cette discussion';
+    deleteBtn.innerHTML = '<i class="fas fa-trash-can"></i>';
+    deleteBtn.onclick = (e) => {
+      e.stopPropagation();
+      deleteAIChat(chat.id);
+    };
+
+    itemDiv.appendChild(detailsDiv);
+    itemDiv.appendChild(deleteBtn);
+    listArea.appendChild(itemDiv);
+  });
+}
+
+function loadAIChat(chatId, closeHistory = true) {
+  if (closeHistory) {
+    const historyPanel = document.getElementById('cf-ai-history-panel');
+    if (historyPanel) historyPanel.classList.remove('open');
+  }
+
+  const chat = cfAiChats.find(c => c.id === chatId);
+  if (!chat) return;
+
+  cfAiCurrentChatId = chatId;
+  localStorage.setItem('cf_ai_current_chat_id', chatId);
+
+  // Vider la zone des messages
+  const messagesArea = document.getElementById('cf-ai-chat-messages');
+  if (messagesArea) {
+    messagesArea.innerHTML = '';
+  }
+
+  cfAiChatHistory = [];
+
+  if (chat.history && chat.history.length > 0) {
+    chat.history.forEach(item => {
+      const sender = item.role === 'USER' ? 'user' : 'ai';
+      appendAIChatBubble(sender, item.message);
+      cfAiChatHistory.push(item);
+    });
+  } else {
+    appendAIChatBubble("ai", "Bonjour ! Je suis **ComFormation AI**, votre assistant d'analyse financière et de gestion. 🚀\n\nQue souhaitez-vous analyser aujourd'hui ? Cliquez sur une suggestion rapide ci-dessous ou posez-moi directement votre question.");
+  }
+}
+
+function deleteAIChat(chatId) {
+  if (!confirm('Voulez-vous vraiment supprimer cette discussion ?')) return;
+
+  cfAiChats = cfAiChats.filter(c => c.id !== chatId);
+  localStorage.setItem('cf_ai_chats', JSON.stringify(cfAiChats));
+
+  if (cfAiCurrentChatId === chatId) {
+    startNewAIChat(false);
+  }
+
+  renderAIChatHistoryList();
+}
+
+function clearAllAIChats() {
+  if (!confirm("Voulez-vous vraiment supprimer tout l'historique des discussions ?")) return;
+
+  cfAiChats = [];
+  localStorage.removeItem('cf_ai_chats');
+  
+  startNewAIChat(true);
+  
+  const historyPanel = document.getElementById('cf-ai-history-panel');
+  if (historyPanel && historyPanel.classList.contains('open')) {
+    renderAIChatHistoryList();
+  }
+}
+
+function appendAIChatBubble(sender, text) {
+  const messagesArea = document.getElementById('cf-ai-chat-messages');
+  if (!messagesArea) return;
+
+  const bubbleDiv = document.createElement('div');
+  bubbleDiv.className = `cf-ai-msg ${sender}`;
+  
+  if (sender === 'ai') {
+    bubbleDiv.innerHTML = parseMarkdown(text);
+  } else {
+    const p = document.createElement('p');
+    p.textContent = text;
+    bubbleDiv.appendChild(p);
+  }
+
+  messagesArea.appendChild(bubbleDiv);
+  messagesArea.scrollTop = messagesArea.scrollHeight;
+}
+
+function showAIChatTyping() {
+  const messagesArea = document.getElementById('cf-ai-chat-messages');
+  if (!messagesArea) return;
+
+  removeAIChatTyping();
+
+  const typingDiv = document.createElement('div');
+  typingDiv.id = 'cf-ai-typing';
+  typingDiv.className = 'cf-ai-msg ai';
+  typingDiv.innerHTML = `
+    <div class="cf-ai-typing-indicator">
+      <div class="cf-ai-typing-dot"></div>
+      <div class="cf-ai-typing-dot"></div>
+      <div class="cf-ai-typing-dot"></div>
+    </div>
+  `;
+  messagesArea.appendChild(typingDiv);
+  messagesArea.scrollTop = messagesArea.scrollHeight;
+}
+
+function removeAIChatTyping() {
+  const typingDiv = document.getElementById('cf-ai-typing');
+  if (typingDiv) {
+    typingDiv.remove();
+  }
+}
+
+async function sendAIChatMessage() {
+  const input = document.getElementById('cf-ai-chat-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  appendAIChatBubble('user', text);
+  showAIChatTyping();
+
+  // Si c'est le premier message de cette conversation, la créer dans cfAiChats
+  let currentChat = cfAiChats.find(c => c.id === cfAiCurrentChatId);
+  if (!currentChat) {
+    const titleText = text.substring(0, 28) + (text.length > 28 ? '...' : '');
+    currentChat = {
+      id: cfAiCurrentChatId,
+      title: titleText,
+      history: [],
+      createdAt: new Date().toISOString()
+    };
+    cfAiChats.push(currentChat);
+    localStorage.setItem('cf_ai_chats', JSON.stringify(cfAiChats));
+  }
+
+  try {
+    const token = localStorage.getItem('cf_token');
+    const response = await fetch('/api/ai/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        message: text,
+        chat_history: cfAiChatHistory.map(h => ({
+          role: h.role,
+          message: h.message
+        }))
+      })
+    });
+
+    removeAIChatTyping();
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error || `Erreur serveur (${response.status})`);
+    }
+
+    const data = await response.json();
+    appendAIChatBubble('ai', data.reply);
+
+    // Mettre à jour l'historique conversationnel local
+    cfAiChatHistory.push({ role: 'USER', message: text });
+    cfAiChatHistory.push({ role: 'CHATBOT', message: data.reply });
+    
+    if (cfAiChatHistory.length > 20) {
+      cfAiChatHistory = cfAiChatHistory.slice(cfAiChatHistory.length - 20);
+    }
+
+    // Sauvegarder dans la structure persistée des conversations
+    currentChat.history = [...cfAiChatHistory];
+    localStorage.setItem('cf_ai_chats', JSON.stringify(cfAiChats));
+
+  } catch (err) {
+    removeAIChatTyping();
+    appendAIChatBubble('ai', `❌ **Une erreur est survenue :** ${err.message}. Veuillez vérifier votre connexion ou réessayer.`);
+    console.error('[AI Chat Widget Error]', err);
+  }
+}
+
+function handleAIChatKey(e) {
+  if (e.key === 'Enter') {
+    sendAIChatMessage();
+  }
+}
+
+function sendSuggestion(text) {
+  const input = document.getElementById('cf-ai-chat-input');
+  if (input) {
+    input.value = text;
+    sendAIChatMessage();
+  }
+}
+
+/**
+ * Un mini parseur Markdown ultra-robuste en JS natif
+ * qui gère les listes, tableaux, gras, italique et sauts de ligne.
+ */
+function parseMarkdown(text) {
+  if (!text) return "";
+  
+  // Échapper d'abord le HTML brut pour des raisons de sécurité
+  let html = text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Séparer les lignes pour traiter les tableaux et les listes
+  const lines = html.split('\n');
+  let result = [];
+  let inList = false;
+  let inTable = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+    
+    // Gestion des tableaux Markdown (| col1 | col2 |)
+    if (line.startsWith('|') && line.endsWith('|')) {
+      if (inList) {
+        result.push('</ul>');
+        inList = false;
+      }
+      
+      const cells = line.split('|').map(c => c.trim()).filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+      
+      // Ligne de séparation (---)
+      if (line.includes('---')) {
+        continue; // Ignorer la ligne de séparation
+      }
+      
+      if (!inTable) {
+        result.push('<table><thead><tr>');
+        cells.forEach(c => result.push(`<th>${parseInlineMarkdown(c)}</th>`));
+        result.push('</tr></thead><tbody>');
+        inTable = true;
+      } else {
+        result.push('<tr>');
+        cells.forEach(c => result.push(`<td>${parseInlineMarkdown(c)}</td>`));
+        result.push('</tr>');
+      }
+      continue;
+    } else if (inTable) {
+      result.push('</tbody></table>');
+      inTable = false;
+    }
+    
+    // Gestion des listes à puces (* ou - ou 1.)
+    if (line.startsWith('* ') || line.startsWith('- ') || (line.match(/^\d+\.\s/) !== null)) {
+      if (!inList) {
+        result.push('<ul>');
+        inList = true;
+      }
+      const itemText = line.startsWith('* ') || line.startsWith('- ') ? line.substring(2) : line.replace(/^\d+\.\s/, '');
+      result.push(`<li>${parseInlineMarkdown(itemText)}</li>`);
+      continue;
+    } else if (inList) {
+      result.push('</ul>');
+      inList = false;
+    }
+    
+    // Gestion des paragraphes classiques
+    if (line === '') {
+      result.push('<br>');
+    } else {
+      result.push(`<p>${parseInlineMarkdown(line)}</p>`);
+    }
+  }
+  
+  // Fermeture des tags si le texte finit au milieu
+  if (inList) result.push('</ul>');
+  if (inTable) result.push('</tbody></table>');
+  
+  return result.join('\n');
+}
+
+function parseInlineMarkdown(text) {
+  return text
+    // Gras : **texte** ou __texte__
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/__(.*?)__/g, '<strong>$1</strong>')
+    // Italique : *texte* ou _texte_
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/_(.*?)_/g, '<em>$1</em>')
+    // Code en ligne : `code`
+    .replace(/`(.*?)`/g, '<code>$1</code>');
+}
 </script>
+
+<!-- ================================================================
+     WIDGET DE CHAT IA (COHERE ASSISTANT)
+     ================================================================ -->
+<!-- Bulle de chat flottante -->
+<div id="cf-ai-chat-bubble" onclick="toggleAIChat()">
+  <i class="fas fa-robot"></i>
+</div>
+
+<!-- Conteneur de la fenêtre de chat -->
+<div id="cf-ai-chat-container">
+  <!-- En-tête -->
+  <div id="cf-ai-chat-header">
+    <div class="cf-ai-header-info">
+      <div class="cf-ai-avatar">
+        <i class="fas fa-brain"></i>
+      </div>
+      <div class="cf-ai-title-group">
+        <div class="cf-ai-title">ComFormation AI</div>
+        <div class="cf-ai-subtitle">Assistant Intelligent</div>
+      </div>
+    </div>
+    <div class="cf-ai-header-actions" style="display: flex; align-items: center; gap: 6px;">
+      <button class="cf-ai-header-btn" onclick="startNewAIChat()" title="Nouvelle conversation">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button class="cf-ai-header-btn" onclick="toggleAIChatHistory()" title="Historique des discussions">
+        <i class="fas fa-history"></i>
+      </button>
+      <button class="cf-ai-close" onclick="toggleAIChat()" title="Fermer le chat" style="margin-left: 2px;">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Zone des messages -->
+  <div id="cf-ai-chat-messages"></div>
+
+  <!-- Panneau Coulissant de l'Historique -->
+  <div id="cf-ai-history-panel">
+    <div class="cf-ai-history-header">
+      <span><i class="fas fa-history"></i> Historique</span>
+      <button onclick="toggleAIChatHistory()" title="Retour"><i class="fas fa-arrow-right"></i></button>
+    </div>
+    <div class="cf-ai-history-list" id="cf-ai-history-list">
+      <!-- Rempli dynamiquement -->
+    </div>
+    <div class="cf-ai-history-footer">
+      <button class="cf-ai-clear-btn" onclick="clearAllAIChats()"><i class="fas fa-trash-can"></i> Supprimer tout l'historique</button>
+    </div>
+  </div>
+
+  <!-- Suggestions rapides -->
+  <div id="cf-ai-chat-suggestions">
+    <button class="cf-ai-chip" onclick="sendSuggestion('🔍 Analyser les impayés')">🔍 Analyser les impayés</button>
+    <button class="cf-ai-chip" onclick="sendSuggestion('📊 Rentabilité des sessions')">📊 Rentabilité des sessions</button>
+    <button class="cf-ai-chip" onclick="sendSuggestion('📈 Bilan financier global')">📈 Bilan financier global</button>
+    <button class="cf-ai-chip" onclick="sendSuggestion('🎓 Top formations & stats')">🎓 Top formations & stats</button>
+  </div>
+
+  <!-- Zone de saisie -->
+  <div id="cf-ai-chat-input-bar">
+    <input type="text" id="cf-ai-chat-input" placeholder="Posez une question..." onkeydown="handleAIChatKey(event)">
+    <button id="cf-ai-send-btn" onclick="sendAIChatMessage()" title="Envoyer">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div>
+
 </body>
 </html>
