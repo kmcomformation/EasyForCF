@@ -336,9 +336,16 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
-// Lancement du serveur après initialisation de la base
-initializeDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`[Serveur] ComFormation démarré sur http://localhost:${PORT}`);
+// Lancement du serveur après initialisation de la base (seulement hors Vercel serverless)
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  initializeDatabase().then(() => {
+    app.listen(PORT, () => {
+      console.log(`[Serveur] ComFormation démarré sur http://localhost:${PORT}`);
+    });
   });
-});
+} else {
+  // Sur Vercel serverless, on lance simplement l'initialisation de la DB lors du chargement de la fonction
+  initializeDatabase().catch(err => console.error('[Vercel DB Init Error]', err));
+}
+
+module.exports = app;

@@ -10,6 +10,7 @@ node_modules/
 *.backup
 *.bak
 diff.txt
+tes.html
 
 # Migration and testing scripts
 check_db.js

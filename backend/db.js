@@ -15,8 +15,8 @@ const dbConfig = {
   queueLimit: 0
 };
 
-// Activer SSL si nécessaire (indispensable pour TiDB Cloud sur Render)
-if (process.env.DB_SSL === 'true') {
+// Activer SSL si nécessaire (indispensable pour TiDB Cloud)
+if (process.env.DB_SSL === 'true' || (process.env.DB_HOST && process.env.DB_HOST.includes('tidbcloud.com'))) {
   dbConfig.ssl = {
     rejectUnauthorized: false // Permet les connexions SSL sécurisées sans erreur de certificat auto-signé
   };
