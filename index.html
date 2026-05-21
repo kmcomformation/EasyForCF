@@ -124,7 +124,8 @@ a{text-decoration:none;}
 /* HEADER */
 .header{background:var(--hbg);padding:0 16px;display:flex;align-items:center;gap:8px;height:52px;position:sticky;top:0;z-index:100;border-bottom:2px solid var(--teal);box-shadow:0 2px 20px rgba(0,0,0,.3);}
 .logo{display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none;}
-.logo-img{height:32px;width:auto;object-fit:contain;opacity:.95;}
+.logo-img{height:34px;width:auto;object-fit:contain;background:#fff;border-radius:6px;padding:2px;box-shadow:0 2px 6px rgba(0,0,0,0.15);border:1px solid rgba(255,255,255,0.3);transition:transform 0.2s ease;}
+.logo-img:hover{transform:scale(1.05);}
 .logo-text{font-size:14px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:.3px;}
 .logo-sep{width:1px;height:20px;background:rgba(255,255,255,.15);margin:0 4px;}
 .nav{display:flex;gap:1px;flex:1;overflow:hidden;}
@@ -458,7 +459,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <header class="header">
   <button class="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
   <div class="logo">
-    <img class="logo-img" id="header-logo-img" src="" alt="CF">
+    <img class="logo-img" id="header-logo-img" src="logo.jpeg" alt="CF">
     <span class="logo-text">ComFormation</span>
   </div>
   <div class="logo-sep"></div>
