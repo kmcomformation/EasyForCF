@@ -23,8 +23,24 @@
 
 <!-- Manifest PWA inline via data URI (évite un fichier externe) -->
 <link rel="manifest" id="pwa-manifest">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+/* ═══ Font Awesome Icon Integration ═══════════════════════════════ */
+.fas,.far,.fab{display:inline-block;vertical-align:middle;line-height:1;}
+.nav-btn .fas,.nav-btn .far{font-size:13px;margin-right:5px;}
+.hdr-btn .fas,.hdr-btn .far{font-size:15px;}
+.hamburger .fas{font-size:18px;}
+.act-btn .fas,.act-btn .far{font-size:13px;}
+.modal-header .fas{font-size:15px;margin-right:6px;}
+.section-title .fas{font-size:15px;margin-right:7px;}
+.btn-login .fas{margin-right:8px;font-size:16px;}
+.badge .fas,.badge .far{font-size:9px;}
+.phone-ico .fas{font-size:13px;color:var(--teal);}
+.user-chip-ico .fas{font-size:14px;}
+.action-item .fas{margin-right:8px;width:14px;text-align:center;}
+.fa-spin{animation:fa-spin 1s infinite linear;}
+@keyframes fa-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
 .mono{font-family:'DM Mono','Courier New',monospace;}
 :root{
@@ -93,6 +109,16 @@ a{text-decoration:none;}
 .nav-btn{background:none;border:none;color:rgba(255,255,255,.6);padding:6px 10px;border-radius:7px;font-size:12px;font-weight:500;transition:all .15s;display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap;}
 .nav-btn:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9);}
 .nav-btn.active{background:var(--teal-glow);color:var(--teal);font-weight:600;}
+/* Navigation Icons Custom Colors for a premium modern look */
+.nav-btn[onclick*="etudiants"] i { color: #3b82f6 !important; }
+.nav-btn[onclick*="paiements"] i { color: #10b981 !important; }
+.nav-btn[onclick*="depenses"] i { color: #ef4444 !important; }
+.nav-btn[onclick*="disponibilite"] i { color: #f59e0b !important; }
+.nav-btn[onclick*="dashboard"] i { color: #06b6d4 !important; }
+.nav-btn[onclick*="sessions"] i { color: #8b5cf6 !important; }
+.nav-btn[onclick*="formations"] i { color: #ec4899 !important; }
+.nav-btn[onclick*="rapport"] i { color: #f97316 !important; }
+.nav-btn[onclick*="users"] i { color: #14b8a6 !important; }
 .hamburger{display:none;flex-direction:column;justify-content:center;gap:5px;background:none;border:none;padding:6px;cursor:pointer;}
 .hamburger span{width:20px;height:2px;background:rgba(255,255,255,.8);border-radius:2px;transition:all .2s;}
 .nav-drawer{display:none;position:fixed;top:52px;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:99;}
@@ -124,11 +150,11 @@ main{flex:1;padding:16px;max-width:1400px;margin:0 auto;width:100%;}
 .stat-card{background:var(--surface);border-radius:var(--radius-lg);border:1px solid var(--border);padding:12px 14px;display:flex;align-items:center;gap:11px;transition:border .2s,box-shadow .2s;}
 .stat-card.filtered{border-color:var(--teal);box-shadow:0 0 0 2px rgba(43,191,155,.15);}
 .stat-icon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
-.si-blue{background:var(--info-bg);}
-.si-green{background:var(--success-bg);}
-.si-amber{background:var(--warning-bg);}
-.si-red{background:var(--danger-bg);}
-.si-purple{background:var(--purple-bg);}
+.si-blue{background:var(--info-bg);color:var(--info);}
+.si-green{background:var(--success-bg);color:var(--success);}
+.si-amber{background:var(--warning-bg);color:var(--warning);}
+.si-red{background:var(--danger-bg);color:var(--danger);}
+.si-purple{background:var(--purple-bg);color:var(--purple);}
 .stat-num{font-size:17px;font-weight:700;color:var(--text);line-height:1;}
 .stat-label{font-size:10px;color:var(--text-m);margin-top:2px;font-weight:500;}
 .stat-sub{font-size:9px;color:var(--teal);margin-top:2px;font-weight:600;display:none;}
@@ -184,15 +210,25 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .pf-amber{background:var(--warning);}
 .pf-green{background:var(--success);}
 .actions{display:flex;gap:3px;}
-.act-btn{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .12s;cursor:pointer;}
-.act-btn:hover{transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.1);}
-.ab-pay:hover{background:var(--success-bg);border-color:var(--success);}
-.ab-rec:hover{background:var(--info-bg);border-color:var(--info);}
-.ab-edit:hover{background:var(--warning-bg);border-color:var(--warning);}
-.ab-del:hover{background:var(--danger-bg);border-color:var(--danger);}
-.ab-lock:hover{background:var(--danger-bg);}
-.ab-unlock:hover{background:var(--success-bg);}
-.ab-disabled{opacity:.3;cursor:not-allowed !important;pointer-events:none;}
+.act-btn{width:32px;height:32px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s cubic-bezier(.4,0,.2,1);cursor:pointer;position:relative;overflow:hidden;}
+.act-btn::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .15s;}
+.act-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2);}
+.act-btn:active{transform:translateY(0);}
+.ab-pay{background:rgba(16,185,129,.12);color:#059669;border:1px solid rgba(16,185,129,.25);}
+.ab-pay:hover{background:#059669;color:#fff;border-color:#059669;box-shadow:0 4px 12px rgba(5,150,105,.4);}
+.ab-rec{background:rgba(99,102,241,.12);color:#6366f1;border:1px solid rgba(99,102,241,.25);}
+.ab-rec:hover{background:#6366f1;color:#fff;border-color:#6366f1;box-shadow:0 4px 12px rgba(99,102,241,.4);}
+.ab-edit{background:rgba(245,158,11,.12);color:#d97706;border:1px solid rgba(245,158,11,.25);}
+.ab-edit:hover{background:#d97706;color:#fff;border-color:#d97706;box-shadow:0 4px 12px rgba(217,119,6,.4);}
+.ab-del{background:rgba(239,68,68,.08);color:#dc2626;border:1px solid rgba(239,68,68,.2);}
+.ab-del:hover{background:#dc2626;color:#fff;border-color:#dc2626;box-shadow:0 4px 12px rgba(220,38,38,.4);}
+.ab-sync{background:rgba(59,130,246,.12);color:#3b82f6;border:1px solid rgba(59,130,246,.25);}
+.ab-sync:hover{background:#3b82f6;color:#fff;border-color:#3b82f6;box-shadow:0 4px 12px rgba(59,130,246,.4);}
+.ab-lock{background:rgba(107,114,128,.1);color:#6b7280;border:1px solid rgba(107,114,128,.2);}
+.ab-lock:hover{background:#dc2626;color:#fff;border-color:#dc2626;}
+.ab-unlock:hover{background:#059669;color:#fff;border-color:#059669;}
+.ab-disabled{background:rgba(107,114,128,.06);color:#d1d5db;border:1px solid rgba(107,114,128,.1);cursor:not-allowed;opacity:.5;}
+.ab-disabled{background:rgba(107,114,128,.06);color:#d1d5db;border:1px solid rgba(107,114,128,.1);cursor:not-allowed;opacity:.4;pointer-events:none;}
 .empty{text-align:center;padding:48px 18px;color:var(--text-m);}
 .empty .e-ico{font-size:36px;margin-bottom:10px;}
 .empty p{font-size:13px;}
@@ -336,14 +372,17 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo-wrap"><img class="login-logo-img" id="login-logo-img" src="" alt="ComFormation"></div>
-    <div class="login-badge">🎓 CENTRE DE FORMATION</div>
+    <div class="login-badge"><i class="fas fa-graduation-cap"></i> CENTRE DE FORMATION</div>
     <h2>Connexion sécurisée</h2>
-    <p>Entrez votre mot de passe pour accéder au système</p>
+    <p>Entrez vos identifiants pour accéder au système</p>
+    <div class="login-field">
+      <input type="email" id="login-email" placeholder="Adresse email" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="email" style="letter-spacing:normal;">
+    </div>
     <div class="login-field">
       <input type="password" id="login-pwd" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')doLogin()" autocomplete="current-password">
     </div>
-    <button class="btn-login" onclick="doLogin()">🔐 Se connecter</button>
-    <div class="login-err" id="login-err">❌ Mot de passe incorrect. Accès refusé.</div>
+    <button class="btn-login" onclick="doLogin()"><i class="fas fa-right-to-bracket"></i> Se connecter</button>
+    <div class="login-err" id="login-err"><i class="fas fa-circle-xmark"></i> Mot de passe incorrect. Accès refusé.</div>
   </div>
 </div>
 
@@ -351,73 +390,74 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="app" id="app" style="display:none;">
 
 <header class="header">
+  <button class="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
   <div class="logo">
     <img class="logo-img" id="header-logo-img" src="" alt="CF">
     <span class="logo-text">ComFormation</span>
   </div>
   <div class="logo-sep"></div>
   <nav class="nav" id="main-nav">
-    <button class="nav-btn active" onclick="showSection('etudiants')" id="nav-etudiants">🎓 Étudiants</button>
-    <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements">💳 Paiements</button>
-    <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses">💸 Dépenses</button>
-   <button class="nav-btn" onclick="showSection('disponibilite')" id="nav-disponibilite">💰 Disponibilité</button>
-<button class="nav-btn" onclick="showSection('dashboard')" id="nav-dashboard">📊 Mon Tableau de bord</button>
+    <button class="nav-btn active" onclick="showSection('etudiants')" id="nav-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
+    <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
+    <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
+   <button class="nav-btn" onclick="showSection('disponibilite')" id="nav-disponibilite"><i class="fas fa-wallet"></i> Disponibilité</button>
+<button class="nav-btn" onclick="showSection('dashboard')" id="nav-dashboard"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
     
-    <button class="nav-btn admin-only" onclick="showSection('sessions')" id="nav-sessions">📅 Sessions</button>
-    <button class="nav-btn admin-only" onclick="showSection('formations')" id="nav-formations">📚 Formations</button>
-    <button class="nav-btn admin-only" onclick="showSection('rapport')" id="nav-rapport">📊 Rapports</button>
-    <button class="nav-btn admin-only" onclick="showSection('users')" id="nav-users">👥 Utilisateurs</button>
+    <button class="nav-btn admin-only" onclick="showSection('sessions')" id="nav-sessions"><i class="fas fa-calendar-days"></i> Sessions</button>
+    <button class="nav-btn admin-only" onclick="showSection('formations')" id="nav-formations"><i class="fas fa-book-open"></i> Formations</button>
+    <button class="nav-btn admin-only" onclick="showSection('rapport')" id="nav-rapport"><i class="fas fa-chart-pie"></i> Rapports</button>
+    <button class="nav-btn admin-only" onclick="showSection('users')" id="nav-users"><i class="fas fa-users"></i> Utilisateurs</button>
   </nav>
   <div class="header-right">
+    <span class="hdr-badge" id="sync-badge" style="background:rgba(43,191,155,.2);color:var(--teal);border:1px solid rgba(43,191,155,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;white-space:nowrap;margin-right:2px;display:none;"><i class="fas fa-cloud"></i> Synchronisé</span>
     <span class="hdr-badge" id="date-badge"></span>
     <!-- KPI Toggle Button -->
-    <button class="hdr-btn" id="kpi-toggle-btn" onclick="toggleKPI()" title="Masquer/Afficher les indicateurs">📊</button>
-    <button class="hdr-btn user-dashboard-only" onclick="showSection('dashboard')" title="Mon tableau de bord">📊</button>
+    <button class="hdr-btn" id="kpi-toggle-btn" onclick="toggleKPI()" title="Masquer/Afficher les indicateurs"><i class="fas fa-chart-bar"></i></button>
+    <button class="hdr-btn user-dashboard-only" onclick="showSection('dashboard')" title="Mon tableau de bord"><i class="fas fa-chart-bar"></i></button>
     <div class="user-chip" onclick="doLogout()" title="Se déconnecter">
       <div class="user-chip-ico" id="user-ico">?</div>
       <span id="user-role-lbl"></span>
     </div>
     <div class="action-menu" id="action-menu" style="display:none;">
-      <button class="hdr-btn" onclick="toggleActions()" title="Actions système">⚙️</button>
+      <button class="hdr-btn" onclick="toggleActions()" title="Actions système"><i class="fas fa-gear"></i></button>
       <div class="action-dropdown" id="action-dropdown">
         <div class="action-section-label">Données</div>
-        <button class="action-item" onclick="toggleBackupPanel();toggleActions()">💾 Backup &amp; Restauration</button>
+        <button class="action-item" onclick="toggleBackupPanel();toggleActions()"><i class="fas fa-hard-drive"></i> Backup &amp; Restauration</button>
         <input type="file" id="import-file" accept=".xlsx,.json" style="display:none" onchange="doImport(event)">
         <input type="file" id="backup-import-file" accept=".xlsx,.json" style="display:none" onchange="doBackupImport(event)">
         <div class="action-sep"></div>
         <div class="action-section-label">Application</div>
-        <button class="action-item" onclick="triggerInstallFromMenu();toggleActions()" id="pwa-menu-install-btn" style="display:none">📲 Installer l'application</button>
-        <button class="action-item" onclick="showInstallBar('ios');toggleActions()" id="pwa-menu-ios-btn" style="display:none">📲 Guide d'installation iOS</button>
+        <button class="action-item" onclick="triggerInstallFromMenu();toggleActions()" id="pwa-menu-install-btn" style="display:none"><i class='fas fa-mobile-screen-button'></i> Installer l'application</button>
+        <button class="action-item" onclick="showInstallBar('ios');toggleActions()" id="pwa-menu-ios-btn" style="display:none"><i class='fas fa-mobile-screen-button'></i> Guide d'installation iOS</button>
         <div class="action-sep"></div>
         <div class="action-section-label">Affichage</div>
-        <button class="action-item" onclick="toggleDark();toggleActions()">🌙 Mode sombre / clair</button>
-        <button class="action-item" onclick="toggleFullscreen();toggleActions()">⛶ Plein écran</button>
+        <button class="action-item" onclick="toggleDark();toggleActions()"><i class="fas fa-moon"></i> Mode sombre / clair</button>
+        <button class="action-item" onclick="toggleFullscreen();toggleActions()"><i class="fas fa-expand"></i> Plein écran</button>
         <div class="action-sep"></div>
-        <button class="action-item danger admin-only" id="btn-vider-donnees" onclick="confirmClear();toggleActions()">🗑️ Vider toutes les données</button>
+        <button class="action-item danger admin-only" id="btn-vider-donnees" onclick="confirmClear();toggleActions()"><i class="fas fa-trash"></i> Vider toutes les données</button>
       </div>
     </div>
-    <button class="hdr-btn non-admin-only" onclick="toggleDark()" title="Mode sombre/clair">🌙</button>
-    <button class="hdr-btn non-admin-only" onclick="toggleFullscreen()" title="Plein écran">⛶</button>
-    <button class="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
+    <button class="hdr-btn non-admin-only" onclick="toggleDark()" title="Mode sombre/clair"><i class="fas fa-moon"></i></button>
+    <button class="hdr-btn non-admin-only" onclick="toggleFullscreen()" title="Plein écran"><i class="fas fa-expand"></i></button>
   </div>
 </header>
 
 <!-- Mobile Drawer -->
 <div class="nav-drawer" id="nav-drawer" onclick="closeDrawerOutside(event)">
   <div class="nav-drawer-inner">
-    <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()">🎓 Étudiants</button>
-    <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()">💳 Paiements</button>
-    <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()">💸 Dépenses</button>
-    <button class="nav-btn" onclick="showSection('disponibilite');closeDrawerAll()">💰 Disponibilité</button>
-    <button class="nav-btn" onclick="showSection('dashboard');closeDrawerAll()">📊 Mon Tableau de bord</button>
-    <button class="nav-btn admin-only" onclick="showSection('sessions');closeDrawerAll()">📅 Sessions</button>
-    <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()">📚 Formations</button>
-    <button class="nav-btn admin-only" onclick="showSection('rapport');closeDrawerAll()">📊 Rapports</button>
-    <button class="nav-btn admin-only" onclick="showSection('users');closeDrawerAll()">👥 Utilisateurs</button>
+    <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()"><i class="fas fa-graduation-cap"></i> Étudiants</button>
+    <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()"><i class="fas fa-credit-card"></i> Paiements</button>
+    <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
+    <button class="nav-btn" onclick="showSection('disponibilite');closeDrawerAll()"><i class="fas fa-wallet"></i> Disponibilité</button>
+    <button class="nav-btn" onclick="showSection('dashboard');closeDrawerAll()"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
+    <button class="nav-btn admin-only" onclick="showSection('sessions');closeDrawerAll()"><i class="fas fa-calendar-days"></i> Sessions</button>
+    <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()"><i class="fas fa-book-open"></i> Formations</button>
+    <button class="nav-btn admin-only" onclick="showSection('rapport');closeDrawerAll()"><i class="fas fa-chart-pie"></i> Rapports</button>
+    <button class="nav-btn admin-only" onclick="showSection('users');closeDrawerAll()"><i class="fas fa-users"></i> Utilisateurs</button>
     <div style="height:1px;background:rgba(255,255,255,.1);margin:6px 4px;"></div>
-    <button class="nav-btn" onclick="toggleDark();closeDrawerAll()">🌙 Mode sombre</button>
-    <button class="nav-btn" onclick="toggleFullscreen();closeDrawerAll()">⛶ Plein écran</button>
-    <button class="nav-btn admin-only" style="color:var(--danger)" onclick="confirmClear();closeDrawerAll()">🗑️ Vider données</button>
+    <button class="nav-btn" onclick="toggleDark();closeDrawerAll()"><i class="fas fa-moon"></i> Mode sombre</button>
+    <button class="nav-btn" onclick="toggleFullscreen();closeDrawerAll()"><i class="fas fa-expand"></i> Plein écran</button>
+    <button class="nav-btn admin-only" style="color:var(--danger)" onclick="confirmClear();closeDrawerAll()"><i class="fas fa-trash"></i> Vider données</button>
   </div>
 </div>
 
@@ -425,23 +465,23 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <!-- STATS -->
   <div class="stats-grid" id="stats-grid">
     <div class="stat-card" id="sc-etudiants">
-      <div class="stat-icon si-blue">🎓</div>
+      <div class="stat-icon si-blue"><i class="fas fa-graduation-cap"></i></div>
       <div><div class="stat-num" id="s-etudiants">0</div><div class="stat-label">Étudiants</div><div class="stat-sub" id="ss-etudiants">vue filtrée</div></div>
     </div>
     <div class="stat-card" id="sc-encaisse">
-      <div class="stat-icon si-green">💰</div>
+      <div class="stat-icon si-green"><i class="fas fa-wallet"></i></div>
       <div><div class="stat-num" id="s-encaisse">0</div><div class="stat-label">Encaissé (FC)</div><div class="stat-sub" id="ss-encaisse">vue filtrée</div></div>
     </div>
     <div class="stat-card" id="sc-reste">
-      <div class="stat-icon si-amber">⏳</div>
+      <div class="stat-icon si-amber"><i class="fas fa-hourglass-half"></i></div>
       <div><div class="stat-num" id="s-reste">0</div><div class="stat-label">Reste à percevoir</div><div class="stat-sub" id="ss-reste">vue filtrée</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon si-red">💸</div>
+      <div class="stat-icon si-red"><i class="fas fa-arrow-trend-down"></i></div>
       <div><div class="stat-num" id="s-depenses">0</div><div class="stat-label">Dépenses (FC)</div></div>
     </div>
     <div class="stat-card">
-      <div class="stat-icon si-purple">📅</div>
+      <div class="stat-icon si-purple"><i class="fas fa-calendar-days"></i></div>
       <div><div class="stat-num" id="s-sessions">0</div><div class="stat-label">Sessions actives</div></div>
     </div>
   </div>
@@ -450,10 +490,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section active" id="sec-etudiants">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">🎓 Liste des Étudiants</span>
+        <span class="card-title"><i class="fas fa-graduation-cap"></i> Liste des Étudiants</span>
         <div class="toolbar">
           <div class="search-box">
-            <span class="s-ico">🔍</span>
+            <span class="s-ico"><i class="fas fa-magnifying-glass"></i></span>
             <input type="text" id="etu-search" placeholder="Matricule, nom, contact…" oninput="renderEtudiants()">
           </div>
           <select class="filter-select" id="etu-f-ses" onchange="renderEtudiants()"><option value="">Toutes sessions</option></select>
@@ -468,10 +508,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <select class="filter-select admin-only" id="etu-f-user" onchange="renderEtudiants()" title="Filtrer par opérateur">
             <option value="">Tous opérateurs</option>
           </select>
-          <button class="btn-primary" onclick="openModalEtu()">✚ Ajouter</button>
+          <button class="btn-primary" onclick="openModalEtu()"><i class="fas fa-plus"></i> Ajouter</button>
           <!-- Après le bouton "Ajouter", ajoutez : -->
 <button class="btn-teal" onclick="showRappelsAutomatiques()" title="Voir les échéances dépassées">
-    ⏰ Rappels
+    <i class="fas fa-bell"></i> Rappels
 </button>
         </div>
       </div>
@@ -488,7 +528,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 </thead>
           <tbody id="tbody-etudiants"></tbody>
         </table>
-        <div class="empty" id="etu-empty" style="display:none;"><div class="e-ico">🎓</div><p>Aucun étudiant enregistré.</p></div>
+        <div class="empty" id="etu-empty" style="display:none;"><div class="e-ico"><i class="fas fa-graduation-cap"></i></div><p>Aucun étudiant enregistré.</p></div>
         <div class="total-row" id="etu-tot" style="display:none;"></div>
       </div>
     </div>
@@ -498,9 +538,9 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section" id="sec-paiements">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">💳 Détail des Paiements</span>
+        <span class="card-title"><i class="fas fa-credit-card"></i> Détail des Paiements</span>
         <div class="toolbar">
-          <div class="search-box"><span class="s-ico">🔍</span>
+          <div class="search-box"><span class="s-ico"><i class="fas fa-magnifying-glass"></i></span>
             <input type="text" id="pay-search" placeholder="Étudiant, matricule…" oninput="renderPaiements()">
           </div>
           <select class="filter-select" id="pay-f-ses" onchange="renderPaiements()"><option value="">Toutes sessions</option></select>
@@ -518,7 +558,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <thead><tr><th>#</th><th>Étudiant</th><th>Matricule</th><th>Montant</th><th>Date</th><th>Session</th><th>Formation</th><th>Par</th></tr></thead>
           <tbody id="tbody-paiements"></tbody>
         </table>
-        <div class="empty" id="pay-empty" style="display:none;"><div class="e-ico">💳</div><p>Aucun paiement.</p></div>
+        <div class="empty" id="pay-empty" style="display:none;"><div class="e-ico"><i class="fas fa-credit-card"></i></div><p>Aucun paiement.</p></div>
         <div class="total-row" id="pay-tot" style="display:none;"></div>
       </div>
     </div>
@@ -528,9 +568,9 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section" id="sec-depenses">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">💸 Dépenses</span>
+        <span class="card-title"><i class="fas fa-arrow-trend-down"></i> Dépenses</span>
         <div class="toolbar">
-          <div class="search-box"><span class="s-ico">🔍</span>
+          <div class="search-box"><span class="s-ico"><i class="fas fa-magnifying-glass"></i></span>
             <input type="text" id="dep-search" placeholder="Libellé…" oninput="renderDepenses()">
           </div>
           <select class="filter-select" id="dep-f-ses" onchange="renderDepenses()"><option value="">Toutes sessions</option></select>
@@ -540,7 +580,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <select class="filter-select admin-only" id="dep-f-user" onchange="renderDepenses()" title="Filtrer par opérateur">
             <option value="">Tous opérateurs</option>
           </select>
-          <button class="btn-primary" onclick="openModalDep()">✚ Ajouter</button>
+          <button class="btn-primary" onclick="openModalDep()"><i class="fas fa-plus"></i> Ajouter</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -548,7 +588,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <thead><tr><th>#</th><th>Libellé</th><th>Montant</th><th>Détail</th><th>Date</th><th>Session</th><th>Par</th><th>Actions</th></tr></thead>
           <tbody id="tbody-depenses"></tbody>
         </table>
-        <div class="empty" id="dep-empty" style="display:none;"><div class="e-ico">💸</div><p>Aucune dépense.</p></div>
+        <div class="empty" id="dep-empty" style="display:none;"><div class="e-ico"><i class="fas fa-arrow-trend-down"></i></div><p>Aucune dépense.</p></div>
         <div class="total-row" id="dep-tot" style="display:none;"></div>
       </div>
     </div>
@@ -558,15 +598,15 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section" id="sec-disponibilite">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">💰 Disponibilité / Caisse</span>
+        <span class="card-title"><i class="fas fa-wallet"></i> Disponibilité / Caisse</span>
         <div class="toolbar">
           <div class="search-box">
-            <span class="s-ico">👤</span>
+            <span class="s-ico"><i class="fas fa-user"></i></span>
             <input type="text" id="disp-search" placeholder="Filtrer par responsable..." oninput="renderDisponibilite()">
           </div>
           <input type="date" class="filter-select" id="disp-date-from" onchange="renderDisponibilite()" title="Date début" style="min-width:120px;">
           <input type="date" class="filter-select" id="disp-date-to" onchange="renderDisponibilite()" title="Date fin" style="min-width:120px;">
-          <button class="btn-primary admin-only" onclick="openModalDispo()">✚ Ajouter</button>
+          <button class="btn-primary admin-only" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -574,7 +614,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <thead><tr><th>#</th><th>Responsable</th><th>Montant (FC)</th><th>Détail</th><th>Date</th><th>Par</th><th>Actions</th></tr></thead>
           <tbody id="tbody-disponibilite"></tbody>
         </table>
-        <div class="empty" id="disp-empty" style="display:none;"><div class="e-ico">💰</div><p>Aucune entrée de disponibilité.</p></div>
+        <div class="empty" id="disp-empty" style="display:none;"><div class="e-ico"><i class="fas fa-wallet"></i></div><p>Aucune entrée de disponibilité.</p></div>
         <div class="total-row" id="disp-tot" style="display:none;"></div>
       </div>
     </div>
@@ -584,14 +624,14 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section" id="sec-dashboard">
     <div class="card" style="margin-bottom:12px;">
       <div class="card-header">
-        <span class="card-title">📊 Mon Tableau de Bord</span>
+        <span class="card-title"><i class="fas fa-chart-bar"></i> Mon Tableau de Bord</span>
         <span id="dash-user-chip" class="badge b-info" style="font-size:11px;"></span>
       </div>
       <div id="dashboard-content" style="padding:14px;"></div>
     </div>
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📋 Mes Opérations récentes</span>
+        <span class="card-title"><i class="fas fa-clipboard"></i> Mes Opérations récentes</span>
         <select class="filter-select" id="dash-filter-type" onchange="renderDashboard()" style="font-size:11px;">
           <option value="">Tout</option>
           <option value="etudiant">Étudiants</option>
@@ -604,7 +644,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <thead><tr><th>#</th><th>Type</th><th>Description</th><th>Montant</th><th>Date</th><th>Session</th></tr></thead>
           <tbody id="tbody-dashboard"></tbody>
         </table>
-        <div class="empty" id="dash-empty" style="display:none;"><div class="e-ico">📋</div><p>Aucune opération enregistrée.</p></div>
+        <div class="empty" id="dash-empty" style="display:none;"><div class="e-ico"><i class="fas fa-clipboard"></i></div><p>Aucune opération enregistrée.</p></div>
       </div>
     </div>
   </div>
@@ -613,8 +653,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section admin-only" id="sec-sessions">
     <div class="card">
       <div class="card-header">
-  <span class="card-title">📅 Gestion des Sessions</span>
-  <button class="btn-primary" onclick="openModalSession()">✚ Nouvelle Session</button>
+  <span class="card-title"><i class="fas fa-calendar-days"></i> Gestion des Sessions</span>
+  <button class="btn-primary" onclick="openModalSession()"><i class="fas fa-plus"></i> Nouvelle Session</button>
 </div>
       <div class="mini-grid" id="mini-sessions"></div>
     </div>
@@ -624,8 +664,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section admin-only" id="sec-formations">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📚 Gestion des Formations</span>
-        <button class="btn-primary" onclick="openModalFormation()">✚ Nouvelle Formation</button>
+        <span class="card-title"><i class="fas fa-book-open"></i> Gestion des Formations</span>
+        <button class="btn-primary" onclick="openModalFormation()"><i class="fas fa-plus"></i> Nouvelle Formation</button>
       </div>
       <div class="mini-grid" id="mini-formations"></div>
     </div>
@@ -635,7 +675,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section admin-only" id="sec-rapport">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">📊 Rapports</span>
+        <span class="card-title"><i class="fas fa-chart-pie"></i> Rapports</span>
         <div class="toolbar">
           <select class="filter-select" id="rpt-ses" onchange="renderRapport()"><option value="">Toutes sessions</option></select>
           <select class="filter-select" id="rpt-form" onchange="renderRapport()"><option value="">Toutes formations</option></select>
@@ -644,7 +684,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
             <option value="session">Détail par Session</option>
             <option value="formation">Détail par Formation</option>
           </select>
-          <button class="btn-teal" onclick="printRapport()">🖨️ Imprimer</button>
+          <button class="btn-teal" onclick="printRapport()"><i class="fas fa-print"></i> Imprimer</button>
         </div>
       </div>
       <div id="rapport-content" class="rapport-section"></div>
@@ -654,14 +694,14 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <!-- BACKUP PANEL (inline, toggle) -->
   <div id="backup-panel" style="display:none;position:fixed;top:52px;right:0;width:520px;max-width:98vw;max-height:calc(100vh - 52px);background:var(--surface);border-left:2px solid var(--teal);border-bottom:2px solid var(--teal);border-bottom-left-radius:14px;box-shadow:var(--shadow-lg);z-index:300;flex-direction:column;overflow:hidden;">
     <div style="background:var(--navy);color:#fff;padding:10px 14px;display:flex;align-items:center;gap:9px;flex-shrink:0;">
-      <span style="font-size:16px;">💾</span>
+      <span style="font-size:16px;"><i class="fas fa-hard-drive"></i></span>
       <span style="font-weight:700;font-size:13px;flex:1;">Backup &amp; Restauration</span>
-      <button onclick="toggleBackupPanel()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+      <button onclick="toggleBackupPanel()" style="background:rgba(255,255,255,.15);border:none;color:#fff;width:24px;height:24px;border-radius:6px;font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;"><i class="fas fa-xmark"></i></button>
     </div>
     <div style="padding:12px 14px;border-bottom:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;">
-      <button class="btn-primary" onclick="document.getElementById('backup-new-file').click()" style="gap:5px;">✚ New</button>
+      <button class="btn-primary" onclick="document.getElementById('backup-new-file').click()" style="gap:5px;"><i class="fas fa-plus"></i> New</button>
       <input type="file" id="backup-new-file" accept=".xlsx,.json" style="display:none" onchange="doBackupUpload(event)">
-      <button class="btn-teal" onclick="exportExcelBackup()" style="gap:5px;">📊 Excel</button>
+      <button class="btn-teal" onclick="exportExcelBackup()" style="gap:5px;"><i class="fas fa-chart-bar"></i> Excel</button>
       <button class="btn-secondary" onclick="exportJSONBackup()" style="gap:5px;">{ } JSON</button>
     </div>
     <div style="flex:1;overflow-y:auto;">
@@ -675,7 +715,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
         </thead>
         <tbody id="tbody-backups"></tbody>
       </table>
-      <div class="empty" id="backup-empty" style="display:none;"><div class="e-ico">💾</div><p>Aucun backup enregistré.</p></div>
+      <div class="empty" id="backup-empty" style="display:none;"><div class="e-ico"><i class="fas fa-hard-drive"></i></div><p>Aucun backup enregistré.</p></div>
     </div>
   </div>
 
@@ -683,15 +723,15 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="section admin-only" id="sec-users">
     <div class="card">
       <div class="card-header">
-        <span class="card-title">👥 Gestion des Utilisateurs</span>
-        <button class="btn-primary" onclick="openModalUser()">✚ Ajouter</button>
+        <span class="card-title"><i class="fas fa-users"></i> Gestion des Utilisateurs</span>
+        <button class="btn-primary" onclick="openModalUser()"><i class="fas fa-plus"></i> Ajouter</button>
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>ID</th><th>Identifiant</th><th>Rôle</th><th>Permissions</th><th>Sécurité</th><th>Actions</th></tr></thead>
+          <thead><tr><th>ID</th><th>Utilisateur</th><th>Email</th><th>Téléphone</th><th>Rôle</th><th>Permissions</th><th>Sécurité</th><th>Actions</th></tr></thead>
           <tbody id="tbody-users"></tbody>
         </table>
-        <div class="empty" id="user-empty" style="display:none;"><div class="e-ico">👥</div><p>Aucun utilisateur.</p></div>
+        <div class="empty" id="user-empty" style="display:none;"><div class="e-ico"><i class="fas fa-users"></i></div><p>Aucun utilisateur.</p></div>
       </div>
     </div>
   </div>
@@ -704,11 +744,11 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-etu" onclick="closeOnOverlay(event,'etu')">
  <div class="modal" id="modal-etu">
   <div class="modal-header" id="mhd-etu">
-    <span>🎓</span><h3 id="etu-mtitle">Ajouter un Étudiant</h3>
-    <button class="modal-close" onclick="closeModal('etu')" title="Fermer">✕</button>
+    <span><i class="fas fa-graduation-cap"></i></span><h3 id="etu-mtitle">Ajouter un Étudiant</h3>
+    <button class="modal-close" onclick="closeModal('etu')" title="Fermer"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body">
-    <div id="etu-closed-notice" class="closed-notice" style="display:none;">🔒 Session clôturée — modification réservée aux administrateurs.</div>
+    <div id="etu-closed-notice" class="closed-notice" style="display:none;"><i class="fas fa-lock"></i> Session clôturée — modification réservée aux administrateurs.</div>
     <div class="form-grid">
       <div class="fg"><label>Matricule</label><input type="text" id="etu-mat" disabled></div>
       <div class="fg"><label>Date d'inscription</label><input type="date" id="etu-date"></div>
@@ -717,10 +757,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       <div class="fg"><label>Contact (téléphone)</label><input type="tel" id="etu-contact" placeholder="+269 XXX XXX XXX" maxlength="30"></div>
       <!-- À l'intérieur de <div class="form-grid">, après le champ Contact, ajoutez : -->
 <div class="fg form-full">
-    <label>📅 Date d'échéance (optionnel)</label>
+    <label><i class="fas fa-calendar-days"></i> Date d'échéance (optionnel)</label>
     <input type="date" id="etu-echeance">
     <div class="form-note" style="margin-top:4px;">
-        ⚠️ Si dépassée et paiement incomplet, un rappel sera généré.
+        <i class="fas fa-triangle-exclamation"></i> Si dépassée et paiement incomplet, un rappel sera généré.
     </div>
 </div>
       <div class="fg"><label>Coût total (FC)</label><input type="number" id="etu-cout" placeholder="Ex: 150000" min="0" max="99999999"></div>
@@ -731,7 +771,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('etu')">Annuler</button>
-    <button class="btn-save" onclick="saveEtudiant()">💾 Enregistrer</button>
+    <button class="btn-save" onclick="saveEtudiant()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
   </div>
  </div>
 </div>
@@ -740,8 +780,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-pay" onclick="closeOnOverlay(event,'pay')">
  <div class="modal" id="modal-pay" style="width:460px;">
   <div class="modal-header" id="mhd-pay">
-    <span>💰</span><h3>Enregistrer un Paiement</h3>
-    <button class="modal-close" onclick="closeModal('pay')">✕</button>
+    <span><i class="fas fa-wallet"></i></span><h3>Enregistrer un Paiement</h3>
+    <button class="modal-close" onclick="closeModal('pay')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body">
     <div class="form-grid">
@@ -764,7 +804,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('pay')">Annuler</button>
-    <button class="btn-save" onclick="savePaiement()">💾 Enregistrer</button>
+    <button class="btn-save" onclick="savePaiement()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
   </div>
  </div>
 </div>
@@ -773,8 +813,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-recu" onclick="closeOnOverlay(event,'recu')">
  <div class="modal" id="modal-recu" style="width:490px;">
   <div class="modal-header" id="mhd-recu">
-    <span>🧾</span><h3>Reçu de Paiement</h3>
-    <button class="modal-close" onclick="closeModal('recu')">✕</button>
+    <span><i class="fas fa-receipt"></i></span><h3>Reçu de Paiement</h3>
+    <button class="modal-close" onclick="closeModal('recu')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body"><div id="recu-content"></div></div>
  </div>
@@ -784,11 +824,11 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-dep" onclick="closeOnOverlay(event,'dep')">
  <div class="modal" id="modal-dep" style="width:460px;">
   <div class="modal-header" id="mhd-dep">
-    <span>💸</span><h3 id="dep-mtitle">Ajouter une Dépense</h3>
-    <button class="modal-close" onclick="closeModal('dep')">✕</button>
+    <span><i class="fas fa-arrow-trend-down"></i></span><h3 id="dep-mtitle">Ajouter une Dépense</h3>
+    <button class="modal-close" onclick="closeModal('dep')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body">
-    <div id="dep-closed-notice" class="closed-notice" style="display:none;">🔒 Session clôturée.</div>
+    <div id="dep-closed-notice" class="closed-notice" style="display:none;"><i class="fas fa-lock"></i> Session clôturée.</div>
     <div class="form-grid">
       <div class="fg"><label>Libellé *</label><input type="text" id="dep-lib" placeholder="Ex: Loyer, salaire…" maxlength="120"></div>
       <div class="fg"><label>Montant (FC) *</label><input type="number" id="dep-mont" placeholder="Ex: 30000" min="0"></div>
@@ -801,7 +841,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('dep')">Annuler</button>
-    <button class="btn-save" onclick="saveDepense()">💾 Enregistrer</button>
+    <button class="btn-save" onclick="saveDepense()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
   </div>
  </div>
 </div>
@@ -810,8 +850,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-session" onclick="closeOnOverlay(event,'session')">
  <div class="modal" id="modal-session" style="width:420px;">
   <div class="modal-header" id="mhd-session">
-    <span>📅</span><h3 id="ses-mtitle">Nouvelle Session</h3>
-    <button class="modal-close" onclick="closeModal('session')">✕</button>
+    <span><i class="fas fa-calendar-days"></i></span><h3 id="ses-mtitle">Nouvelle Session</h3>
+    <button class="modal-close" onclick="closeModal('session')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body">
     <div class="form-grid">
@@ -821,7 +861,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('session')">Annuler</button>
-    <button class="btn-save" onclick="saveSession()">💾 Enregistrer</button>
+    <button class="btn-save" onclick="saveSession()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
   </div>
  </div>
 </div>
@@ -830,8 +870,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-formation" onclick="closeOnOverlay(event,'formation')">
  <div class="modal" id="modal-formation" style="width:390px;">
   <div class="modal-header" id="mhd-formation">
-    <span>📚</span><h3 id="form-mtitle">Nouvelle Formation</h3>
-    <button class="modal-close" onclick="closeModal('formation')">✕</button>
+    <span><i class="fas fa-book-open"></i></span><h3 id="form-mtitle">Nouvelle Formation</h3>
+    <button class="modal-close" onclick="closeModal('formation')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body">
     <div class="form-grid c1">
@@ -840,7 +880,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('formation')">Annuler</button>
-    <button class="btn-save" onclick="saveFormation()">💾 Enregistrer</button>
+    <button class="btn-save" onclick="saveFormation()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
   </div>
  </div>
 </div>
@@ -849,13 +889,22 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-user" onclick="closeOnOverlay(event,'user')">
  <div class="modal" id="modal-user" style="width:420px;">
   <div class="modal-header" id="mhd-user">
-    <span>👤</span><h3 id="user-mtitle">Ajouter un Utilisateur</h3>
-    <button class="modal-close" onclick="closeModal('user')">✕</button>
+    <span><i class="fas fa-user"></i></span><h3 id="user-mtitle">Ajouter un Utilisateur</h3>
+    <button class="modal-close" onclick="closeModal('user')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body">
     <div class="form-grid">
       <div class="fg form-full"><label>Identifiant (login)</label>
         <input type="text" id="user-login" placeholder="Ex: admin, user1…" maxlength="30" autocomplete="off">
+      </div>
+      <div class="fg"><label>Nom</label>
+        <input type="text" id="user-nom" placeholder="Nom de famille" maxlength="80">
+      </div>
+      <div class="fg"><label>Prénom</label>
+        <input type="text" id="user-prenom" placeholder="Prénom" maxlength="80">
+      </div>
+      <div class="fg form-full"><label>Numéro de téléphone</label>
+        <input type="text" id="user-num" placeholder="Numéro de téléphone" maxlength="30">
       </div>
       <div class="fg"><label>Mot de passe *</label>
         <input type="password" id="user-pwd" placeholder="Minimum 4 caractères" minlength="4" autocomplete="new-password">
@@ -872,24 +921,24 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     </div>
     <!-- Permissions dynamiques pour les Users -->
     <div id="user-perm-zone" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
-      <div style="background:var(--navy);color:#fff;padding:8px 13px;font-size:11px;font-weight:700;letter-spacing:.4px;">⚙️ CONFIGURATION DES ACCÈS — Rôle User</div>
+      <div style="background:var(--navy);color:#fff;padding:8px 13px;font-size:11px;font-weight:700;letter-spacing:.4px;"><i class="fas fa-gear"></i> CONFIGURATION DES ACCÈS — Rôle User</div>
       <div style="padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Sections visibles</div>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-etudiants" checked> 🎓 Étudiants</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-paiements"> 💳 Paiements</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-depenses"> 💸 Dépenses</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-disponibilite"> 💰 Disponibilité</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-sec-dashboard" checked> 📊 Mon tableau de bord</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-etudiants" checked> <i class="fas fa-graduation-cap"></i> Étudiants</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-paiements"> <i class="fas fa-credit-card"></i> Paiements</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-depenses"> <i class="fas fa-arrow-trend-down"></i> Dépenses</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-disponibilite"> <i class="fas fa-wallet"></i> Disponibilité</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-sec-dashboard" checked> <i class="fas fa-chart-bar"></i> Mon tableau de bord</label>
         </div>
         <div>
           <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Actions autorisées</div>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-etu" checked> ✚ Ajouter étudiant</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-pay"> 💰 Enregistrer paiement</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> ✚ Ajouter dépense</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit"> ✏️ Modifier ses entrées</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-del"> 🗑️ Supprimer ses entrées</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-system"> ⚙️ Accès Action Système</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-etu" checked> <i class="fas fa-plus"></i> Ajouter étudiant</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-pay"> <i class="fas fa-wallet"></i> Enregistrer paiement</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> <i class="fas fa-plus"></i> Ajouter dépense</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit"> <i class="fas fa-pencil"></i> Modifier ses entrées</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-del"> <i class="fas fa-trash"></i> Supprimer ses entrées</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-system"> <i class="fas fa-gear"></i> Accès Action Système</label>
         </div>
       </div>
       <div style="padding:0 12px 10px;">
@@ -904,7 +953,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('user')">Annuler</button>
-    <button class="btn-save" onclick="saveUser()">💾 Enregistrer</button>
+    <button class="btn-save" onclick="saveUser()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
   </div>
  </div>
 </div>
@@ -913,8 +962,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-dispo" onclick="closeOnOverlay(event,'dispo')">
   <div class="modal" id="modal-dispo" style="width:460px;">
     <div class="modal-header" id="mhd-dispo">
-      <span>💰</span><h3 id="dispo-mtitle">Ajouter une entrée</h3>
-      <button class="modal-close" onclick="closeModal('dispo')">✕</button>
+      <span><i class="fas fa-wallet"></i></span><h3 id="dispo-mtitle">Ajouter une entrée</h3>
+      <button class="modal-close" onclick="closeModal('dispo')"><i class="fas fa-xmark"></i></button>
     </div>
     <div class="modal-body">
       <div class="form-grid">
@@ -930,7 +979,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal('dispo')">Annuler</button>
-      <button class="btn-save" onclick="saveDisponibilite()">💾 Enregistrer</button>
+      <button class="btn-save" onclick="saveDisponibilite()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
     </div>
   </div>
 </div>
@@ -939,8 +988,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-confirm" onclick="closeOnOverlay(event,'confirm')">
  <div class="modal" id="modal-confirm" style="width:380px;">
   <div class="modal-header" id="mhd-confirm" style="background:#dc2626;">
-    <span>⚠️</span><h3>Confirmation requise</h3>
-    <button class="modal-close" onclick="closeModal('confirm')">✕</button>
+    <span><i class="fas fa-triangle-exclamation" style="color:var(--warning)"></i></span><h3>Confirmation requise</h3>
+    <button class="modal-close" onclick="closeModal('confirm')"><i class="fas fa-xmark"></i></button>
   </div>
   <div class="modal-body" style="padding:18px;">
     <p id="confirm-msg" style="font-size:13px;line-height:1.65;color:var(--text);"></p>
@@ -955,16 +1004,16 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div class="overlay" id="ov-rappel" onclick="closeOnOverlay(event,'rappel')">
     <div class="modal" id="modal-rappel" style="width:700px; max-width:95vw;">
         <div class="modal-header" id="mhd-rappel">
-            <span>⏰</span>
+            <span><i class="fas fa-bell"></i></span>
             <h3>Rappels de paiement - Échéances dépassées</h3>
-            <button class="modal-close" onclick="closeModal('rappel')">✕</button>
+            <button class="modal-close" onclick="closeModal('rappel')"><i class="fas fa-xmark"></i></button>
         </div>
         <div class="modal-body" id="rappel-content" style="max-height:70vh; overflow-y:auto;">
             <!-- Le contenu sera généré dynamiquement -->
         </div>
         <div class="modal-footer">
             <button class="btn-cancel" onclick="closeModal('rappel')">Fermer</button>
-            <button class="btn-teal" onclick="envoyerRappelsGroupes()">📱 Envoyer tous les rappels</button>
+            <button class="btn-teal" onclick="envoyerRappelsGroupes()"><i class="fas fa-mobile-screen"></i> Envoyer tous les rappels</button>
         </div>
     </div>
 </div>
@@ -975,12 +1024,12 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
      Apparaît automatiquement quand le navigateur supporte l'install
      ============================================================ -->
 <div id="pwa-install-bar">
-  <span style="font-size:22px;">📲</span>
+  <span style="font-size:22px;"><i class="fas fa-mobile-screen-button"></i></span>
   <div class="pwa-txt">
     <strong>Installer ComFormation</strong> comme application sur cet appareil pour un accès rapide hors connexion.
   </div>
-  <button class="pwa-btn-install" onclick="installPWA()">⬇️ Installer</button>
-  <button class="pwa-btn-dismiss" onclick="dismissPWA()" title="Fermer">✕</button>
+  <button class="pwa-btn-install" onclick="installPWA()"><i class="fas fa-download"></i> Installer</button>
+  <button class="pwa-btn-dismiss" onclick="dismissPWA()" title="Fermer"><i class="fas fa-xmark"></i></button>
 </div>
 
 <script>
@@ -1107,6 +1156,7 @@ let paiements      = [];
 let depenses       = [];
 let users          = [];
 let disponibilites = [];
+let backups        = [];
 
 let nSes   = 1;
 let nForm  = 1;
@@ -1131,6 +1181,7 @@ async function loadFromIDB() {
     depenses       = _mem[PREFIX+'depenses']       || [];
     users          = _mem[PREFIX+'users']          || [];
     disponibilites = _mem[PREFIX+'disponibilites'] || [];
+    backups        = _mem[PREFIX+'backups']        || [];
 
     nSes   = _mem[PREFIX+'nSes']   || 1;
     nForm  = _mem[PREFIX+'nForm']  || 1;
@@ -1152,11 +1203,11 @@ async function loadFromIDB() {
 
 /* Migration one-shot depuis l'ancien localStorage (cf5_) */
 async function migrateFromLocalStorage() {
-  const keys = ['sessions','formations','etudiants','paiements','depenses','users','disponibilites','nSes','nForm','nEtu','nPay','nDep','nUsr','nDispo'];
+  const keys = ['sessions','formations','etudiants','paiements','depenses','users','disponibilites','backups','nSes','nForm','nEtu','nPay','nDep','nUsr','nDispo'];
   let migrated = false;
   for (const k of keys) {
     try {
-      const raw = localStorage.getItem('cf5_' + k);
+      const raw = localStorage.getItem(k === 'backups' ? 'cf_backups' : 'cf5_' + k);
       if (raw !== null) {
         const v = JSON.parse(raw);
         _mem[PREFIX + k] = v;
@@ -1174,6 +1225,7 @@ async function migrateFromLocalStorage() {
     depenses       = _mem[PREFIX+'depenses']       || [];
     users          = _mem[PREFIX+'users']          || [];
     disponibilites = _mem[PREFIX+'disponibilites'] || [];
+    backups        = _mem[PREFIX+'backups']        || [];
     nSes   = _mem[PREFIX+'nSes']   || 1;
     nForm  = _mem[PREFIX+'nForm']  || 1;
     nEtu   = _mem[PREFIX+'nEtu']   || 1;
@@ -1184,6 +1236,178 @@ async function migrateFromLocalStorage() {
     console.log('[Migration] Données cf5_ migrées vers IndexedDB');
   }
 }
+
+// -------------------------------------------------------------
+// LOGIQUE DE SYNCHRONISATION HYBRIDE HORS-LIGNE & EN-LIGNE
+// -------------------------------------------------------------
+const generateId = () => Date.now() + Math.floor(Math.random() * 1000);
+
+function updateSyncBadge(queueLength = null) {
+  const badge = document.getElementById('sync-badge');
+  if (!badge) return;
+  badge.style.display = 'inline-block';
+
+  if (queueLength === null) {
+    IDB.get('cf6_sync_queue').then(q => {
+      updateSyncBadge(q ? q.length : 0);
+    }).catch(() => {
+      updateSyncBadge(0);
+    });
+    return;
+  }
+
+  if (!navigator.onLine) {
+    if (queueLength > 0) {
+      badge.innerHTML = `<i class="fas fa-circle-exclamation"></i> Hors-ligne (Attente : ${queueLength})`;
+      badge.style.background = 'rgba(245, 158, 11, 0.15)';
+      badge.style.color = '#f59e0b';
+      badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+    } else {
+      badge.innerHTML = '<i class="fas fa-circle-exclamation"></i> Hors-ligne';
+      badge.style.background = 'rgba(107, 114, 128, 0.15)';
+      badge.style.color = '#9ca3af';
+      badge.style.borderColor = 'rgba(107, 114, 128, 0.3)';
+    }
+  } else {
+    if (isSyncing) {
+      badge.innerHTML = '<i class="fas fa-arrows-rotate fa-spin"></i> Synchronisation...';
+      badge.style.background = 'rgba(59, 130, 246, 0.15)';
+      badge.style.color = '#3b82f6';
+      badge.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+    } else if (queueLength > 0) {
+      badge.innerHTML = `<i class="fas fa-clock"></i> Sync en attente (${queueLength})`;
+      badge.style.background = 'rgba(245, 158, 11, 0.15)';
+      badge.style.color = '#f59e0b';
+      badge.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+    } else {
+      badge.innerHTML = '<i class="fas fa-cloud"></i> Synchronisé';
+      badge.style.background = 'rgba(43, 191, 155, 0.2)';
+      badge.style.color = 'var(--teal)';
+      badge.style.borderColor = 'rgba(43, 191, 155, 0.3)';
+    }
+  }
+}
+
+async function queueSyncOperation(action, table, recordId, data) {
+  let queue = await IDB.get('cf6_sync_queue') || [];
+  queue.push({
+    id: 'sq_' + Date.now() + '_' + Math.random(),
+    action,
+    table,
+    recordId,
+    data,
+    timestamp: Date.now()
+  });
+  await IDB.set('cf6_sync_queue', queue);
+  updateSyncBadge(queue.length);
+  triggerSync();
+}
+
+let isSyncing = false;
+async function triggerSync() {
+  if (isSyncing) return;
+  
+  let queue = await IDB.get('cf6_sync_queue') || [];
+  updateSyncBadge(queue.length);
+  
+  if (!navigator.onLine) return;
+  const token = localStorage.getItem('cf_token');
+  if (!token) return;
+  
+  if (!queue.length) return;
+  
+  isSyncing = true;
+  updateSyncBadge(queue.length);
+  console.log(`[Sync] Démarrage de la synchronisation de ${queue.length} opérations...`);
+  
+  let remainingQueue = [...queue];
+  
+  try {
+    for (const op of queue) {
+      if (op.action === 'CLEAR') {
+        const res = await fetch('/api/sync/clear', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        if (res.ok) {
+          remainingQueue.shift();
+          await IDB.set('cf6_sync_queue', remainingQueue);
+        } else {
+          console.warn('[Sync] Échec du CLEAR :', res.statusText);
+          break;
+        }
+        continue;
+      }
+      
+      const res = await fetch('/api/sync', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token
+        },
+        body: JSON.stringify(op)
+      });
+      
+      if (res.ok) {
+        remainingQueue.shift();
+        await IDB.set('cf6_sync_queue', remainingQueue);
+      } else {
+        console.warn('[Sync] Échec pour :', op, res.statusText);
+        break;
+      }
+    }
+  } catch (err) {
+    console.error('[Sync] Erreur réseau lors de la synchronisation', err);
+  } finally {
+    isSyncing = false;
+    updateSyncBadge(remainingQueue.length);
+    if (remainingQueue.length === 0) {
+      await pullLatestDataFromServer();
+    }
+  }
+}
+
+async function pullLatestDataFromServer() {
+  if (!navigator.onLine) return;
+  const token = localStorage.getItem('cf_token');
+  if (!token) return;
+  
+  try {
+    const res = await fetch('/api/sync/pull', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      sessions = data.sessions || [];
+      formations = data.formations || [];
+      etudiants = data.etudiants || [];
+      paiements = data.paiements || [];
+      depenses = data.depenses || [];
+      users = data.users || [];
+      disponibilites = data.disponibilites || [];
+      backups = data.backups || [];
+      
+      saveAll();
+      
+      if (typeof initApp === 'function') {
+        initApp();
+      }
+      console.log('[Sync] Récupération et synchronisation des données distantes réussies !');
+    }
+  } catch (err) {
+    console.error('[Sync] Erreur lors du pull des données', err);
+  }
+}
+
+window.addEventListener('online', () => {
+  triggerSync();
+});
+window.addEventListener('offline', () => {
+  updateSyncBadge();
+});
 
 let currentRole = null;
 let currentUserId = null;
@@ -1196,7 +1420,7 @@ function saveAll(){
   SS('etudiants',etudiants); SS('paiements',paiements);
   SS('depenses',depenses); SS('users',users);
   SS('disponibilites',disponibilites);
-  // Sauvegarde des bilans (sans les dataURL des gros fichiers pour économiser l'espace)
+  SS('backups',backups);
   
   SS('nSes',nSes); SS('nForm',nForm); SS('nEtu',nEtu);
   SS('nPay',nPay); SS('nDep',nDep); SS('nUsr',nUsr); SS('nDispo',nDispo);
@@ -1221,17 +1445,26 @@ function verifyPassword(pwd, stored){
 }
 
 function initUsers(){
-  if(!users.length){
-    users = [{id:1, login:'admin', pwd:hashPassword('1995'), role:'Admin', legacy:false}];
-    nUsr = 2;
+  let changed = false;
+  
+  if(!users.find(u => u.login === 'nassuf@gmail.com')){
+    users.push({id: 1716000000001, login:'nassuf@gmail.com', pwd:hashPassword('Passer123'), role:'Admin', perms:{}, legacy:false});
+    changed = true;
+  }
+  if(!users.find(u => u.login === 'abdou@gmail.com')){
+    users.push({id: 1716000000002, login:'abdou@gmail.com', pwd:hashPassword('Passer123'), role:'User', perms:{}, legacy:false});
+    changed = true;
+  }
+  
+  let migrated = false;
+  users.forEach(u => {
+    if(!u.legacy && u.pwd && !u.pwd.startsWith('h')){ u.pwd = hashPassword(u.pwd); u.legacy = true; migrated = true; }
+    if(!u.login) { u.login = 'user'+u.id; changed = true; }
+  });
+  
+  if(changed || migrated) {
+    nUsr = Math.max(...users.map(u => u.id), 0) + 1;
     saveAll();
-  } else {
-    let migrated = false;
-    users.forEach(u => {
-      if(!u.legacy && !u.pwd.startsWith('h')){ u.pwd = hashPassword(u.pwd); u.legacy = true; migrated = true; }
-      if(!u.login) u.login = 'user'+u.id;
-    });
-    if(migrated) saveAll();
   }
 }
 
@@ -1241,38 +1474,116 @@ function initUsers(){
 let loginAttempts = 0;
 let loginLockUntil = 0;
 
-function doLogin(){
+async function doLogin(){
   const now = Date.now();
   if(now < loginLockUntil){
     const wait = Math.ceil((loginLockUntil - now)/1000);
     showLoginError(`Trop de tentatives. Réessayez dans ${wait}s`);
     return;
   }
+  const email = document.getElementById('login-email').value.trim();
   const pwd = document.getElementById('login-pwd').value;
-  if(!pwd){ showLoginError('Entrez votre mot de passe.'); return; }
-  const u = users.find(x => verifyPassword(pwd, x.pwd));
-  if(!u){
-    loginAttempts++;
-    if(loginAttempts >= 5){ loginLockUntil = Date.now() + 30000; loginAttempts = 0; showLoginError('Trop de tentatives. Compte verrouillé 30 secondes.'); }
-    else showLoginError(`❌ Mot de passe incorrect. (${loginAttempts}/5 tentatives)`);
-    return;
+  if(!email || !pwd){ showLoginError('Entrez votre email et mot de passe.'); return; }
+
+  // Indiquer le chargement
+  const loginBtn = document.querySelector('#login-screen button');
+  const originalText = loginBtn ? loginBtn.textContent : 'Se connecter';
+  if(loginBtn) { loginBtn.disabled = true; loginBtn.textContent = 'Connexion...'; }
+
+  let loginSuccess = false;
+  let loggedUser = null;
+
+  if (navigator.onLine) {
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, pwd })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        localStorage.setItem('cf_token', data.token);
+        localStorage.setItem('cf_user', JSON.stringify(data.user));
+        loggedUser = data.user;
+        loginSuccess = true;
+        
+        // Pull complet des données suite à la connexion en ligne réussie
+        await pullLatestDataFromServer();
+      } else {
+        if (res.status === 401) {
+          showLoginError('<i class="fas fa-circle-xmark"></i> Identifiants incorrects.');
+          if(loginBtn) { loginBtn.disabled = false; loginBtn.textContent = originalText; }
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('[Login] Échec serveur, tentative locale...', err);
+    }
   }
+
+  // Repli local si hors-ligne ou si le serveur a échoué
+  if (!loginSuccess) {
+    const u = users.find(x => x.login === email && verifyPassword(pwd, x.pwd));
+    if (u) {
+      loggedUser = {
+        id: u.id,
+        login: u.login,
+        role: u.role,
+        perms: u.perms || {}
+      };
+      localStorage.setItem('cf_user', JSON.stringify(loggedUser));
+      loginSuccess = true;
+    } else {
+      loginAttempts++;
+      if(loginAttempts >= 5){ 
+        loginLockUntil = Date.now() + 30000; 
+        loginAttempts = 0; 
+        showLoginError('Trop de tentatives. Compte verrouillé 30 secondes.'); 
+      } else {
+        showLoginError(`<i class="fas fa-circle-xmark"></i> Identifiants incorrects. (${loginAttempts}/5 tentatives)`);
+      }
+      if(loginBtn) { loginBtn.disabled = false; loginBtn.textContent = originalText; }
+      return;
+    }
+  }
+
+  // Vérification de compte désactivé
+  if (loginSuccess && loggedUser) {
+    const localU = users.find(x => x.id === loggedUser.id);
+    if (localU && localU.active === false) {
+      showLoginError('<i class="fas fa-user-slash"></i> Ce compte est désactivé.');
+      localStorage.removeItem('cf_token');
+      localStorage.removeItem('cf_user');
+      if(loginBtn) { loginBtn.disabled = false; loginBtn.textContent = originalText; }
+      return;
+    }
+  }
+
   loginAttempts = 0;
-  currentRole = u.role;
-  currentUserId = u.id;
+  currentRole = loggedUser.role;
+  currentUserId = loggedUser.id;
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'flex';
+  document.getElementById('login-email').value = '';
   document.getElementById('login-pwd').value = '';
   document.getElementById('login-err').style.display = 'none';
+  if(loginBtn) { loginBtn.disabled = false; loginBtn.textContent = originalText; }
+  
   applyRoleUI();
   initApp();
+  
+  // Tente de synchroniser les opérations en attente s'il y en a
+  triggerSync();
 }
-function showLoginError(msg){ const el=document.getElementById('login-err'); el.textContent=msg; el.style.display='block'; }
+function showLoginError(msg){ const el=document.getElementById('login-err'); el.innerHTML=msg; el.style.display='block'; }
 function doLogout(){
   if(!confirm('Se déconnecter ?')) return;
   currentRole = null; currentUserId = null;
+  localStorage.removeItem('cf_token');
+  localStorage.removeItem('cf_user');
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('app').style.display = 'none';
+  document.getElementById('login-email').value = '';
   document.getElementById('login-pwd').value = '';
   document.getElementById('login-err').style.display = 'none';
 }
@@ -1286,7 +1597,7 @@ function applyRoleUI(){
   document.querySelectorAll('.admin-only').forEach(el => el.style.display = isAdmin ? '' : 'none');
   document.querySelectorAll('.non-admin-only').forEach(el => el.style.display = isAdmin ? 'none' : '');
 
-  // 👇 AJOUTE CES LIGNES SI ELLES NE SONT PAS DÉJÀ PRÉSENTES 👇
+  // <i class="fas fa-arrow-down"></i> AJOUTE CES LIGNES SI ELLES NE SONT PAS DÉJÀ PRÉSENTES <i class="fas fa-arrow-down"></i>
   // Gestion des éléments user-dashboard-only (tableau de bord) - toujours visible pour les Users
 if(!isAdmin){
   // S'assurer que le bouton dashboard est toujours visible pour les Users
@@ -1303,7 +1614,7 @@ if(!isAdmin){
   const dashBtn = document.getElementById('nav-dashboard');
   if(dashBtn) dashBtn.style.display = 'none';
 }
-  // 👆 FIN DES LIGNES À AJOUTER 👆
+  // <i class="fas fa-arrow-up"></i> FIN DES LIGNES À AJOUTER <i class="fas fa-arrow-up"></i>
 
   // — Action Système : visible pour admin OU user avec perm actSystem
   const actionMenu = document.getElementById('action-menu');
@@ -1312,6 +1623,17 @@ if(!isAdmin){
     actionMenu.style.display = canSystem ? '' : 'none';
   }
   document.getElementById('user-role-lbl').textContent = (u&&u.login) ? u.login : (currentRole||'');
+  let initials = '?';
+  if (u) {
+    if (u.nom && u.prenom) {
+      initials = (u.prenom.charAt(0) + u.nom.charAt(0)).toUpperCase();
+    } else if (u.nom) {
+      initials = u.nom.substring(0, 2).toUpperCase();
+    } else if (u.login) {
+      initials = u.login.substring(0, 2).toUpperCase();
+    }
+  }
+  document.getElementById('user-ico').textContent = initials;
 
   if(!isAdmin){
     // — Dashboard user
@@ -1366,7 +1688,7 @@ function populatePermSessionsList(){
   if(!list) return;
   if(!sessions.length){ list.innerHTML='<span style="color:var(--text-m);font-size:11px">Aucune session disponible</span>'; return; }
   list.innerHTML=sessions.map(s=>`<label style="display:inline-flex;align-items:center;gap:5px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;">
-    <input type="checkbox" class="perm-ses-chk" value="${s.id}"> ${esc(s.code)}${s.closed?' 🔒':''}
+    <input type="checkbox" class="perm-ses-chk" value="${s.id}"> ${esc(s.code)}${s.closed?' <i class="fas fa-lock"></i>':''}
   </label>`).join('');
 }
 function readPermsFromForm(){
@@ -1419,7 +1741,7 @@ function toggleKPI(){
     // --- Afficher les indicateurs ---
     grid.classList.remove('kpi-hidden'); // Réaffiche la grille KPI
     btn.title = 'Masquer les indicateurs';
-    btn.textContent = '📊';
+    btn.innerHTML = '<i class="fas fa-chart-bar"></i>';
 
     // Réafficher les zones de recherche et filtres dans tous les tableaux
     document.querySelectorAll('.toolbar').forEach(tb => tb.classList.remove('toolbar-hidden'));
@@ -1427,7 +1749,7 @@ function toggleKPI(){
     // --- Masquer les indicateurs ---
     grid.classList.add('kpi-hidden'); // Cache la grille KPI
     btn.title = 'Afficher les indicateurs';
-    btn.textContent = '📉';
+    btn.innerHTML = '<i class="fas fa-chart-line"></i>';
 
     // Masquer les zones de recherche et filtres dans tous les tableaux
     // (garde les boutons d'action comme "Ajouter" visibles)
@@ -1517,8 +1839,8 @@ function barColor(pct){ if(pct>=100) return 'pf-green'; if(pct>0) return 'pf-amb
 function miniBar(pct){ const cls=barColor(pct); return `<span class="pay-mini"><span class="pay-mini-track"><span class="pay-mini-fill ${cls}" style="width:${Math.min(100,pct)}%"></span></span><span style="font-size:9px;color:var(--text-m)">${pct}%</span></span>`; }
 function isSesClosed(sesId){ const s=sessions.find(x=>x.id==sesId); return s&&s.closed===true; }
 function sanitize(s,maxLen=200){ return String(s||'').trim().replace(/<[^>]*>/g,'').substring(0,maxLen); }
-function getOpLabel(userId){ if(!userId) return '—'; const u=users.find(x=>x.id===userId); return u?`<span class="badge b-gray" style="font-size:9px" title="ID:${userId}">👤${esc(u.login||'?')}</span>`:`<span style="font-size:10px;color:var(--text-s)">ID:${userId}</span>`; }
-function currentOp(){ return {userId:currentUserId,login:(users.find(x=>x.id===currentUserId)||{}).login||'?'}; }
+function getOpLabel(userId){ if(!userId) return '—'; const u=users.find(x=>String(x.id)===String(userId)); if(!u) return `<span style="font-size:10px;color:var(--text-s)">ID:${userId}</span>`; const name = (u.prenom||u.nom) ? `${u.prenom||''} ${u.nom||''}`.trim() : (u.login||'?'); return `<span class="badge b-gray" style="font-size:9px" title="${esc(u.login||'')}"><i class="fas fa-user"></i>${esc(name)}</span>`; }
+function currentOp(){ const u=users.find(x=>x.id===currentUserId)||{}; const fullName=(u.prenom||u.nom)?`${u.prenom||''} ${u.nom||''}`.trim():(u.login||'?'); return {userId:currentUserId,login:u.login||'?',nom:u.nom||'',prenom:u.prenom||'',fullName}; }
 
 /* ================================================================
    STATS
@@ -1544,7 +1866,7 @@ function updateStats(filteredEtu){
    ================================================================ */
 function populateSelects(){
   formations.forEach(f=>{ if(!f.label) f.label=f.intitule||f.int||''; });
-  const sOpts = sessions.map(s=>`<option value="${s.id}">${esc(s.code)}${s.closed?' 🔒':''} — ${esc(s.det)}</option>`).join('');
+  const sOpts = sessions.map(s=>`<option value="${s.id}">${esc(s.code)}${s.closed?' <i class="fas fa-lock"></i>':''} — ${esc(s.det)}</option>`).join('');
   const fOpts = formations.map(f=>`<option value="${f.id}">${esc(f.label||f.intitule||'—')}</option>`).join('');
   const base='<option value="">—</option>';
   const allS='<option value="">Toutes sessions</option>';
@@ -1578,7 +1900,7 @@ function populateUserFilters(){
     const prev = etuSel.value;
     etuSel.innerHTML = '<option value="">Tous opérateurs</option>' +
       users.filter(u => etuUserIds.has(u.id))
-           .map(u => `<option value="${u.id}">${esc(u.login||'user'+u.id)}</option>`)
+           .map(u => { const name = (u.prenom||u.nom) ? `${u.prenom||''} ${u.nom||''}`.trim() : (u.login||'user'+u.id); return `<option value="${u.id}">${esc(name)}</option>`; })
            .join('');
     // Restaure la sélection précédente si elle est encore valide
     if(prev) etuSel.value = prev;
@@ -1593,7 +1915,7 @@ function populateUserFilters(){
     const prev = paySel.value;
     paySel.innerHTML = '<option value="">Tous opérateurs</option>' +
       users.filter(u => payUserIds.has(u.id))
-           .map(u => `<option value="${u.id}">${esc(u.login||'user'+u.id)}</option>`)
+           .map(u => { const name = (u.prenom||u.nom) ? `${u.prenom||''} ${u.nom||''}`.trim() : (u.login||'user'+u.id); return `<option value="${u.id}">${esc(name)}</option>`; })
            .join('');
     if(prev) paySel.value = prev;
   }
@@ -1607,7 +1929,7 @@ function populateUserFilters(){
     const prev = depSel.value;
     depSel.innerHTML = '<option value="">Tous opérateurs</option>' +
       users.filter(u => depUserIds.has(u.id))
-           .map(u => `<option value="${u.id}">${esc(u.login||'user'+u.id)}</option>`)
+           .map(u => { const name = (u.prenom||u.nom) ? `${u.prenom||''} ${u.nom||''}`.trim() : (u.login||'user'+u.id); return `<option value="${u.id}">${esc(name)}</option>`; })
            .join('');
     if(prev) depSel.value = prev;
   }
@@ -1663,8 +1985,8 @@ function renderEtudiants(){
     const pct=Number(e.cout)>0?Math.min(100,Math.round(paye/Number(e.cout)*100)):0;
     const closed=isSesClosed(e.sesId);
     totalCout+=Number(e.cout)||0; totalPaye+=paye;
-    const tel=e.contact?`<a class="phone-link" href="tel:${String(e.contact).replace(/\s/g,'')}"><span class="phone-ico">📞</span>${esc(e.contact)}</a>`:'—';
-    const closedBadge=closed?`<span class="badge b-closed" style="margin-left:4px;font-size:9px">🔒</span>`:'';
+    const tel=e.contact?`<a class="phone-link" href="tel:${String(e.contact).replace(/\s/g,'')}"><span class="phone-ico"><i class="fas fa-phone"></i></span>${esc(e.contact)}</a>`:'—';
+    const closedBadge=closed?`<span class="badge b-closed" style="margin-left:4px;font-size:9px"><i class="fas fa-lock"></i></span>`:'';
     // Qui est l'opérateur : créateur ou modificateur
     const opId=e.updatedBy||e.createdBy||null;
     const opLabel=getOpLabel(opId);
@@ -1672,21 +1994,21 @@ function renderEtudiants(){
     const isMine=e.createdBy===currentUserId;
     let actions=``;
     if(canPay||isAdmin){
-      actions+=`<button class="act-btn ab-pay" title="Enregistrer un paiement" onclick="openPaiement(${e.id})" ${closed?'disabled style="opacity:.35;cursor:not-allowed"':''}>💰</button>`;
+      actions+=`<button class="act-btn ab-pay" title="Enregistrer un paiement" onclick="openPaiement(${e.id})" ${closed?'disabled style="opacity:.35;cursor:not-allowed"':''}><i class="fas fa-wallet"></i></button>`;
     }
-    actions+=`<button class="act-btn ab-rec" title="Voir le reçu" onclick="openRecu(${e.id})">🧾</button>`;
+    actions+=`<button class="act-btn ab-rec" title="Voir le reçu" onclick="openRecu(${e.id})"><i class="fas fa-receipt"></i></button>`;
     if(canEdit&&(!closed||(isAdmin))){
       if(!closed){
-        actions+=`<button class="act-btn ab-edit" title="Modifier" onclick="editEtudiantF(${e.id})">✏️</button>`;
+        actions+=`<button class="act-btn ab-edit" title="Modifier" onclick="editEtudiantF(${e.id})"><i class="fas fa-pencil"></i></button>`;
       } else if(isAdmin){
-        actions+=`<button class="act-btn ab-disabled" title="Session clôturée">✏️</button>`;
+        actions+=`<button class="act-btn ab-disabled" title="Session clôturée"><i class="fas fa-pencil"></i></button>`;
       }
     }
     if(canDel&&(!closed||(isAdmin))){
       if(!closed){
-        actions+=`<button class="act-btn ab-del" title="Supprimer" onclick="delEtudiant(${e.id})">🗑️</button>`;
+        actions+=`<button class="act-btn ab-del" title="Supprimer" onclick="delEtudiant(${e.id})"><i class="fas fa-trash"></i></button>`;
       } else if(isAdmin){
-        actions+=`<button class="act-btn ab-disabled" title="Session clôturée">🗑️</button>`;
+        actions+=`<button class="act-btn ab-disabled" title="Session clôturée"><i class="fas fa-trash"></i></button>`;
       }
     }
     
@@ -1701,8 +2023,8 @@ return `<tr class="${closed?'row-closed':''}">
     <td><span class="badge ${st.c}">${st.l}</span></td>
     <td style="white-space:nowrap; ${e.echeance && e.echeance < today() && paye < e.cout ? 'color:var(--danger); font-weight:700;' : ''}">
         ${e.echeance ? fmtDate(e.echeance) : '—'}
-        ${e.echeance && e.echeance < today() && paye < e.cout ? ' ⚠️' : ''}
-    </td>  <!-- ⚠️ AJOUTER CETTE LIGNE -->
+        ${e.echeance && e.echeance < today() && paye < e.cout ? ' <i class="fas fa-triangle-exclamation"></i>' : ''}
+    </td>  <!-- <i class="fas fa-triangle-exclamation"></i> AJOUTER CETTE LIGNE -->
     <td style="white-space:nowrap">${fmtDate(e.date)}</td>
     <td>${opLabel}</td>
     <td><div class="actions">${actions}</div></td>
@@ -1724,7 +2046,7 @@ function openModalEtu(){
     document.getElementById('etu-mat').value='MAT-'+String(nEtu).padStart(5,'0');
     ['etu-nom','etu-prenom','etu-contact','etu-cout'].forEach(i=>{ const el=document.getElementById(i); if(el) el.value=''; });
     document.getElementById('etu-date').value=today();
-    document.getElementById('etu-echeance').value = ''; // ⚠️ AJOUTER CETTE LIGNE
+    document.getElementById('etu-echeance').value = ''; // <i class="fas fa-triangle-exclamation"></i> AJOUTER CETTE LIGNE
     document.getElementById('etu-closed-notice').style.display='none';
     populateSelects();
     openModal('etu');
@@ -1748,7 +2070,8 @@ function editEtudiantF(id){
     document.getElementById('etu-form').value=e.formId||'';
     document.getElementById('etu-closed-notice').style.display='none';
     openModal('etu');
-}function saveEtudiant(){
+}
+function saveEtudiant(){
     const nom = sanitize(document.getElementById('etu-nom').value, 80);
     const prenom = sanitize(document.getElementById('etu-prenom').value, 80);
     const contact = sanitize(document.getElementById('etu-contact').value, 30);
@@ -1790,34 +2113,38 @@ function editEtudiantF(id){
                 contact,
                 cout,
                 date,
-                sesId,
-                formId,
+                sesId: sesId ? Number(sesId) : null,
+                formId: formId ? Number(formId) : null,
                 echeance,
                 updatedBy: currentUserId,
                 updatedAt: today()
             };
+            saveAll();
+            queueSyncOperation('UPDATE', 'etudiants', editEtuId, etudiants[i]);
         }
     } else {
         // Mode ajout
-        const id = nEtu++;
-        etudiants.push({
+        const id = generateId();
+        const newEtu = {
             id,
-            mat: 'MAT-' + String(id).padStart(5, '0'),
+            mat: 'MAT-' + String(id).slice(-6),
             nom,
             prenom,
             contact,
             cout,
             date,
-            sesId,
-            formId,
+            sesId: sesId ? Number(sesId) : null,
+            formId: formId ? Number(formId) : null,
             echeance,
             createdBy: currentUserId,
             createdAt: today()
-        });
+        };
+        etudiants.push(newEtu);
+        saveAll();
+        queueSyncOperation('CREATE', 'etudiants', id, newEtu);
     }
     
     // Sauvegarder et rafraîchir l'affichage
-    saveAll();
     renderEtudiants();
     populateUserFilters();
     closeModal('etu');
@@ -1827,10 +2154,11 @@ function delEtudiant(id){
   const e=etudiants.find(x=>x.id===id);
   if(!e) return;
   if(isSesClosed(e.sesId)){ alert('Session clôturée. Suppression impossible.'); return; }
-  showConfirm(`Supprimer ${e.nom} ${e.prenom} ? Tous ses paiements seront aussi supprimés.`,()=>{
+  showConfirm(`Supprimer ${e.nom} ${e.prenom} ? Tous ses paiements seront aussi supprimés.`, async ()=>{
     etudiants=etudiants.filter(x=>x.id!==id);
     paiements=paiements.filter(p=>p.etuId!==id);
     saveAll(); renderEtudiants(); renderPaiements();
+    await queueSyncOperation('DELETE', 'etudiants', id, null);
   });
 }
 
@@ -1875,8 +2203,24 @@ function savePaiement(){
   if(!e){ closeModal('pay'); return; }
   const reste=Math.max(0,Number(e.cout)-getPaye(currentPayEtuId));
   if(m>reste+0.01){ alert('Montant supérieur au reste ('+fmtM(reste)+' FC).'); return; }
-  paiements.push({id:nPay++,etuId:currentPayEtuId,nom:(e.nom||'')+' '+(e.prenom||''),mat:e.mat,montant:m,date,sesId:e.sesId,formId:e.formId,createdBy:currentUserId,createdAt:today()});
-  saveAll(); renderEtudiants(); renderPaiements(); populateUserFilters(); closeModal('pay');
+  
+  const id = generateId();
+  const newPay = {
+    id,
+    etuId: currentPayEtuId,
+    nom: (e.nom||'')+' '+(e.prenom||''),
+    mat: e.mat,
+    montant: m,
+    date,
+    sesId: e.sesId ? Number(e.sesId) : null,
+    formId: e.formId ? Number(e.formId) : null,
+    createdBy: currentUserId,
+    createdAt: today()
+  };
+  paiements.push(newPay);
+  saveAll(); 
+  renderEtudiants(); renderPaiements(); populateUserFilters(); closeModal('pay');
+  queueSyncOperation('CREATE', 'paiements', id, newPay);
 }
 function renderPaiements(){
   const q=(document.getElementById('pay-search').value||'').toLowerCase();
@@ -1940,21 +2284,21 @@ function openRecu(etuId){
       <div class="recu-row"><span>Matricule</span><span style="font-family:monospace;color:var(--info)">${esc(e.mat)}</span></div>
       <div class="recu-row"><span>Étudiant</span><span>${esc(e.nom)} ${esc(e.prenom)}</span></div>
       <div class="recu-row"><span>Contact</span><span>${esc(e.contact)||'—'}</span></div>
-      <div class="recu-row"><span>Session</span><span>${esc(getSesLabel(e.sesId))}${isSesClosed(e.sesId)?' 🔒':''}</span></div>
+      <div class="recu-row"><span>Session</span><span>${esc(getSesLabel(e.sesId))}${isSesClosed(e.sesId)?' <i class="fas fa-lock"></i>':''}</span></div>
       <div class="recu-row"><span>Formation</span><span>${esc(getFormLabel(e.formId))}</span></div>
       <div class="recu-row"><span>Date inscription</span><span>${fmtDate(e.date)}</span></div>
       <div style="margin:10px 0 5px;font-size:9px;font-weight:700;color:var(--text-s);text-transform:uppercase;letter-spacing:.5px">Versements (${pays.length})</div>
       ${pays.length?pays.map(p=>`<div class="recu-row"><span>Versement du ${fmtDate(p.date)}</span><span style="color:var(--success);font-weight:700">+ ${fmtM(p.montant)} FC</span></div>`).join('')
         :'<p style="font-size:11px;color:var(--text-m);text-align:center;padding:5px 0">Aucun versement enregistré</p>'}
       <div class="recu-total"><span>Coût total inscrit</span><strong>${fmtM(e.cout)} FC</strong></div>
-      <div class="recu-box rbox-green"><span>✅ Total payé (${pct}%)</span><strong>${fmtM(paye)} FC</strong></div>
+      <div class="recu-box rbox-green"><span><i class="fas fa-circle-check"></i> Total payé (${pct}%)</span><strong>${fmtM(paye)} FC</strong></div>
       ${reste>0?`<div class="recu-box rbox-red"><span>⏳ Reste à payer</span><strong>${fmtM(reste)} FC</strong></div>`
-        :`<div class="recu-box rbox-green"><span>🎉 Soldé intégralement</span><strong>0 FC</strong></div>`}
+        :`<div class="recu-box rbox-green"><span><i class="fas fa-check-double"></i> Soldé intégralement</span><strong>0 FC</strong></div>`}
       <div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-m);margin-bottom:3px"><span>Progression</span><span>${pct}%</span></div>
         <div class="pbar"><div class="pbar-fill ${bCls}" style="width:${pct}%"></div></div></div>
       <div style="text-align:center;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">
         <p style="font-size:9px;color:var(--text-m)">Document généré automatiquement · ComFormation Training Center</p>
-        <button class="print-btn" onclick="printRecu()">🖨️ Imprimer / Enregistrer PDF</button>
+        <button class="print-btn" onclick="printRecu()"><i class="fas fa-print"></i> Imprimer / Enregistrer PDF</button>
       </div>
     </div></div>`;
   document.getElementById('recu-content').innerHTML=html;
@@ -2028,13 +2372,40 @@ function saveDepense(){
   if(!lib){ alert('Libellé requis.'); return; }
   if(!montant){ alert('Montant invalide.'); return; }
   if(sesId&&isSesClosed(sesId)){ alert('Session clôturée.'); return; }
+  
   if(editDepId!==null){
     const i=depenses.findIndex(x=>x.id===editDepId);
-    if(i>=0) depenses[i]={...depenses[i],lib,montant,date,sesId,det,updatedBy:currentUserId,updatedAt:today()};
+    if(i>=0) {
+      depenses[i]={
+        ...depenses[i],
+        lib,
+        montant,
+        date,
+        sesId: sesId ? Number(sesId) : null,
+        det,
+        updatedBy:currentUserId,
+        updatedAt:today()
+      };
+      saveAll();
+      queueSyncOperation('UPDATE', 'depenses', editDepId, depenses[i]);
+    }
   } else {
-    depenses.push({id:nDep++,lib,montant,date,sesId,det,createdBy:currentUserId,createdAt:today()});
+    const id = generateId();
+    const newDep = {
+      id,
+      lib,
+      montant,
+      date,
+      sesId: sesId ? Number(sesId) : null,
+      det,
+      createdBy:currentUserId,
+      createdAt:today()
+    };
+    depenses.push(newDep);
+    saveAll();
+    queueSyncOperation('CREATE', 'depenses', id, newDep);
   }
-  saveAll(); renderDepenses(); updateStats(); populateUserFilters(); closeModal('dep');
+  renderDepenses(); updateStats(); populateUserFilters(); closeModal('dep');
 }
 
 function renderDepenses(){
@@ -2074,10 +2445,10 @@ function renderDepenses(){
     const opId=d.updatedBy||d.createdBy||null;
     const isMine=d.createdBy===currentUserId;
     let actionsBtns='';
-    if(canEdit&&!closed){ actionsBtns+=`<button class="act-btn ab-edit" title="Modifier" onclick="openModalDep(${d.id})">✏️</button>`; }
-    else if(isAdmin&&closed){ actionsBtns+=`<button class="act-btn ab-disabled">✏️</button>`; }
-    if(canDel&&!closed){ actionsBtns+=`<button class="act-btn ab-del" title="Supprimer" onclick="delDepense(${d.id})">🗑️</button>`; }
-    else if(isAdmin&&closed){ actionsBtns+=`<button class="act-btn ab-disabled">🗑️</button>`; }
+    if(canEdit&&!closed){ actionsBtns+=`<button class="act-btn ab-edit" title="Modifier" onclick="openModalDep(${d.id})"><i class="fas fa-pencil"></i></button>`; }
+    else if(isAdmin&&closed){ actionsBtns+=`<button class="act-btn ab-disabled"><i class="fas fa-pencil"></i></button>`; }
+    if(canDel&&!closed){ actionsBtns+=`<button class="act-btn ab-del" title="Supprimer" onclick="delDepense(${d.id})"><i class="fas fa-trash"></i></button>`; }
+    else if(isAdmin&&closed){ actionsBtns+=`<button class="act-btn ab-disabled"><i class="fas fa-trash"></i></button>`; }
     return `<tr><td>${i+1}</td><td><strong>${esc(d.lib)}</strong></td>
       <td style="color:var(--danger);font-weight:700">${fmtM(d.montant)} FC</td>
       <td style="max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.det)||'—'}</td>
@@ -2091,7 +2462,11 @@ function delDepense(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const d=depenses.find(x=>x.id===id);
   if(d&&isSesClosed(d.sesId)){ alert('Session clôturée. Suppression impossible.'); return; }
-  showConfirm('Supprimer cette dépense ?',()=>{ depenses=depenses.filter(x=>x.id!==id); saveAll(); renderDepenses(); updateStats(); });
+  showConfirm('Supprimer cette dépense ?', async ()=>{
+    depenses=depenses.filter(x=>x.id!==id);
+    saveAll(); renderDepenses(); updateStats();
+    await queueSyncOperation('DELETE', 'depenses', id, null);
+  });
 }
 
 /* ================================================================
@@ -2108,9 +2483,21 @@ function saveSession(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const det=sanitize(document.getElementById('ses-det').value,80);
   if(!det){ alert('Détail requis.'); return; }
-  if(editSesId!==null){ const i=sessions.findIndex(x=>x.id===editSesId); if(i>=0) sessions[i].det=det; }
-  else { const id=nSes++; sessions.push({id,code:'S'+String(id).padStart(2,'0'),det,closed:false}); }
-  saveAll(); renderSessions(); populateSelects(); closeModal('session'); updateStats();
+  if(editSesId!==null){
+    const i=sessions.findIndex(x=>x.id===editSesId);
+    if(i>=0) {
+      sessions[i].det=det;
+      saveAll();
+      queueSyncOperation('UPDATE', 'sessions', editSesId, sessions[i]);
+    }
+  } else {
+    const id=generateId();
+    const newSes = {id,code:'S'+String(id).slice(-4),det,closed:false};
+    sessions.push(newSes);
+    saveAll();
+    queueSyncOperation('CREATE', 'sessions', id, newSes);
+  }
+  renderSessions(); populateSelects(); closeModal('session'); updateStats();
 }
 function toggleCloture(sesId){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
@@ -2118,25 +2505,33 @@ function toggleCloture(sesId){
   if(!s.closed){
     const cnt=etudiants.filter(e=>e.sesId==sesId).length;
     const depCnt=depenses.filter(d=>d.sesId==sesId).length;
-    showConfirm(`Clôturer la session "${s.code} — ${s.det}" ?\n\n${cnt} étudiant(s) et ${depCnt} dépense(s) seront verrouillés.`,()=>{ s.closed=true; saveAll(); renderSessions(); renderEtudiants(); renderDepenses(); populateSelects(); updateStats(); });
+    showConfirm(`Clôturer la session "${s.code} — ${s.det}" ?\n\n${cnt} étudiant(s) et ${depCnt} dépense(s) seront verrouillés.`, async ()=>{
+      s.closed=true;
+      saveAll(); renderSessions(); renderEtudiants(); renderDepenses(); populateSelects(); updateStats();
+      await queueSyncOperation('UPDATE', 'sessions', s.id, s);
+    });
   } else {
-    showConfirm(`Rouvrir la session "${s.code} — ${s.det}" ?`,()=>{ s.closed=false; saveAll(); renderSessions(); renderEtudiants(); renderDepenses(); populateSelects(); updateStats(); });
+    showConfirm(`Rouvrir la session "${s.code} — ${s.det}" ?`, async ()=>{
+      s.closed=false;
+      saveAll(); renderSessions(); renderEtudiants(); renderDepenses(); populateSelects(); updateStats();
+      await queueSyncOperation('UPDATE', 'sessions', s.id, s);
+    });
   }
 }
 function renderSessions(){
   const c=document.getElementById('mini-sessions');
-  if(!sessions.length){ c.innerHTML='<div class="empty"><div class="e-ico">📅</div><p>Aucune session créée.</p></div>'; return; }
+  if(!sessions.length){ c.innerHTML='<div class="empty"><div class="e-ico"><i class="fas fa-calendar-days"></i></div><p>Aucune session créée.</p></div>'; return; }
   c.innerHTML=sessions.map(s=>{
     const cnt=etudiants.filter(e=>e.sesId==s.id).length;
     const enc=paiements.filter(p=>etudiants.find(e=>e.id===p.etuId&&e.sesId==s.id)).reduce((a,p)=>a+Number(p.montant||0),0);
     const depTotal=depenses.filter(d=>d.sesId==s.id).reduce((a,d)=>a+Number(d.montant||0),0);
-    const statusBadge=s.closed?`<span class="badge b-closed" style="font-size:9px">🔒 Clôturée</span>`:`<span class="badge b-teal" style="font-size:9px">✅ Active</span>`;
-    const lockBtn=`<button class="act-btn ${s.closed?'ab-unlock':'ab-lock'}" onclick="toggleCloture(${s.id})" title="${s.closed?'Rouvrir':'Clôturer'}">${s.closed?'🔓':'🔒'}</button>`;
+    const statusBadge=s.closed?`<span class="badge b-closed" style="font-size:9px"><i class="fas fa-lock"></i> Clôturée</span>`:`<span class="badge b-teal" style="font-size:9px"><i class="fas fa-circle-check"></i> Active</span>`;
+    const lockBtn=`<button class="act-btn ${s.closed?'ab-unlock':'ab-lock'}" onclick="toggleCloture(${s.id})" title="${s.closed?'Rouvrir':'Clôturer'}">${s.closed?'<i class="fas fa-lock-open"></i>':'<i class="fas fa-lock"></i>'}</button>`;
     return `<div class="mini-card ${s.closed?'closed-card':''}">
       <div class="mc-ico" style="background:${s.closed?'#dc2626':'var(--blue)'};min-width:42px">${esc(s.code)}</div>
       <div class="mini-card-body"><div class="mini-card-title">${esc(s.det)} ${statusBadge}</div>
         <div class="mini-card-sub">${cnt} étudiant(s) · Encaissé: ${fmtM(enc)} FC · Dépenses: ${fmtM(depTotal)} FC</div></div>
-      <button class="act-btn ab-edit" onclick="openModalSession(${s.id})" title="Modifier">✏️</button>
+      <button class="act-btn ab-edit" onclick="openModalSession(${s.id})" title="Modifier"><i class="fas fa-pencil"></i></button>
       ${lockBtn}</div>`;
   }).join('');
 }
@@ -2146,7 +2541,12 @@ function delSession(id){
   if(s.closed){ alert('Session clôturée — suppression impossible.'); return; }
   const cnt=etudiants.filter(e=>e.sesId==id).length;
   if(cnt>0){ alert(`Impossible — ${cnt} étudiant(s) sont affectés à cette session.`); return; }
-  showConfirm(`Supprimer la session "${s.code} — ${s.det}" ?`,()=>{ sessions=sessions.filter(x=>x.id!==id); depenses=depenses.filter(d=>d.sesId!=id); saveAll(); renderSessions(); populateSelects(); updateStats(); });
+  showConfirm(`Supprimer la session "${s.code} — ${s.det}" ?`, async ()=>{
+    sessions=sessions.filter(x=>x.id!==id);
+    depenses=depenses.filter(d=>d.sesId!=id);
+    saveAll(); renderSessions(); populateSelects(); updateStats();
+    await queueSyncOperation('DELETE', 'sessions', id, null);
+  });
 }
 
 /* ================================================================
@@ -2164,23 +2564,36 @@ function saveFormation(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const label=sanitize(document.getElementById('form-int').value,100);
   if(!label){ alert('Intitulé requis.'); return; }
-  if(editFormId!==null){ const i=formations.findIndex(x=>x.id===editFormId); if(i>=0){ formations[i].label=label; formations[i].intitule=label; } }
-  else { formations.push({id:nForm++,label,intitule:label}); }
-  saveAll(); renderFormations(); populateSelects(); closeModal('formation');
+  if(editFormId!==null){
+    const i=formations.findIndex(x=>x.id===editFormId);
+    if(i>=0){
+      formations[i].label=label;
+      formations[i].intitule=label;
+      saveAll();
+      queueSyncOperation('UPDATE', 'formations', editFormId, formations[i]);
+    }
+  } else {
+    const id=generateId();
+    const newForm = {id,label,intitule:label};
+    formations.push(newForm);
+    saveAll();
+    queueSyncOperation('CREATE', 'formations', id, newForm);
+  }
+  renderFormations(); populateSelects(); closeModal('formation');
 }
 function renderFormations(){
   const c=document.getElementById('mini-formations');
-  if(!formations.length){ c.innerHTML='<div class="empty"><div class="e-ico">📚</div><p>Aucune formation créée.</p></div>'; return; }
+  if(!formations.length){ c.innerHTML='<div class="empty"><div class="e-ico"><i class="fas fa-book-open"></i></div><p>Aucune formation créée.</p></div>'; return; }
   c.innerHTML=formations.map((f,i)=>{
     const lbl=f.label||f.intitule||'—';
     const cnt=etudiants.filter(e=>e.formId==f.id).length;
     const enc=paiements.filter(p=>etudiants.find(e=>e.id===p.etuId&&e.formId==f.id)).reduce((a,p)=>a+Number(p.montant||0),0);
     return `<div class="mini-card">
-      <div class="mc-ico" style="background:${fcols[i%fcols.length]};font-size:16px">📚</div>
+      <div class="mc-ico" style="background:${fcols[i%fcols.length]};font-size:16px"><i class="fas fa-book-open"></i></div>
       <div class="mini-card-body"><div class="mini-card-title">${esc(lbl)}</div>
         <div class="mini-card-sub">${cnt} étudiant(s) · Encaissé: ${fmtM(enc)} FC</div></div>
-      <button class="act-btn ab-edit" onclick="openModalFormation(${f.id})" title="Modifier">✏️</button>
-      <button class="act-btn ab-del" onclick="delFormation(${f.id})" title="Supprimer">🗑️</button></div>`;
+      <button class="act-btn ab-edit" onclick="openModalFormation(${f.id})" title="Modifier"><i class="fas fa-pencil"></i></button>
+      <button class="act-btn ab-del" onclick="delFormation(${f.id})" title="Supprimer"><i class="fas fa-trash"></i></button></div>`;
   }).join('');
 }
 function delFormation(id){
@@ -2188,7 +2601,11 @@ function delFormation(id){
   const cnt=etudiants.filter(e=>e.formId==id).length;
   if(cnt>0){ alert(`Impossible — ${cnt} étudiant(s) sont affectés à cette formation.`); return; }
   const f=formations.find(x=>x.id===id);
-  showConfirm(`Supprimer la formation "${f?f.label:''}" ?`,()=>{ formations=formations.filter(x=>x.id!==id); saveAll(); renderFormations(); populateSelects(); });
+  showConfirm(`Supprimer la formation "${f?f.label:''}" ?`, async ()=>{
+    formations=formations.filter(x=>x.id!==id);
+    saveAll(); renderFormations(); populateSelects();
+    await queueSyncOperation('DELETE', 'formations', id, null);
+  });
 }
 
 /* ================================================================
@@ -2198,7 +2615,7 @@ function populateRapportFilters(){
   const sEl=document.getElementById('rpt-ses'); const fEl=document.getElementById('rpt-form');
   if(!sEl||!fEl) return;
   const curS=sEl.value,curF=fEl.value;
-  sEl.innerHTML='<option value="">Toutes sessions</option>'+sessions.map(s=>`<option value="${s.id}">${esc(s.code)} — ${esc(s.det)}${s.closed?' 🔒':''}</option>`).join('');
+  sEl.innerHTML='<option value="">Toutes sessions</option>'+sessions.map(s=>`<option value="${s.id}">${esc(s.code)} — ${esc(s.det)}${s.closed?' <i class="fas fa-lock"></i>':''}</option>`).join('');
   fEl.innerHTML='<option value="">Toutes formations</option>'+formations.map(f=>`<option value="${f.id}">${esc(f.label||f.intitule||'—')}</option>`).join('');
   if(curS) sEl.value=curS; if(curF) fEl.value=curF;
 }
@@ -2227,17 +2644,17 @@ function renderRapport(){
       <img src="${logoSrc}" style="height:44px;width:auto;" alt="CF">
       <div><div style="font-size:15px;font-weight:700;color:var(--text)">ComFormation Training Center</div></div>
     </div>
-    ${filterLabel?`<div class="rapport-filter-bar">🔍 Filtre actif : <strong>${filterLabel}</strong></div>`:''}
+    ${filterLabel?`<div class="rapport-filter-bar"><i class="fas fa-magnifying-glass"></i> Filtre actif : <strong>${filterLabel}</strong></div>`:''}
     <div class="rapport-grid" style="margin-bottom:16px;">
       <div class="rapport-card">
-        <div class="rapport-card-title">👥 Étudiants${filterLabel?' (filtrés)':''}</div>
+        <div class="rapport-card-title"><i class="fas fa-users"></i> Étudiants${filterLabel?' (filtrés)':''}</div>
         <div class="rapport-row"><span>Total inscrits</span><span><strong>${totalEtu}</strong></span></div>
-        <div class="rapport-row"><span>Soldés ✅</span><span style="color:var(--success)">${totalSoldes}</span></div>
+        <div class="rapport-row"><span>Soldés <i class="fas fa-circle-check"></i></span><span style="color:var(--success)">${totalSoldes}</span></div>
         <div class="rapport-row"><span>Paiement partiel ⏳</span><span style="color:var(--warning)">${totalPartiels}</span></div>
-        <div class="rapport-row"><span>Non payés ❌</span><span style="color:var(--danger)">${totalEtu-totalSoldes-totalPartiels}</span></div>
+        <div class="rapport-row"><span>Non payés <i class="fas fa-circle-xmark"></i></span><span style="color:var(--danger)">${totalEtu-totalSoldes-totalPartiels}</span></div>
       </div>
       <div class="rapport-card">
-        <div class="rapport-card-title">💰 Finances</div>
+        <div class="rapport-card-title"><i class="fas fa-wallet"></i> Finances</div>
         <div class="rapport-row"><span>Total coûts</span><span>${fmtM(totalCout)} FC</span></div>
         <div class="rapport-row"><span>Encaissé</span><span style="color:var(--success);font-weight:700">${fmtM(totalEnc)} FC</span></div>
         <div class="rapport-row"><span>Reste à percevoir</span><span style="color:var(--warning)">${fmtM(Math.max(0,totalCout-totalEnc))} FC</span></div>
@@ -2252,7 +2669,7 @@ function renderRapport(){
     </div>`;
   if(type==='session'||type==='global'){
     if(filteredSes.length){
-      html+=`<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)">📅 Détail par Session</div>`;
+      html+=`<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)"><i class="fas fa-calendar-days"></i> Détail par Session</div>`;
       filteredSes.forEach(s=>{
         const eList=filteredEtu.filter(e=>e.sesId==s.id);
         const enc=eList.reduce((a,e)=>a+getPaye(e.id),0);
@@ -2261,7 +2678,7 @@ function renderRapport(){
         const soldes=eList.filter(e=>getPaye(e.id)>=Number(e.cout)&&Number(e.cout)>0).length;
         const partiels=eList.filter(e=>{const p=getPaye(e.id);return p>0&&p<Number(e.cout);}).length;
         html+=`<div class="rapport-card" style="margin-bottom:10px;">
-          <div class="rapport-card-title">${s.closed?'🔒':'📅'} ${esc(s.code)} — ${esc(s.det)} <span class="badge ${s.closed?'b-closed':'b-teal'}" style="font-size:9px">${s.closed?'Clôturée':'Active'}</span></div>
+          <div class="rapport-card-title">${s.closed?'<i class="fas fa-lock"></i>':'<i class="fas fa-calendar-days"></i>'} ${esc(s.code)} — ${esc(s.det)} <span class="badge ${s.closed?'b-closed':'b-teal'}" style="font-size:9px">${s.closed?'Clôturée':'Active'}</span></div>
           <div class="rapport-grid" style="margin-bottom:10px;">
             <div><div class="rapport-row"><span>Étudiants</span><span>${eList.length}</span></div>
               <div class="rapport-row"><span>Soldés</span><span style="color:var(--success)">${soldes}</span></div>
@@ -2297,14 +2714,14 @@ function renderRapport(){
   }
   if(type==='formation'||type==='global'){
     if(filteredForm.length){
-      html+=`<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;margin-top:${type==='global'?'16px':'0'};padding-bottom:6px;border-bottom:1px solid var(--border)">📚 Détail par Formation</div>`;
+      html+=`<div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;margin-top:${type==='global'?'16px':'0'};padding-bottom:6px;border-bottom:1px solid var(--border)"><i class="fas fa-book-open"></i> Détail par Formation</div>`;
       filteredForm.forEach((f,fi)=>{
         const lbl=f.label||f.intitule||'—';
         const eList=filteredEtu.filter(e=>e.formId==f.id);
         const enc=eList.reduce((a,e)=>a+getPaye(e.id),0);
         const cout=eList.reduce((a,e)=>a+Number(e.cout||0),0);
         html+=`<div class="rapport-card" style="margin-bottom:10px;">
-          <div class="rapport-card-title"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${fcols[fi%fcols.length]}"></span> 📚 ${esc(lbl)}</div>
+          <div class="rapport-card-title"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${fcols[fi%fcols.length]}"></span> <i class="fas fa-book-open"></i> ${esc(lbl)}</div>
           <div class="rapport-grid">
             <div><div class="rapport-row"><span>Étudiants inscrits</span><span>${eList.length}</span></div>
               <div class="rapport-row"><span>Sessions concernées</span><span>${new Set(eList.map(e=>e.sesId)).size}</span></div></div>
@@ -2346,13 +2763,16 @@ function openModalUser(id){
     const u=users.find(x=>x.id===id); if(!u) return;
     document.getElementById('user-mtitle').textContent='Modifier Utilisateur';
     document.getElementById('user-login').value=u.login||'';
+    document.getElementById('user-nom').value=u.nom||'';
+    document.getElementById('user-prenom').value=u.prenom||'';
+    document.getElementById('user-num').value=u.num||'';
     document.getElementById('user-pwd').value=''; document.getElementById('user-pwd2').value='';
     document.getElementById('user-role').value=u.role||'User';
     togglePermFields();
     if(u.role==='User') applyPermsToForm(getPermDef(u));
   } else {
     document.getElementById('user-mtitle').textContent='Ajouter un Utilisateur';
-    ['user-login','user-pwd','user-pwd2'].forEach(i=>{ const el=document.getElementById(i); if(el) el.value=''; });
+    ['user-login','user-pwd','user-pwd2','user-nom','user-prenom','user-num'].forEach(i=>{ const el=document.getElementById(i); if(el) el.value=''; });
     document.getElementById('user-role').value='User';
     togglePermFields();
   }
@@ -2361,6 +2781,9 @@ function openModalUser(id){
 function saveUser(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const login=sanitize(document.getElementById('user-login').value,30);
+  const nom=sanitize(document.getElementById('user-nom').value,80);
+  const prenom=sanitize(document.getElementById('user-prenom').value,80);
+  const num=sanitize(document.getElementById('user-num').value,30);
   const pwd=document.getElementById('user-pwd').value.trim();
   const pwd2=document.getElementById('user-pwd2').value.trim();
   const role=document.getElementById('user-role').value;
@@ -2370,18 +2793,27 @@ function saveUser(){
     if(!pwd||pwd.length<4){ alert('Mot de passe requis (minimum 4 caractères).'); return; }
     if(pwd!==pwd2){ alert('Les mots de passe ne correspondent pas.'); return; }
     if(users.find(u=>u.login===login)){ alert('Cet identifiant est déjà utilisé.'); return; }
-    users.push({id:nUsr++,login,pwd:hashPassword(pwd),role,perms,legacy:false});
+    const id = generateId();
+    const newUser = {id,login,nom,prenom,num,pwd:hashPassword(pwd),role,perms,legacy:false,active:true};
+    users.push(newUser);
+    saveAll();
+    queueSyncOperation('CREATE', 'users', id, newUser);
   } else {
     const i=users.findIndex(x=>x.id===editUsrId); if(i<0) return;
     if(editUsrId===1&&role!=='Admin'){ alert("Impossible de changer le rôle de l'admin principal."); return; }
     const updated={...users[i]};
     if(login) updated.login=login;
+    updated.nom=nom;
+    updated.prenom=prenom;
+    updated.num=num;
     if(pwd){ if(pwd.length<4){ alert('Mot de passe minimum 4 caractères.'); return; } if(pwd!==pwd2){ alert('Les mots de passe ne correspondent pas.'); return; } updated.pwd=hashPassword(pwd); updated.legacy=false; }
     if(editUsrId!==1) updated.role=role;
     updated.perms=role==='User'?perms:null;
     users[i]=updated;
+    saveAll();
+    queueSyncOperation('UPDATE', 'users', editUsrId, users[i]);
   }
-  saveAll(); renderUsers(); closeModal('user');
+  renderUsers(); closeModal('user');
 }
 function renderUsers(){
   const tbody=document.getElementById('tbody-users');
@@ -2393,27 +2825,75 @@ function renderUsers(){
     let permSummary='—';
     if(u.role==='Admin'){ permSummary='<span class="badge b-info" style="font-size:9px">Accès total</span>'; }
     else if(perms){
-      const secs=[perms.secEtudiants&&'🎓',perms.secPaiements&&'💳',perms.secDepenses&&'💸',perms.secDisponibilite&&'💰',perms.secDashboard&&'📊'].filter(Boolean);
+      const secs=[perms.secEtudiants&&'<i class="fas fa-graduation-cap"></i>',perms.secPaiements&&'<i class="fas fa-credit-card"></i>',perms.secDepenses&&'<i class="fas fa-arrow-trend-down"></i>',perms.secDisponibilite&&'<i class="fas fa-wallet"></i>',perms.secDashboard&&'<i class="fas fa-chart-bar"></i>'].filter(Boolean);
       const acts=[perms.actAddEtu&&'Aj.Etu',perms.actPay&&'Pmt',perms.actAddDep&&'Aj.Dep',perms.actEdit&&'Mod',perms.actDel&&'Sup'].filter(Boolean);
       permSummary=`<div style="font-size:9px;line-height:1.8">${secs.join(' ')}<br><span style="color:var(--text-m)">${acts.join(' · ')||'Aucune action'}</span></div>`;
     } else { permSummary='<span class="badge b-warning" style="font-size:9px">Non configuré</span>'; }
-    return `<tr>
-      <td>${u.id}</td><td><strong>${esc(u.login||'—')}</strong></td>
+    
+    const isActive = (u.active !== false);
+    const isSelfOrPrimary = (u.id === 1 || u.id === currentUserId);
+    const nameDisplay = u.nom ? (u.prenom + ' ' + u.nom) : (u.login||'—');
+    const statusBadge = isActive ? '' : ' <span class="badge b-danger" style="font-size:9px;margin-left:4px;padding:2px 6px;display:inline-flex;align-items:center;gap:3px;"><i class="fas fa-ban"></i> Inactif</span>';
+    
+    let actionsHtml = `<div class="actions">`;
+    actionsHtml += `<button class="act-btn ab-edit" onclick="openModalUser(${u.id})" title="Modifier"><i class="fas fa-pencil"></i></button>`;
+    
+    if (!isSelfOrPrimary) {
+      if (isActive) {
+        actionsHtml += `<button class="act-btn ab-lock" onclick="toggleUserActive(${u.id})" title="Désactiver le compte"><i class="fas fa-user-slash"></i></button>`;
+      } else {
+        actionsHtml += `<button class="act-btn ab-pay" onclick="toggleUserActive(${u.id})" style="background:rgba(16,185,129,.12);color:#059669;border-color:rgba(16,185,129,.25);" title="Réactiver le compte"><i class="fas fa-user-check"></i></button>`;
+      }
+      actionsHtml += `<button class="act-btn ab-del" onclick="delUser(${u.id})" title="Supprimer"><i class="fas fa-trash"></i></button>`;
+    } else {
+      if (u.id === 1) {
+        actionsHtml += `<span style="font-size:9px;color:var(--text-m);padding:4px">principal</span>`;
+      } else {
+        actionsHtml += `<span style="font-size:9px;color:var(--text-m);padding:4px">vous</span>`;
+      }
+    }
+    actionsHtml += `</div>`;
+
+    return `<tr style="${isActive ? '' : 'opacity:0.8;background:rgba(239,68,68,.02);'}">
+      <td>${u.id}</td>
+      <td><strong>${esc(nameDisplay)}</strong>${statusBadge}</td>
+      <td><span style="font-family:var(--font-mono);font-size:11px;">${esc(u.login||'—')}</span></td>
+      <td><span>${esc(u.num||'—')}</span></td>
       <td><span class="badge ${u.role==='Admin'?'b-info':'b-purple'}">${u.role}</span></td>
       <td>${permSummary}</td>
-      <td><span class="security-tag">🔒 ${u.pwd&&u.pwd.startsWith('h')?'Hashé':'Héritage'}</span></td>
-      <td><div class="actions">
-        <button class="act-btn ab-edit" onclick="openModalUser(${u.id})" title="Modifier">✏️</button>
-        ${u.id===1?`<span style="font-size:9px;color:var(--text-m);padding:4px">principal</span>`:''}
-      </div></td></tr>`;
+      <td><span class="security-tag"><i class="fas fa-lock"></i> ${u.pwd&&u.pwd.startsWith('h')?'Hashé':'Héritage'}</span></td>
+      <td>${actionsHtml}</td>
+    </tr>`;
   }).join('');
+}
+function toggleUserActive(id){
+  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(id===1){ alert("L'administrateur principal ne peut pas être désactivé."); return; }
+  if(id===currentUserId){ alert("Vous ne pouvez pas désactiver votre propre compte."); return; }
+  
+  const u = users.find(x => x.id === id);
+  if(!u) return;
+  
+  const newState = (u.active !== false) ? false : true;
+  const msg = newState ? `Réactiver le compte de "${u.login}" ?` : `Désactiver le compte de "${u.login}" ?`;
+  
+  showConfirm(msg, async () => {
+    u.active = newState;
+    saveAll();
+    renderUsers();
+    await queueSyncOperation('UPDATE', 'users', id, u);
+  });
 }
 function delUser(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   if(id===1){ alert("L'administrateur principal ne peut pas être supprimé."); return; }
   if(id===currentUserId){ alert("Vous ne pouvez pas supprimer votre propre compte."); return; }
   const u=users.find(x=>x.id===id);
-  showConfirm(`Supprimer l'utilisateur "${u?u.login:id}" ?`,()=>{ users=users.filter(x=>x.id!==id); saveAll(); renderUsers(); });
+  showConfirm(`Supprimer l'utilisateur "${u?u.login:id}" ?`, async ()=>{
+    users=users.filter(x=>x.id!==id);
+    saveAll(); renderUsers();
+    await queueSyncOperation('DELETE', 'users', id, null);
+  });
 }
 
 /* ================================================================
@@ -2434,11 +2914,11 @@ function renderDisponibilite(){
   if(!filtered.length){ tbody.innerHTML=''; empty.style.display='block'; tot.style.display='none'; return; }
   empty.style.display='none'; tot.style.display='flex';
   const totalMontant=filtered.reduce((sum,d)=>sum+(Number(d.montant)||0),0);
-  tot.innerHTML=`<span>💰 Total disponible : <strong style="color:var(--success)">${fmtM(totalMontant)} FC</strong></span>`;
+  tot.innerHTML=`<span><i class="fas fa-wallet"></i> Total disponible : <strong style="color:var(--success)">${fmtM(totalMontant)} FC</strong></span>`;
   tbody.innerHTML=filtered.map((d,idx)=>{
     let actions='';
-    if(isAdmin){ actions=`<div class="actions"><button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})">✏️</button><button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})">🗑️</button></div>`; }
-    else { actions=`<div class="actions"><span class="badge b-gray" style="font-size:10px">🔒</span></div>`; }
+    if(isAdmin){ actions=`<div class="actions"><button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})"><i class="fas fa-pencil"></i></button><button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})"><i class="fas fa-trash"></i></button></div>`; }
+    else { actions=`<div class="actions"><span class="badge b-gray" style="font-size:10px"><i class="fas fa-lock"></i></span></div>`; }
     return `<tr><td>${idx+1}</td><td><strong>${esc(d.responsable)}</strong></td>
       <td style="color:var(--success);font-weight:700">${fmtM(d.montant)} FC</td>
       <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.detail)||'—'}</td>
@@ -2473,14 +2953,30 @@ function saveDisponibilite(){
   if(!responsable){ alert('Le responsable est requis.'); return; }
   if(montant<=0){ alert('Le montant doit être supérieur à 0.'); return; }
   if(!date){ alert('La date est requise.'); return; }
-  if(editDispoId!==null){ const idx=disponibilites.findIndex(x=>x.id===editDispoId); if(idx>=0) disponibilites[idx]={...disponibilites[idx],responsable,montant,detail,date,updatedBy:currentUserId}; }
-  else { disponibilites.push({id:nDispo++,responsable,montant,detail,date,createdBy:currentUserId,createdAt:today()}); }
-  saveAll(); renderDisponibilite(); closeModal('dispo');
+  if(editDispoId!==null){
+    const idx=disponibilites.findIndex(x=>x.id===editDispoId);
+    if(idx>=0) {
+      disponibilites[idx]={...disponibilites[idx],responsable,montant,detail,date,updatedBy:currentUserId};
+      saveAll();
+      queueSyncOperation('UPDATE', 'disponibilites', editDispoId, disponibilites[idx]);
+    }
+  } else {
+    const id = generateId();
+    const newDispo = {id,responsable,montant,detail,date,createdBy:currentUserId,createdAt:today()};
+    disponibilites.push(newDispo);
+    saveAll();
+    queueSyncOperation('CREATE', 'disponibilites', id, newDispo);
+  }
+  renderDisponibilite(); closeModal('dispo');
 }
 function delDisponibilite(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const item=disponibilites.find(x=>x.id===id);
-  showConfirm(`Supprimer l'entrée de ${item?.responsable||'?'} (${fmtM(item?.montant)} FC) ?`,()=>{ disponibilites=disponibilites.filter(x=>x.id!==id); saveAll(); renderDisponibilite(); });
+  showConfirm(`Supprimer l'entrée de ${item?.responsable||'?'} (${fmtM(item?.montant)} FC) ?`, async ()=>{
+    disponibilites=disponibilites.filter(x=>x.id!==id);
+    saveAll(); renderDisponibilite();
+    await queueSyncOperation('DELETE', 'disponibilites', id, null);
+  });
 }
 
 /* ================================================================
@@ -2488,11 +2984,12 @@ function delDisponibilite(id){
    ================================================================ */
 function confirmClear(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
-  showConfirm('⚠️ ATTENTION — Vider TOUTES les données ?\n\nÉtudiants, paiements, dépenses, sessions, formations, disponibilités ET bilans de session seront supprimés.\nCette action est IRRÉVERSIBLE.',()=>{
-   etudiants=[]; paiements=[]; depenses=[]; sessions=[]; formations=[]; disponibilites=[];
+  showConfirm('<i class="fas fa-triangle-exclamation"></i> ATTENTION — Vider TOUTES les données ?\n\nÉtudiants, paiements, dépenses, sessions, formations, disponibilités ET bilans de session seront supprimés.\nCette action est IRRÉVERSIBLE.', async () => {
+    etudiants=[]; paiements=[]; depenses=[]; sessions=[]; formations=[]; disponibilites=[];
     nDispo=1; nEtu=1; nPay=1; nDep=1; nSes=1; nForm=1;
     saveAll(); populateSelects();
     renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
+    await queueSyncOperation('CLEAR', 'all', 0, null);
   });
 }
 
@@ -2526,40 +3023,26 @@ function doImport(ev){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); ev.target.value=''; return; }
   const file=ev.target.files[0]; if(!file){ ev.target.value=''; return; }
   const ext=file.name.split('.').pop().toLowerCase();
+  
   if(ext==='json'){
     const r=new FileReader();
-    r.onload=e=>{
+    r.onload= async e=>{
       try{
         const data=JSON.parse(e.target.result);
-        if(data.sessions){ sessions=data.sessions; sessions.forEach(s=>{if(s.closed===undefined)s.closed=false;}); }
-        if(data.formations){ formations=data.formations; formations.forEach(f=>{if(!f.label)f.label=f.intitule||f.int||'';}); }
-        if(data.etudiants) etudiants=data.etudiants;
-        if(data.paiements) paiements=data.paiements;
-        if(data.depenses) depenses=data.depenses;
-        if(data.disponibilites) disponibilites=data.disponibilites;
-       
-        recalcCounters(); saveAll(); populateSelects();
-        renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
-        alert('✅ Import JSON réussi !');
+        await importAndRestoreData(data);
+        alert('<i class="fas fa-circle-check"></i> Import JSON réussi !');
       }catch(err){ alert('Erreur import JSON : '+err.message); }
     };
     r.readAsText(file);
   } else if(ext==='xlsx'){
     if(typeof XLSX==='undefined'){ alert('Librairie XLSX non disponible.'); ev.target.value=''; return; }
     const r=new FileReader();
-    r.onload=e=>{
+    r.onload= async e=>{
       try{
         const wb=XLSX.read(e.target.result,{type:'binary',cellDates:true,dateNF:'YYYY-MM-DD'});
-        const parseDate=v=>{ if(!v) return ''; if(v instanceof Date) return v.toISOString().split('T')[0]; const d=new Date(v); return isNaN(d)?String(v):d.toISOString().split('T')[0]; };
-        if(wb.SheetNames.includes('Sessions')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Sessions']); sessions=[]; let n=1; rows.forEach(r=>{ const id=n++; sessions.push({id,code:r.Code||'S'+String(id).padStart(2,'0'),det:r.Detail||'',closed:r.Cloturee==='Oui'}); }); nSes=n; }
-        if(wb.SheetNames.includes('Formations')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Formations']); formations=[]; let n=1; rows.forEach(r=>{ const label=r.Formation||''; formations.push({id:n++,label,intitule:label}); }); nForm=n; }
-        if(wb.SheetNames.includes('Etudiants')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Etudiants']); etudiants=[]; let n=1; rows.forEach(r=>{ const ses=sessions.find(s=>s.code===(r.Session||'')); const frm=formations.find(f=>(f.label||f.intitule)===(r.Formation||'')); const id=n++; etudiants.push({id,mat:r.Matricule||'MAT-'+String(id).padStart(5,'0'),nom:r.Nom||'',prenom:r.Prenom||'',contact:r.Contact||'',cout:parseFloat(r.Cout_Total)||0,date:parseDate(r.Date),sesId:ses?ses.id:'',formId:frm?frm.id:'',photo:null}); }); nEtu=n; }
-        if(wb.SheetNames.includes('Paiements')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Paiements']); paiements=[]; let n=1; rows.forEach(r=>{ const etu=etudiants.find(e=>e.mat===(r.Matricule||'')); const ses=sessions.find(s=>s.code===(r.Session||'')); const frm=formations.find(f=>(f.label||f.intitule)===(r.Formation||'')); paiements.push({id:n++,etuId:etu?etu.id:null,nom:r.Etudiant||'',mat:r.Matricule||'',montant:parseFloat(r.Montant)||0,date:parseDate(r.Date),sesId:ses?ses.id:(etu?etu.sesId:''),formId:frm?frm.id:(etu?etu.formId:'')}); }); nPay=n; }
-        if(wb.SheetNames.includes('Depenses')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Depenses']); depenses=[]; let n=1; rows.forEach(r=>{ const ses=sessions.find(s=>s.code===(r.Session||'')); depenses.push({id:n++,lib:r.Libelle||'',montant:parseFloat(r.Montant)||0,det:r.Detail||'',date:parseDate(r.Date),sesId:ses?ses.id:''}); }); nDep=n; }
-        if(wb.SheetNames.includes('Disponibilite')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Disponibilite']); disponibilites=[]; let n=1; rows.forEach(r=>{ disponibilites.push({id:r.ID||n++,responsable:r.Responsable||'',montant:parseFloat(r.Montant)||0,detail:r.Detail||'',date:r.Date||''}); }); nDispo=Math.max(...disponibilites.map(d=>d.id),0)+1; }
-        saveAll(); populateSelects();
-        renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
-        alert('✅ Import Excel réussi !');
+        const data = parseExcelToStandardJSON(wb);
+        await importAndRestoreData(data);
+        alert('<i class="fas fa-circle-check"></i> Import Excel réussi !');
       }catch(err){ alert('Erreur import Excel : '+err.message); }
       ev.target.value='';
     };
@@ -2573,6 +3056,292 @@ function recalcCounters(){
   nEtu=(etudiants.length?Math.max(...etudiants.map(e=>e.id)):0)+1;
   nPay=(paiements.length?Math.max(...paiements.map(p=>p.id)):0)+1;
   nDep=(depenses.length?Math.max(...depenses.map(d=>d.id)):0)+1;
+}
+
+function parseExcelToStandardJSON(wb) {
+  const parsedData = { sessions: [], formations: [], etudiants: [], paiements: [], depenses: [], disponibilites: [] };
+  const parseDate = v => {
+    if(!v) return '';
+    if(v instanceof Date) return v.toISOString().split('T')[0];
+    const d=new Date(v);
+    return isNaN(d) ? String(v) : d.toISOString().split('T')[0];
+  };
+
+  if(wb.SheetNames.includes('Sessions')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Sessions']);
+    rows.forEach((r, idx) => {
+      parsedData.sessions.push({
+        id: idx + 1,
+        code: r.Code || 'S' + String(idx + 1).padStart(2, '0'),
+        det: r.Detail || '',
+        closed: r.Cloturee === 'Oui'
+      });
+    });
+  }
+  if(wb.SheetNames.includes('Formations')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Formations']);
+    rows.forEach((r, idx) => {
+      parsedData.formations.push({
+        id: idx + 1,
+        label: r.Formation || ''
+      });
+    });
+  }
+  if(wb.SheetNames.includes('Etudiants')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Etudiants']);
+    rows.forEach((r, idx) => {
+      parsedData.etudiants.push({
+        id: idx + 1,
+        mat: r.Matricule || 'MAT-' + String(idx + 1).padStart(5, '0'),
+        nom: r.Nom || '',
+        prenom: r.Prenom || '',
+        contact: r.Contact || '',
+        cout: parseFloat(r.Cout_Total) || 0,
+        date: parseDate(r.Date),
+        photo: null,
+        _sessionCode: r.Session || '',
+        _formationLabel: r.Formation || ''
+      });
+    });
+  }
+  if(wb.SheetNames.includes('Paiements')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Paiements']);
+    rows.forEach((r, idx) => {
+      parsedData.paiements.push({
+        id: idx + 1,
+        nom: r.Etudiant || '',
+        mat: r.Matricule || '',
+        montant: parseFloat(r.Montant) || 0,
+        date: parseDate(r.Date),
+        _sessionCode: r.Session || '',
+        _formationLabel: r.Formation || ''
+      });
+    });
+  }
+  if(wb.SheetNames.includes('Depenses')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Depenses']);
+    rows.forEach((r, idx) => {
+      parsedData.depenses.push({
+        id: idx + 1,
+        lib: r.Libelle || '',
+        montant: parseFloat(r.Montant) || 0,
+        det: r.Detail || '',
+        date: parseDate(r.Date),
+        _sessionCode: r.Session || ''
+      });
+    });
+  }
+  if(wb.SheetNames.includes('Disponibilite')){
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets['Disponibilite']);
+    rows.forEach((r, idx) => {
+      parsedData.disponibilites.push({
+        id: r.ID || (idx + 1),
+        responsable: r.Responsable || '',
+        montant: parseFloat(r.Montant) || 0,
+        detail: r.Detail || '',
+        date: r.Date || ''
+      });
+    });
+  }
+  return parsedData;
+}
+
+async function importAndRestoreData(parsedData) {
+  // 1. Clear both server and local cache
+  await queueSyncOperation('CLEAR', 'all', 0, null);
+
+  sessions = [];
+  formations = [];
+  etudiants = [];
+  paiements = [];
+  depenses = [];
+  disponibilites = [];
+
+  const sessionMap = {};     // maps old id/code to new BIGINT id
+  const formationMap = {};   // maps old id/label to new BIGINT id
+  const etudiantMap = {};    // maps old id/matricule to new BIGINT id
+
+  // Helper to generate conflict-free BIGINT id
+  const getOrGenerateId = (oldId, map) => {
+    if (!oldId) return null;
+    const numId = Number(oldId);
+    if (isNaN(numId)) return oldId;
+    if (numId > 1000000000000) return numId;
+    if (!map[numId]) {
+      map[numId] = generateId();
+    }
+    return map[numId];
+  };
+
+  // 2. Import Sessions
+  if (Array.isArray(parsedData.sessions)) {
+    parsedData.sessions.forEach(s => {
+      const newId = getOrGenerateId(s.id, sessionMap);
+      const newSession = {
+        id: newId,
+        code: s.code || 'S' + String(newId).slice(-4),
+        det: s.det || '',
+        closed: !!s.closed
+      };
+      sessions.push(newSession);
+      if (s.code) sessionMap[s.code] = newId;
+    });
+  }
+
+  // 3. Import Formations
+  if (Array.isArray(parsedData.formations)) {
+    parsedData.formations.forEach(f => {
+      const newId = getOrGenerateId(f.id, formationMap);
+      const labelVal = f.label || f.intitule || '';
+      const newFormation = {
+        id: newId,
+        label: labelVal
+      };
+      formations.push(newFormation);
+      if (labelVal) formationMap[labelVal] = newId;
+    });
+  }
+
+  // 4. Import Etudiants
+  if (Array.isArray(parsedData.etudiants)) {
+    parsedData.etudiants.forEach(e => {
+      const newId = getOrGenerateId(e.id, etudiantMap);
+      
+      let sesId = getOrGenerateId(e.sesId, sessionMap);
+      if (!sesId && e._sessionCode) {
+        sesId = sessionMap[e._sessionCode] || null;
+      }
+      let formId = getOrGenerateId(e.formId, formationMap);
+      if (!formId && e._formationLabel) {
+        formId = formationMap[e._formationLabel] || null;
+      }
+
+      const newEtu = {
+        id: newId,
+        mat: e.mat || 'MAT-' + String(newId).slice(-6),
+        nom: e.nom || '',
+        prenom: e.prenom || '',
+        contact: e.contact || '',
+        cout: parseFloat(e.cout) || 0,
+        date: e.date || today(),
+        echeance: e.echeance || null,
+        sesId: sesId || null,
+        formId: formId || null,
+        photo: e.photo || null,
+        createdBy: e.createdBy || null,
+        createdAt: e.createdAt || today(),
+        updatedBy: e.updatedBy || null,
+        updatedAt: e.updatedAt || today()
+      };
+      etudiants.push(newEtu);
+      if (e.mat) etudiantMap[e.mat] = newId;
+    });
+  }
+
+  // 5. Import Paiements
+  if (Array.isArray(parsedData.paiements)) {
+    parsedData.paiements.forEach(p => {
+      const newId = generateId();
+      
+      let etuId = getOrGenerateId(p.etuId, etudiantMap);
+      if (!etuId && p.mat) {
+        etuId = etudiantMap[p.mat] || null;
+      }
+      
+      let sesId = getOrGenerateId(p.sesId, sessionMap);
+      if (!sesId && p._sessionCode) {
+        sesId = sessionMap[p._sessionCode] || null;
+      }
+      
+      let formId = getOrGenerateId(p.formId, formationMap);
+      if (!formId && p._formationLabel) {
+        formId = formationMap[p._formationLabel] || null;
+      }
+
+      const student = etuId ? etudiants.find(x => x.id === etuId) : null;
+      if (student) {
+        if (!sesId) sesId = student.sesId;
+        if (!formId) formId = student.formId;
+      }
+
+      const newPay = {
+        id: newId,
+        etuId: etuId || null,
+        nom: p.nom || (student ? (student.nom + ' ' + student.prenom) : ''),
+        mat: p.mat || (student ? student.mat : ''),
+        montant: parseFloat(p.montant) || 0,
+        date: p.date || today(),
+        sesId: sesId || null,
+        formId: formId || null,
+        createdBy: p.createdBy || null,
+        createdAt: p.createdAt || today()
+      };
+      paiements.push(newPay);
+    });
+  }
+
+  // 6. Import Depenses
+  if (Array.isArray(parsedData.depenses)) {
+    parsedData.depenses.forEach(d => {
+      const newId = generateId();
+      
+      let sesId = getOrGenerateId(d.sesId, sessionMap);
+      if (!sesId && d._sessionCode) {
+        sesId = sessionMap[d._sessionCode] || null;
+      }
+
+      const newDep = {
+        id: newId,
+        lib: d.lib || '',
+        montant: parseFloat(d.montant) || 0,
+        date: d.date || today(),
+        sesId: sesId || null,
+        det: d.det || '',
+        createdBy: d.createdBy || null,
+        createdAt: d.createdAt || today(),
+        updatedBy: d.updatedBy || null,
+        updatedAt: d.updatedAt || today()
+      };
+      depenses.push(newDep);
+    });
+  }
+
+  // 7. Import Disponibilites
+  if (Array.isArray(parsedData.disponibilites)) {
+    parsedData.disponibilites.forEach(d => {
+      const newId = generateId();
+      const newDispo = {
+        id: newId,
+        responsable: d.responsable || '',
+        montant: parseFloat(d.montant) || 0,
+        detail: d.detail || '',
+        date: d.date || today(),
+        createdBy: d.createdBy || null,
+        createdAt: d.createdAt || today(),
+        updatedBy: d.updatedBy || null
+      };
+      disponibilites.push(newDispo);
+    });
+  }
+
+  // Save all to local IndexedDB and refresh counters
+  recalcCounters();
+  saveAll();
+  populateSelects();
+  renderEtudiants();
+  renderPaiements();
+  renderDepenses();
+  renderSessions();
+  renderFormations();
+  updateStats();
+
+  // Queue 'CREATE' operations sequentially
+  for (const s of sessions) await queueSyncOperation('CREATE', 'sessions', s.id, s);
+  for (const f of formations) await queueSyncOperation('CREATE', 'formations', f.id, f);
+  for (const e of etudiants) await queueSyncOperation('CREATE', 'etudiants', e.id, e);
+  for (const p of paiements) await queueSyncOperation('CREATE', 'paiements', p.id, p);
+  for (const d of depenses) await queueSyncOperation('CREATE', 'depenses', d.id, d);
+  for (const d of disponibilites) await queueSyncOperation('CREATE', 'disponibilites', d.id, d);
 }
 
 /* ================================================================
@@ -2620,7 +3389,7 @@ let pwaInstallEvent = null;
 /* ---- Service Worker Blob (cache offline) ---- */
 if ('serviceWorker' in navigator) {
   const swCode = `
-const CACHE_NAME = 'comformation-v8';
+const CACHE_NAME = 'comformation-v10';
 let appURL = '';
 
 self.addEventListener('message', e => {
@@ -2799,10 +3568,10 @@ function updatePwaSettingsBlock() {
   if (swLbl) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistration().then(reg => {
-        swLbl.textContent = reg ? '✅ Actif' : '⏳ En cours…';
-      }).catch(() => { swLbl.textContent = '❌ Inactif'; });
+        swLbl.innerHTML = reg ? '<i class="fas fa-circle-check"></i> Actif' : '<i class="fas fa-spinner fa-spin"></i> En cours…';
+      }).catch(() => { swLbl.innerHTML = '<i class="fas fa-circle-xmark"></i> Inactif'; });
     } else {
-      swLbl.textContent = '❌ Non supporté';
+      swLbl.innerHTML = '<i class="fas fa-circle-xmark"></i> Non supporté';
     }
   }
 
@@ -2810,7 +3579,7 @@ function updatePwaSettingsBlock() {
   const themeBtn = document.getElementById('theme-toggle-btn');
   if (themeBtn) {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    themeBtn.textContent = isDark ? '☀️ Clair' : '🌙 Sombre';
+    themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Clair' : '<i class="fas fa-moon"></i> Sombre';
   }
 
   block.className = block.className.replace(/pwa-\w+/g, '').trim();
@@ -2818,28 +3587,28 @@ function updatePwaSettingsBlock() {
   if (isStandalone) {
     // Déjà installée
     block.classList.add('pwa-installed');
-    if (icon)  icon.textContent  = '✅';
+    if (icon)  icon.innerHTML    = '<i class="fas fa-circle-check"></i>';
     if (title) title.textContent = 'Application installée et active';
     if (desc)  desc.textContent  = 'ComFormation fonctionne comme une application native sur cet appareil.';
-    if (zone)  zone.innerHTML    = '<span class="badge b-success" style="font-size:12px;padding:5px 12px;">✅ Installée</span>';
+    if (zone)  zone.innerHTML    = '<span class="badge b-success" style="font-size:12px;padding:5px 12px;"><i class="fas fa-circle-check"></i> Installée</span>';
   } else if (pwaInstallEvent) {
     // Chrome/Edge : prompt disponible
     block.classList.add('pwa-available');
-    if (icon)  icon.textContent  = '📲';
+    if (icon)  icon.innerHTML    = '<i class="fas fa-mobile-screen-button"></i>';
     if (title) title.textContent = 'Prêt à installer sur cet appareil';
     if (desc)  desc.textContent  = 'Cliquez sur le bouton pour installer ComFormation comme application.';
-    if (zone)  zone.innerHTML    = '<button class="btn-teal" onclick="installPWA()" style="font-size:13px;padding:8px 16px;">⬇️ Installer maintenant</button>';
+    if (zone)  zone.innerHTML    = '<button class="btn-teal" onclick="installPWA()" style="font-size:13px;padding:8px 16px;"><i class="fas fa-download"></i> Installer maintenant</button>';
   } else if (isIOS) {
     // iOS Safari : instruction manuelle
     block.classList.add('pwa-ios');
-    if (icon)  icon.textContent  = '🍎';
+    if (icon)  icon.innerHTML    = '<i class="fab fa-apple"></i>';
     if (title) title.textContent = 'Installation manuelle (iOS Safari)';
     if (desc)  desc.textContent  = 'Appuyez sur ⎙ Partager → "Sur l\'écran d\'accueil" dans Safari.';
-    if (zone)  zone.innerHTML    = '<button class="btn-secondary" onclick="showInstallBar(\'ios\')" style="font-size:12px;">📋 Voir le guide</button>';
+    if (zone)  zone.innerHTML    = '<button class="btn-secondary" onclick="showInstallBar(\'ios\')" style="font-size:12px;"><i class="fas fa-clipboard"></i> Voir le guide</button>';
   } else {
     // Navigateur sans support ou déjà refusé
     block.classList.add('pwa-none');
-    if (icon)  icon.textContent  = '🌐';
+    if (icon)  icon.innerHTML    = '<i class="fas fa-globe"></i>';
     if (title) title.textContent = 'Installation non disponible sur ce navigateur';
     if (desc)  desc.textContent  = 'Utilisez Chrome, Edge (Android/PC) ou Safari (iOS) pour installer l\'application.';
     if (zone)  zone.innerHTML    = '';
@@ -2853,7 +3622,7 @@ function renderDashboard(){
   if(currentRole==='Admin') return; // Admin a ses propres rapports
   const u=users.find(x=>x.id===currentUserId);
   const chip=document.getElementById('dash-user-chip');
-  if(chip) chip.textContent='👤 '+((u&&u.login)||'?');
+  if(chip) chip.innerHTML='<i class="fas fa-user"></i> '+((u&&u.login)||'?');
 
   // KPIs personnels
   const mesEtu=etudiants.filter(e=>e.createdBy===currentUserId);
@@ -2866,22 +3635,22 @@ function renderDashboard(){
   if(content){
     content.innerHTML=`
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-bottom:14px;">
-        <div class="stat-card"><div class="stat-icon si-blue">🎓</div><div><div class="stat-num">${mesEtu.length}</div><div class="stat-label">Mes étudiants</div></div></div>
-        <div class="stat-card"><div class="stat-icon si-green">💰</div><div><div class="stat-num">${fmtM(totalEncMes)}</div><div class="stat-label">Paiements saisis (FC)</div></div></div>
-        <div class="stat-card"><div class="stat-icon si-red">💸</div><div><div class="stat-num">${fmtM(totalDepMes)}</div><div class="stat-label">Dépenses saisies (FC)</div></div></div>
-        <div class="stat-card"><div class="stat-icon si-purple">📋</div><div><div class="stat-num">${mesPay.length+mesDep.length+mesEtu.length}</div><div class="stat-label">Total opérations</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-blue"><i class="fas fa-graduation-cap"></i></div><div><div class="stat-num">${mesEtu.length}</div><div class="stat-label">Mes étudiants</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-green"><i class="fas fa-wallet"></i></div><div><div class="stat-num">${fmtM(totalEncMes)}</div><div class="stat-label">Paiements saisis (FC)</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-red"><i class="fas fa-arrow-trend-down"></i></div><div><div class="stat-num">${fmtM(totalDepMes)}</div><div class="stat-label">Dépenses saisies (FC)</div></div></div>
+        <div class="stat-card"><div class="stat-icon si-purple"><i class="fas fa-clipboard"></i></div><div><div class="stat-num">${mesPay.length+mesDep.length+mesEtu.length}</div><div class="stat-label">Total opérations</div></div></div>
       </div>
       <div style="font-size:11px;color:var(--text-m);padding:8px 10px;background:var(--info-bg);border-radius:7px;border-left:3px solid var(--info);">
-        ℹ️ Ce tableau de bord affiche uniquement vos propres opérations. Les totaux globaux sont réservés à l'administrateur.
+        <i class="fas fa-circle-info"></i> Ce tableau de bord affiche uniquement vos propres opérations. Les totaux globaux sont réservés à l'administrateur.
       </div>`;
   }
 
   // Table des opérations
   const filterType=(document.getElementById('dash-filter-type')?.value)||'';
   let ops=[];
-  if(!filterType||filterType==='etudiant') mesEtu.forEach(e=>ops.push({type:'etudiant',label:'🎓 '+e.nom+' '+e.prenom,montant:Number(e.cout||0),date:e.date,sesId:e.sesId}));
-  if(!filterType||filterType==='paiement') mesPay.forEach(p=>ops.push({type:'paiement',label:'💳 '+p.nom,montant:Number(p.montant||0),date:p.date,sesId:p.sesId}));
-  if(!filterType||filterType==='depense') mesDep.forEach(d=>ops.push({type:'depense',label:'💸 '+d.lib,montant:Number(d.montant||0),date:d.date,sesId:d.sesId}));
+  if(!filterType||filterType==='etudiant') mesEtu.forEach(e=>ops.push({type:'etudiant',label:'<i class="fas fa-graduation-cap"></i> '+e.nom+' '+e.prenom,montant:Number(e.cout||0),date:e.date,sesId:e.sesId}));
+  if(!filterType||filterType==='paiement') mesPay.forEach(p=>ops.push({type:'paiement',label:'<i class="fas fa-credit-card"></i> '+p.nom,montant:Number(p.montant||0),date:p.date,sesId:p.sesId}));
+  if(!filterType||filterType==='depense') mesDep.forEach(d=>ops.push({type:'depense',label:'<i class="fas fa-arrow-trend-down"></i> '+d.lib,montant:Number(d.montant||0),date:d.date,sesId:d.sesId}));
   ops.sort((a,b)=>(b.date||'')>=(a.date||'')?1:-1);
 
   const tbody=document.getElementById('tbody-dashboard');
@@ -2987,7 +3756,7 @@ function envoyerRappelWhatsApp(etuId) {
     if (!etu) return;
     
     if (!etu.contact) {
-        alert(`❌ Impossible d'envoyer : ${etu.nom} ${etu.prenom} n'a pas de numéro de téléphone.`);
+        alert(`<i class="fas fa-circle-xmark"></i> Impossible d'envoyer : ${etu.nom} ${etu.prenom} n'a pas de numéro de téléphone.`);
         return;
     }
     
@@ -3015,14 +3784,14 @@ function showRappelsAutomatiques() {
     const etudiantsRetard = getEtudiantsEnRetard();
     
     if (etudiantsRetard.length === 0) {
-        alert('✅ Aucun étudiant avec échéance dépassée !');
+        alert('<i class="fas fa-circle-check"></i> Aucun étudiant avec échéance dépassée !');
         return;
     }
     
     const content = document.getElementById('rappel-content');
     
     let html = `<div style="margin-bottom:15px; padding:10px; background:var(--warning-bg); border-radius:8px;">
-        <strong>⚠️ ${etudiantsRetard.length} étudiant(s)</strong> ont une échéance dépassée avec un solde impayé.
+        <strong><i class="fas fa-triangle-exclamation"></i> ${etudiantsRetard.length} étudiant(s)</strong> ont une échéance dépassée avec un solde impayé.
     </div>`;
     
     html += `<div style="display:flex; flex-direction:column; gap:12px;">`;
@@ -3039,19 +3808,19 @@ function showRappelsAutomatiques() {
                 <div style="flex:1;">
                     <div style="font-weight:700; font-size:14px;">${etu.nom} ${etu.prenom}</div>
                     <div style="font-size:11px; color:var(--text-m); margin-top:4px;">
-                        🎓 ${etu.mat} | 📚 ${getFormLabel(etu.formId)} | 📅 Session: ${getSesLabel(etu.sesId)}
+                        <i class="fas fa-graduation-cap"></i> ${etu.mat} | <i class="fas fa-book-open"></i> ${getFormLabel(etu.formId)} | <i class="fas fa-calendar-days"></i> Session: ${getSesLabel(etu.sesId)}
                     </div>
                     <div style="margin-top:8px; display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:6px; font-size:12px;">
-                        <div>💰 Coût: ${fmtM(cout)} FC</div>
-                        <div style="color:var(--success)">✅ Payé: ${fmtM(paye)} FC (${pct}%)</div>
-                        <div style="color:var(--danger); font-weight:700;">⚠️ Reste: ${fmtM(reste)} FC</div>
-                        <div>📅 Échéance: ${fmtDate(etu.echeance)}</div>
-                        <div>📞 ${etu.contact || 'Pas de contact'}</div>
+                        <div><i class="fas fa-wallet"></i> Coût: ${fmtM(cout)} FC</div>
+                        <div style="color:var(--success)"><i class="fas fa-circle-check"></i> Payé: ${fmtM(paye)} FC (${pct}%)</div>
+                        <div style="color:var(--danger); font-weight:700;"><i class="fas fa-triangle-exclamation"></i> Reste: ${fmtM(reste)} FC</div>
+                        <div><i class="fas fa-calendar-days"></i> Échéance: ${fmtDate(etu.echeance)}</div>
+                        <div><i class="fas fa-phone"></i> ${etu.contact || 'Pas de contact'}</div>
                     </div>
                 </div>
                 <div style="display:flex; gap:6px;">
                     <button class="btn-primary" onclick="envoyerRappelWhatsApp(${etu.id})" style="padding:6px 12px; font-size:11px;" ${!etu.contact ? 'disabled' : ''}>
-                        📱 Relance
+                        <i class="fas fa-mobile-screen"></i> Relance
                     </button>
                 </div>
             </div>
@@ -3074,7 +3843,7 @@ async function envoyerRappelsGroupes() {
         return;
     }
     
-    const confirmer = confirm(`📱 Envoyer des rappels WhatsApp à ${avecContact.length} étudiant(s) ?\n\nLes liens vont s'ouvrir dans des onglets séparés.`);
+    const confirmer = confirm(`<i class="fas fa-mobile-screen"></i> Envoyer des rappels WhatsApp à ${avecContact.length} étudiant(s) ?\n\nLes liens vont s'ouvrir dans des onglets séparés.`);
     
     if (!confirmer) return;
     
@@ -3084,7 +3853,7 @@ async function envoyerRappelsGroupes() {
         }, i * 500);
     }
     
-    alert(`✅ Ouverture de ${avecContact.length} conversation(s) WhatsApp.\n\nSi les popups sont bloqués, autorisez-les pour ce site.`);
+    alert(`<i class="fas fa-circle-check"></i> Ouverture de ${avecContact.length} conversation(s) WhatsApp.\n\nSi les popups sont bloqués, autorisez-les pour ce site.`);
 }
 
 // Vérification quotidienne automatique des rappels
@@ -3111,7 +3880,7 @@ function verifierRappelsQuotidiens() {
                 box-shadow: var(--shadow-md);
                 max-width: 300px;
             `;
-            notification.innerHTML = `⏰ ${retard.length} rappel(s) de paiement en attente. <strong>Cliquez pour voir</strong>`;
+            notification.innerHTML = `<i class="fas fa-bell"></i> ${retard.length} rappel(s) de paiement en attente. <strong>Cliquez pour voir</strong>`;
             notification.onclick = () => {
                 notification.remove();
                 showRappelsAutomatiques();
@@ -3125,10 +3894,7 @@ function verifierRappelsQuotidiens() {
 /* ================================================================
    BACKUP & RESTAURATION
    ================================================================ */
-let backups = JSON.parse(localStorage.getItem('cf_backups')||'[]');
 let backupPanelOpen = false;
-
-function saveBackupsLS(){ localStorage.setItem('cf_backups', JSON.stringify(backups)); }
 
 function toggleBackupPanel(){
   const panel = document.getElementById('backup-panel');
@@ -3154,9 +3920,9 @@ function renderBackups(){
     <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text-m);white-space:nowrap;">${b.date||'—'}</td>
     <td style="padding:8px 12px;border-bottom:1px solid var(--border);">
       <div style="display:flex;gap:4px;">
-        <button class="act-btn ab-del" title="Supprimer ce backup" onclick="deleteBackup('${b.id}')">🗑️</button>
-        <button class="act-btn ab-edit" title="Renommer le fichier" onclick="renameBackup('${b.id}')">✏️</button>
-        <button class="act-btn" title="Importer ce fichier dans l'application" onclick="syncBackup('${b.id}')" style="color:var(--teal);border-color:var(--teal);">🔄</button>
+        <button class="act-btn ab-del" title="Supprimer ce backup" onclick="deleteBackup('${b.id}')"><i class="fas fa-trash"></i></button>
+        <button class="act-btn ab-edit" title="Renommer le fichier" onclick="renameBackup('${b.id}')"><i class="fas fa-pencil"></i></button>
+        <button class="act-btn" title="Importer ce fichier dans l'application" onclick="syncBackup('${b.id}')" style="color:var(--teal);border-color:var(--teal);"><i class="fas fa-arrows-rotate"></i></button>
       </div>
     </td>
   </tr>`).join('');
@@ -3173,69 +3939,62 @@ function doBackupUpload(ev){
   const ext = name.split('.').pop().toLowerCase();
   if(!['xlsx','json'].includes(ext)){ alert('Format non supporté. Utilisez .xlsx ou .json'); ev.target.value=''; return; }
   const r = new FileReader();
-  r.onload = e => {
+  r.onload = async e => {
     try{
       const id = 'bk_'+Date.now();
       const rawData = e.target.result;
+      let newBackup = null;
       if(ext==='json'){
         JSON.parse(rawData); // validation structurelle
-        backups.push({id, name, date:fmtDateTime(), type:'JSON', data:rawData});
+        newBackup = {id, name, date:fmtDateTime(), type:'JSON', data:rawData};
       } else {
         // Stocker le binaire Excel en base64
         const b64 = btoa(rawData);
-        backups.push({id, name, date:fmtDateTime(), type:'Excel', data:b64});
+        newBackup = {id, name, date:fmtDateTime(), type:'Excel', data:b64};
       }
-      saveBackupsLS(); renderBackups();
+      backups.push(newBackup);
+      saveAll(); renderBackups();
+      await queueSyncOperation('CREATE', 'backups', id, newBackup);
     }catch(err){ alert('Fichier invalide : '+err.message); }
   };
   if(ext==='json') r.readAsText(file); else r.readAsBinaryString(file);
   ev.target.value='';
 }
 
-function deleteBackup(id){
+async function deleteBackup(id){
   if(!confirm('Supprimer ce backup ?')) return;
   backups = backups.filter(b=>b.id!==id);
-  saveBackupsLS(); renderBackups();
+  saveAll(); renderBackups();
+  await queueSyncOperation('DELETE', 'backups', id, null);
 }
 
-function renameBackup(id){
+async function renameBackup(id){
   const b = backups.find(x=>x.id===id); if(!b) return;
   const name = prompt('Nouveau nom :', b.name);
   if(!name) return;
   b.name = name;
-  saveBackupsLS(); renderBackups();
+  saveAll(); renderBackups();
+  await queueSyncOperation('UPDATE', 'backups', id, b);
 }
 
 /* SYNC — importe le fichier de la ligne vers l'application */
-function syncBackup(id){
+async function syncBackup(id){
   const b = backups.find(x=>x.id===id); if(!b) return;
   if(!b.data){ alert('Ce fichier ne contient pas de données restaurables.\n(Export Excel sans contenu stocké)'); return; }
   if(!confirm('Importer "'+b.name+'" vers l\'application ?\n\nCeci remplacera toutes les données actuelles.')) return;
   try{
     if(b.type==='JSON'){
       const data = JSON.parse(b.data);
-      if(data.sessions){ sessions=data.sessions; sessions.forEach(s=>{if(s.closed===undefined)s.closed=false;}); }
-      if(data.formations){ formations=data.formations; formations.forEach(f=>{if(!f.label)f.label=f.intitule||f.int||'';}); }
-      if(data.etudiants) etudiants=data.etudiants;
-      if(data.paiements) paiements=data.paiements;
-      if(data.depenses) depenses=data.depenses;
-      if(data.disponibilites) disponibilites=data.disponibilites;
+      await importAndRestoreData(data);
     } else {
       // Excel — décoder depuis base64
       if(typeof XLSX==='undefined'){ alert('Librairie XLSX non disponible.'); return; }
       const binary = atob(b.data);
       const wb = XLSX.read(binary, {type:'binary', cellDates:true, dateNF:'YYYY-MM-DD'});
-      const parseDate = v=>{ if(!v) return ''; if(v instanceof Date) return v.toISOString().split('T')[0]; const d=new Date(v); return isNaN(d)?String(v):d.toISOString().split('T')[0]; };
-      if(wb.SheetNames.includes('Sessions')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Sessions']); sessions=[]; let n=1; rows.forEach(r=>{ const i=n++; sessions.push({id:i,code:r.Code||'S'+String(i).padStart(2,'0'),det:r.Detail||'',closed:r.Cloturee==='Oui'}); }); nSes=n; }
-      if(wb.SheetNames.includes('Formations')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Formations']); formations=[]; let n=1; rows.forEach(r=>{ const label=r.Formation||''; formations.push({id:n++,label,intitule:label}); }); nForm=n; }
-      if(wb.SheetNames.includes('Etudiants')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Etudiants']); etudiants=[]; let n=1; rows.forEach(r=>{ const ses=sessions.find(s=>s.code===(r.Session||'')); const frm=formations.find(f=>(f.label||f.intitule)===(r.Formation||'')); const i=n++; etudiants.push({id:i,mat:r.Matricule||'MAT-'+String(i).padStart(5,'0'),nom:r.Nom||'',prenom:r.Prenom||'',contact:r.Contact||'',cout:parseFloat(r.Cout_Total)||0,date:parseDate(r.Date),sesId:ses?ses.id:'',formId:frm?frm.id:'',photo:null}); }); nEtu=n; }
-      if(wb.SheetNames.includes('Paiements')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Paiements']); paiements=[]; let n=1; rows.forEach(r=>{ const etu=etudiants.find(e=>e.mat===(r.Matricule||'')); const ses=sessions.find(s=>s.code===(r.Session||'')); const frm=formations.find(f=>(f.label||f.intitule)===(r.Formation||'')); paiements.push({id:n++,etuId:etu?etu.id:null,nom:r.Etudiant||'',mat:r.Matricule||'',montant:parseFloat(r.Montant)||0,date:parseDate(r.Date),sesId:ses?ses.id:(etu?etu.sesId:''),formId:frm?frm.id:(etu?etu.formId:'')}); }); nPay=n; }
-      if(wb.SheetNames.includes('Depenses')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Depenses']); depenses=[]; let n=1; rows.forEach(r=>{ const ses=sessions.find(s=>s.code===(r.Session||'')); depenses.push({id:n++,lib:r.Libelle||'',montant:parseFloat(r.Montant)||0,det:r.Detail||'',date:parseDate(r.Date),sesId:ses?ses.id:''}); }); nDep=n; }
-      if(wb.SheetNames.includes('Disponibilite')){ const rows=XLSX.utils.sheet_to_json(wb.Sheets['Disponibilite']); disponibilites=[]; let n=1; rows.forEach(r=>{ disponibilites.push({id:r.ID||n++,responsable:r.Responsable||'',montant:parseFloat(r.Montant)||0,detail:r.Detail||'',date:r.Date||''}); }); nDispo=Math.max(...disponibilites.map(d=>d.id),0)+1; }
+      const data = parseExcelToStandardJSON(wb);
+      await importAndRestoreData(data);
     }
-    recalcCounters(); saveAll(); populateSelects();
-    renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
-    alert('✅ Import réussi depuis "'+b.name+'"');
+    alert('<i class="fas fa-circle-check"></i> Import réussi depuis "'+b.name+'"');
   }catch(err){ alert('Erreur import : '+err.message); }
 }
 
@@ -3261,8 +4020,10 @@ function exportExcelBackup(){
     const b64 = btoa(wbout);
     XLSX.writeFile(wb, fn);
     const id='bk_'+Date.now();
-    backups.push({id, name:fn, date:fmtDateTime(), type:'Excel', data:b64});
-    saveBackupsLS(); renderBackups();
+    const newBackup = {id, name:fn, date:fmtDateTime(), type:'Excel', data:b64};
+    backups.push(newBackup);
+    saveAll(); renderBackups();
+    queueSyncOperation('CREATE', 'backups', id, newBackup);
   }catch(err){ alert('Erreur export : '+err.message); }
 }
 
@@ -3274,8 +4035,10 @@ function exportJSONBackup(){
   const blob=new Blob([json],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
   const id='bk_'+Date.now();
-  backups.push({id, name:fn, date:fmtDateTime(), type:'JSON', data:json});
-  saveBackupsLS(); renderBackups();
+  const newBackup = {id, name:fn, date:fmtDateTime(), type:'JSON', data:json};
+  backups.push(newBackup);
+  saveAll(); renderBackups();
+  queueSyncOperation('CREATE', 'backups', id, newBackup);
 }
 
 // Ferme le panneau backup si on clique ailleurs
