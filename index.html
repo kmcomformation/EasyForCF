@@ -1157,6 +1157,7 @@ let depenses       = [];
 let users          = [];
 let disponibilites = [];
 let backups        = [];
+let lastDataHash   = '';
 
 let nSes   = 1;
 let nForm  = 1;
@@ -1381,6 +1382,23 @@ async function pullLatestDataFromServer() {
     });
     if (res.ok) {
       const data = await res.json();
+      
+      // Empêcher tout scintillement ou rafraîchissement inutile si les données n'ont pas changé
+      const dataString = JSON.stringify({
+        sessions: data.sessions,
+        formations: data.formations,
+        etudiants: data.etudiants,
+        paiements: data.paiements,
+        depenses: data.depenses,
+        users: data.users,
+        disponibilites: data.disponibilites
+      });
+      
+      if (dataString === lastDataHash) {
+        return; // Aucun changement détecté, on ignore la mise à jour de l'UI
+      }
+      lastDataHash = dataString;
+
       sessions = data.sessions || [];
       formations = data.formations || [];
       etudiants = data.etudiants || [];
@@ -1395,7 +1413,7 @@ async function pullLatestDataFromServer() {
       if (typeof initApp === 'function') {
         initApp();
       }
-      console.log('[Sync] Récupération et synchronisation des données distantes réussies !');
+      console.log('[Sync] Récupération et synchronisation en temps réel réussies !');
     }
   } catch (err) {
     console.error('[Sync] Erreur lors du pull des données', err);
@@ -2492,7 +2510,22 @@ function saveSession(){
     }
   } else {
     const id=generateId();
-    const newSes = {id,code:'S'+String(id).slice(-4),det,closed:false};
+    // Calculer le prochain numéro de session sous la forme S001, S002, etc. (en excluant les anciens IDs géants de type S1714)
+    let nextNum = 1;
+    if (sessions.length > 0) {
+      const numbers = sessions
+        .map(s => {
+          const match = s.code ? s.code.match(/^S(\d+)$/i) : null;
+          return match ? parseInt(match[1], 10) : 0;
+        })
+        .filter(num => num > 0 && num < 1000);
+      
+      if (numbers.length > 0) {
+        nextNum = Math.max(...numbers) + 1;
+      }
+    }
+    const code = 'S' + String(nextNum).padStart(3, '0');
+    const newSes = {id,code,det,closed:false};
     sessions.push(newSes);
     saveAll();
     queueSyncOperation('CREATE', 'sessions', id, newSes);
@@ -4077,6 +4110,9 @@ document.addEventListener('click', e => {
 
   initUsers();
   (function loadXLSX(){ if(typeof XLSX!=='undefined') return; const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onerror=()=>console.warn('XLSX library not loaded'); document.head.appendChild(s); })();
+
+  // Lancer la synchronisation périodique Snappy en temps réel (toutes les 3 secondes)
+  setInterval(pullLatestDataFromServer, 3000);
 })();
 </script>
 </body>
