@@ -94,8 +94,45 @@ async function initializeDatabase() {
   }
 }
 
+// Fonction de seeding à la demande pour l'auto-guérison
+async function seedDefaultUsers() {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const ADMIN_ID = 1716000000001;
+    const EMP_ID   = 1716000000002;
+
+    const [adminRows] = await connection.query('SELECT * FROM users WHERE login = ?', ['nassuf@gmail.com']);
+    if (adminRows.length === 0) {
+      const adminPwdHash = hashPassword('Passer123');
+      await connection.query(
+        'INSERT INTO users (id, login, pwd, role, perms, legacy) VALUES (?, ?, ?, ?, ?, ?)',
+        [ADMIN_ID, 'nassuf@gmail.com', adminPwdHash, 'Admin', '{}', false]
+      );
+      console.log('[DB] Seeding (On-Demand) : Administrateur créé.');
+    }
+    
+    const [empRows] = await connection.query('SELECT * FROM users WHERE login = ?', ['abdou@gmail.com']);
+    if (empRows.length === 0) {
+      const empPwdHash = hashPassword('Passer123');
+      await connection.query(
+        'INSERT INTO users (id, login, pwd, role, perms, legacy) VALUES (?, ?, ?, ?, ?, ?)',
+        [EMP_ID, 'abdou@gmail.com', empPwdHash, 'User', '{}', false]
+      );
+      console.log('[DB] Seeding (On-Demand) : Employé créé.');
+    }
+    return true;
+  } catch (err) {
+    console.error('[DB Error] Seeding à la demande échoué :', err.message);
+    return false;
+  } finally {
+    if (connection) connection.release();
+  }
+}
+
 module.exports = {
   pool,
   initializeDatabase,
-  hashPassword
+  hashPassword,
+  seedDefaultUsers
 };

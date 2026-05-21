@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const { pool, initializeDatabase, hashPassword } = require('./db');
+const { pool, initializeDatabase, hashPassword, seedDefaultUsers } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -65,6 +65,12 @@ app.get('/api/health', async (req, res) => {
     try {
       const [userRows] = await pool.query('SELECT COUNT(*) AS count FROM users');
       userCount = userRows[0].count;
+      if (userCount === 0) {
+        console.log('[API Health] Base vide détectée, lancement du seeding à la demande...');
+        await seedDefaultUsers();
+        const [updatedRows] = await pool.query('SELECT COUNT(*) AS count FROM users');
+        userCount = updatedRows[0].count;
+      }
     } catch (err) {
       userCount = `Table users manquante ou erreur: ${err.message}`;
     }
@@ -102,6 +108,17 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
+    // Tenter de seeder automatiquement si la base est vide (mécanisme d'auto-guérison)
+    try {
+      const [countRows] = await pool.query('SELECT COUNT(*) AS count FROM users');
+      if (countRows[0].count === 0) {
+        console.log('[API Login] Base vide détectée, lancement du seeding à la demande...');
+        await seedDefaultUsers();
+      }
+    } catch (dbErr) {
+      console.warn('[DB Warning] Échec vérification ou seeding :', dbErr.message);
+    }
+
     // Récupérer l'utilisateur correspondant à l'email (login)
     const [users] = await pool.query('SELECT * FROM users WHERE login = ?', [email]);
     
