@@ -13,6 +13,28 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' })); // Limite élevée pour pouvoir envoyer les photos des étudiants
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
+// Cache de promesse d'initialisation pour éviter les race-conditions
+let dbInitPromise = null;
+function getDbInitPromise() {
+  if (!dbInitPromise) {
+    dbInitPromise = initializeDatabase();
+  }
+  return dbInitPromise;
+}
+
+// Middleware pour forcer l'attente du bootstrapping de la DB
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api')) {
+    try {
+      await getDbInitPromise();
+    } catch (err) {
+      console.error('[DB Init Middleware Error]', err);
+      return res.status(500).json({ error: 'Initialisation de la base de données en cours ou en échec.' });
+    }
+  }
+  next();
+});
+
 // Whitelist des colonnes valides pour chaque table SQL pour éviter toute injection ou erreur de champ
 const VALID_COLUMNS = {
   users: ['id', 'centre_id', 'login', 'pwd', 'role', 'perms', 'legacy', 'nom', 'prenom', 'num'],
@@ -757,14 +779,14 @@ app.get('*', (req, res) => {
 
 // Lancement du serveur après initialisation de la base (seulement hors Vercel serverless)
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-  initializeDatabase().then(() => {
+  getDbInitPromise().then(() => {
     app.listen(PORT, () => {
       console.log(`[Serveur] ComFormation démarré sur http://localhost:${PORT}`);
     });
   });
 } else {
   // Sur Vercel serverless, on lance simplement l'initialisation de la DB lors du chargement de la fonction
-  initializeDatabase().catch(err => console.error('[Vercel DB Init Error]', err));
+  getDbInitPromise().catch(err => console.error('[Vercel DB Init Error]', err));
 }
 
 module.exports = app;
