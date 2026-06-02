@@ -1971,13 +1971,8 @@ async function loadFromIDB() {
     nUsr   = _mem[PREFIX+'nUsr']   || 2;
     nDispo = _mem[PREFIX+'nDispo'] || 1;
 
-    /* Migration éventuelle depuis l'ancien localStorage (cf5_) */
-    if (!users.length) await migrateFromLocalStorage();
-
   } catch (err) {
     console.error('[IDB loadAll error]', err);
-    /* Fallback : tente la migration localStorage */
-    await migrateFromLocalStorage();
   }
 }
 
@@ -2138,7 +2133,25 @@ async function triggerSync() {
         updateSyncBadge(updatedQueue.length);
       } else {
         console.warn('[Sync] Échec pour :', op, res.statusText);
-        break;
+        if (res.status === 401 || res.status === 403) {
+          break;
+        }
+        op.retries = (op.retries || 0) + 1;
+        if (op.retries >= 3) {
+          console.error('[Sync] Abandon de l\'opération après 3 échecs pour éviter de bloquer la synchronisation :', op);
+          const currentQueue = await IDB.get('cf6_sync_queue') || [];
+          const updatedQueue = currentQueue.filter(x => x.id !== op.id);
+          await IDB.set('cf6_sync_queue', updatedQueue);
+          updateSyncBadge(updatedQueue.length);
+        } else {
+          const currentQueue = await IDB.get('cf6_sync_queue') || [];
+          const idx = currentQueue.findIndex(x => x.id === op.id);
+          if (idx !== -1) {
+            currentQueue[idx].retries = op.retries;
+            await IDB.set('cf6_sync_queue', currentQueue);
+          }
+          break;
+        }
       }
     }
   } catch (err) {
@@ -2244,30 +2257,6 @@ function verifyPassword(pwd, stored){
   return pwd === stored;
 }
 
-function initUsers(){
-  let changed = false;
-  
-  if(!users.find(u => u.login === 'nassuf@gmail.com')){
-    users.push({id: 1716000000001, login:'nassuf@gmail.com', pwd:hashPassword('Passer123'), role:'Admin', perms:{}, legacy:false});
-    changed = true;
-  }
-  if(!users.find(u => u.login === 'abdou@gmail.com')){
-    users.push({id: 1716000000002, login:'abdou@gmail.com', pwd:hashPassword('Passer123'), role:'User', perms:{}, legacy:false});
-    changed = true;
-  }
-  
-  let migrated = false;
-  users.forEach(u => {
-    if(!u.legacy && u.pwd && !u.pwd.startsWith('h')){ u.pwd = hashPassword(u.pwd); u.legacy = true; migrated = true; }
-    if(!u.login) { u.login = 'user'+u.id; changed = true; }
-  });
-  
-  if(changed || migrated) {
-    nUsr = Math.max(...users.map(u => u.id), 0) + 1;
-    saveAll();
-  }
-}
-
 /* ================================================================
    LOGIN / LOGOUT
    ================================================================ */
@@ -2325,14 +2314,20 @@ async function doLogin(){
         loggedUser = data.user;
         loginSuccess = true;
         
+        // Redirection si SuperAdmin
+        if (loggedUser.role === 'SuperAdmin') {
+          window.location.href = '/superadmin.html';
+          return;
+        }
+
         // Pull complet des données suite à la connexion en ligne réussie
         await pullLatestDataFromServer();
       } else {
-        if (res.status === 401) {
-          showLoginError('<i class="fas fa-circle-xmark"></i> Identifiants incorrects.');
-          if(loginBtn) { loginBtn.disabled = false; loginBtn.textContent = originalText; }
-          return;
-        }
+        const errData = await res.json().catch(() => ({}));
+        const errMsg = errData.error || 'Erreur d\'authentification.';
+        showLoginError(`<i class="fas fa-circle-xmark"></i> ${errMsg}`);
+        if(loginBtn) { loginBtn.disabled = false; loginBtn.textContent = originalText; }
+        return;
       }
     } catch (err) {
       console.warn('[Login] Échec serveur, tentative locale...', err);
@@ -2378,6 +2373,13 @@ async function doLogin(){
   }
 
   loginAttempts = 0;
+  
+  // Redirection si SuperAdmin (mode local repli, bien qu'improbable pour SuperAdmin)
+  if (loggedUser.role === 'SuperAdmin') {
+    window.location.href = '/superadmin.html';
+    return;
+  }
+
   currentRole = loggedUser.role;
   currentUserId = loggedUser.id ? (isNaN(Number(loggedUser.id)) ? loggedUser.id : Number(loggedUser.id)) : null;
 
@@ -2402,21 +2404,40 @@ async function doLogin(){
   // Tente de synchroniser les opérations en attente s'il y en a
   triggerSync();
 }
+function loadAll() {
+  return new Promise(async (resolve) => {
+    try {
+      if (window.indexedDB) {
+        sessions = await IDB.get('cf6_sessions') || [];
+        formations = await IDB.get('cf6_formations') || [];
+        etudiants = await IDB.get('cf6_etudiants') || [];
+        paiements = await IDB.get('cf6_paiements') || [];
+        depenses = await IDB.get('cf6_depenses') || [];
+        users = await IDB.get('cf6_users') || [];
+        disponibilites = await IDB.get('cf6_disponibilites') || [];
+        backups = await IDB.get('cf6_backups') || [];
+      }
+      
+      resolve();
+    } catch (e) {
+      console.warn("IDB Load Error:", e);
+      resolve();
+    }
+  });
+}
 function showLoginError(msg){ const el=document.getElementById('login-err'); el.innerHTML=msg; el.style.display='block'; }
 function doLogout(){
   if(!confirm('Se déconnecter ?')) return;
-  currentRole = null; currentUserId = null;
+  
   localStorage.removeItem('cf_token');
   localStorage.removeItem('cf_user');
   localStorage.removeItem('cf_remember_me');
-  const rememberCheckbox = document.getElementById('login-remember');
-  if (rememberCheckbox) rememberCheckbox.checked = false;
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-email').value = '';
-  document.getElementById('login-pwd').value = '';
-  document.getElementById('login-err').style.display = 'none';
-  if (typeof checkAIChatbotVisibility === 'function') checkAIChatbotVisibility();
+  
+  if (window.indexedDB) {
+    try { window.indexedDB.deleteDatabase('ComFormationDB'); } catch(e){}
+  }
+  
+  window.location.reload();
 }
 function handleForgotPassword() {
   alert("🔑 Pour réinitialiser votre mot de passe, veuillez contacter l'administrateur du centre ComFormation.");

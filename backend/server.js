@@ -15,14 +15,14 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Whitelist des colonnes valides pour chaque table SQL pour éviter toute injection ou erreur de champ
 const VALID_COLUMNS = {
-  users: ['id', 'login', 'pwd', 'role', 'perms', 'legacy', 'nom', 'prenom', 'num'],
-  sessions: ['id', 'code', 'det', 'closed'],
-  formations: ['id', 'label'],
-  etudiants: ['id', 'mat', 'nom', 'prenom', 'contact', 'cout', 'date', 'echeance', 'sesId', 'formId', 'photo', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
-  paiements: ['id', 'etuId', 'nom', 'mat', 'montant', 'date', 'sesId', 'formId', 'createdBy', 'createdAt'],
-  depenses: ['id', 'lib', 'montant', 'date', 'sesId', 'det', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
-  disponibilites: ['id', 'responsable', 'montant', 'detail', 'date', 'createdBy', 'createdAt', 'updatedBy'],
-  backups: ['id', 'name', 'date', 'type', 'data']
+  users: ['id', 'centre_id', 'login', 'pwd', 'role', 'perms', 'legacy', 'nom', 'prenom', 'num'],
+  sessions: ['id', 'centre_id', 'code', 'det', 'closed'],
+  formations: ['id', 'centre_id', 'label'],
+  etudiants: ['id', 'centre_id', 'mat', 'nom', 'prenom', 'contact', 'cout', 'date', 'echeance', 'sesId', 'formId', 'photo', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
+  paiements: ['id', 'centre_id', 'etuId', 'nom', 'mat', 'montant', 'date', 'sesId', 'formId', 'createdBy', 'createdAt'],
+  depenses: ['id', 'centre_id', 'lib', 'montant', 'date', 'sesId', 'det', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
+  disponibilites: ['id', 'centre_id', 'responsable', 'montant', 'detail', 'date', 'createdBy', 'createdAt', 'updatedBy'],
+  backups: ['id', 'centre_id', 'name', 'date', 'type', 'data']
 };
 
 // Middleware d'authentification par JWT
@@ -119,8 +119,13 @@ app.post('/api/login', async (req, res) => {
       console.warn('[DB Warning] Échec vérification ou seeding :', dbErr.message);
     }
 
-    // Récupérer l'utilisateur correspondant à l'email (login)
-    const [users] = await pool.query('SELECT * FROM users WHERE login = ?', [email]);
+    // Récupérer l'utilisateur correspondant à l'email (login) avec le statut de son centre
+    const [users] = await pool.query(`
+      SELECT u.*, c.statut as centre_statut 
+      FROM users u 
+      LEFT JOIN centres c ON u.centre_id = c.id 
+      WHERE u.login = ?
+    `, [email]);
     
     if (users.length === 0) {
       return res.status(401).json({ error: 'Identifiants incorrects. Accès refusé.' });
@@ -131,9 +136,13 @@ app.post('/api/login', async (req, res) => {
       return res.status(401).json({ error: 'Identifiants incorrects. Accès refusé.' });
     }
 
+    if (u.role !== 'SuperAdmin' && u.centre_statut === 'inactif') {
+      return res.status(403).json({ error: "Votre compte est désactivé. Veuillez contacter l'administrateur pour en savoir plus." });
+    }
+
     // Générer le JWT
     const token = jwt.sign(
-      { id: u.id, login: u.login, role: u.role },
+      { id: u.id, centre_id: u.centre_id, login: u.login, role: u.role },
       JWT_SECRET,
       { expiresIn: '30d' } // Session valide 30 jours
     );
@@ -143,6 +152,7 @@ app.post('/api/login', async (req, res) => {
       token,
       user: {
         id: Number(u.id),
+        centre_id: u.centre_id ? Number(u.centre_id) : null,
         login: u.login,
         role: u.role,
         perms: u.perms ? (typeof u.perms === 'string' ? JSON.parse(u.perms) : u.perms) : {}
@@ -165,6 +175,7 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
     const u = rows[0];
     res.json({
       id: Number(u.id),
+      centre_id: u.centre_id ? Number(u.centre_id) : null,
       login: u.login,
       role: u.role,
       perms: u.perms ? JSON.parse(u.perms) : {}
@@ -182,6 +193,10 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
     return res.status(400).json({ error: 'Paramètres de synchronisation invalides.' });
   }
 
+  if (!req.user.centre_id && req.user.role !== 'SuperAdmin') {
+    return res.status(403).json({ error: 'Accès interdit. Aucun centre assigné.' });
+  }
+
   // Sécurité: Vérifier que la table demandée est autorisée
   if (!VALID_COLUMNS[table]) {
     return res.status(400).json({ error: `Table '${table}' non autorisée.` });
@@ -193,6 +208,8 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
     await connection.beginTransaction();
 
     if (action === 'CREATE') {
+      // Injecter le centre_id de force
+      data.centre_id = req.user.centre_id;
       // Filtrer les colonnes pour n'envoyer que ce qui est valide
       const fields = Object.keys(data).filter(k => VALID_COLUMNS[table].includes(k) && k !== 'id');
       const columns = ['id', ...fields];
@@ -222,16 +239,16 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
         return val;
       });
       
-      // Ajouter l'ID à la fin pour la clause WHERE
-      values.push(recordId);
+      // Ajouter l'ID et le centre_id pour la clause WHERE
+      values.push(recordId, req.user.centre_id);
 
       const updateClauses = fields.map(col => `\`${col}\` = ?`).join(', ');
-      const sql = `UPDATE \`${table}\` SET ${updateClauses} WHERE id = ?`;
+      const sql = `UPDATE \`${table}\` SET ${updateClauses} WHERE id = ? AND centre_id = ?`;
       await connection.query(sql, values);
 
     } else if (action === 'DELETE') {
-      // Suppression de l'enregistrement
-      await connection.query(`DELETE FROM \`${table}\` WHERE id = ?`, [recordId]);
+      // Suppression de l'enregistrement avec vérification du centre_id
+      await connection.query(`DELETE FROM \`${table}\` WHERE id = ? AND centre_id = ?`, [recordId, req.user.centre_id]);
     }
 
     await connection.commit();
@@ -249,14 +266,22 @@ app.post('/api/sync', authenticateToken, async (req, res) => {
 // Récupération de l'ensemble des données distantes (Pull complet)
 app.get('/api/sync/pull', authenticateToken, async (req, res) => {
   try {
-    const [users] = await pool.query('SELECT id, login, pwd, role, perms, legacy, nom, prenom, num FROM users');
-    const [sessions] = await pool.query('SELECT * FROM sessions');
-    const [formations] = await pool.query('SELECT * FROM formations');
-    const [etudiants] = await pool.query('SELECT * FROM etudiants');
-    const [paiements] = await pool.query('SELECT * FROM paiements');
-    const [depenses] = await pool.query('SELECT * FROM depenses');
-    const [disponibilites] = await pool.query('SELECT * FROM disponibilites');
-    const [backups] = await pool.query('SELECT id, name, date, type, data FROM backups');
+    const cid = req.user.centre_id;
+    if (!cid && req.user.role !== 'SuperAdmin') {
+      return res.status(403).json({ error: 'Accès interdit. Aucun centre assigné.' });
+    }
+    if (req.user.role === 'SuperAdmin') {
+      return res.json({ users:[], sessions:[], formations:[], etudiants:[], paiements:[], depenses:[], disponibilites:[], backups:[] });
+    }
+
+    const [users] = await pool.query('SELECT id, login, pwd, role, perms, legacy, nom, prenom, num FROM users WHERE centre_id = ?', [cid]);
+    const [sessions] = await pool.query('SELECT * FROM sessions WHERE centre_id = ?', [cid]);
+    const [formations] = await pool.query('SELECT * FROM formations WHERE centre_id = ?', [cid]);
+    const [etudiants] = await pool.query('SELECT * FROM etudiants WHERE centre_id = ?', [cid]);
+    const [paiements] = await pool.query('SELECT * FROM paiements WHERE centre_id = ?', [cid]);
+    const [depenses] = await pool.query('SELECT * FROM depenses WHERE centre_id = ?', [cid]);
+    const [disponibilites] = await pool.query('SELECT * FROM disponibilites WHERE centre_id = ?', [cid]);
+    const [backups] = await pool.query('SELECT id, name, date, type, data FROM backups WHERE centre_id = ?', [cid]);
 
     // Formater les données pour correspondre aux attentes du client JS
     const parsedUsers = users.map(u => ({
@@ -357,16 +382,19 @@ app.get('/api/sync/pull', authenticateToken, async (req, res) => {
 
 // Route pour vider toutes les données (sauf les utilisateurs et sauvegardes)
 app.post('/api/sync/clear', authenticateToken, async (req, res) => {
+  const cid = req.user.centre_id;
+  if (!cid) return res.status(403).json({ error: 'Accès interdit.' });
+
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
     await connection.query('SET FOREIGN_KEY_CHECKS = 0');
-    await connection.query('DELETE FROM paiements');
-    await connection.query('DELETE FROM etudiants');
-    await connection.query('DELETE FROM depenses');
-    await connection.query('DELETE FROM disponibilites');
-    await connection.query('DELETE FROM sessions');
-    await connection.query('DELETE FROM formations');
+    await connection.query('DELETE FROM paiements WHERE centre_id = ?', [cid]);
+    await connection.query('DELETE FROM etudiants WHERE centre_id = ?', [cid]);
+    await connection.query('DELETE FROM depenses WHERE centre_id = ?', [cid]);
+    await connection.query('DELETE FROM disponibilites WHERE centre_id = ?', [cid]);
+    await connection.query('DELETE FROM sessions WHERE centre_id = ?', [cid]);
+    await connection.query('DELETE FROM formations WHERE centre_id = ?', [cid]);
     await connection.query('SET FOREIGN_KEY_CHECKS = 1');
     await connection.commit();
     res.json({ success: true });
@@ -395,6 +423,9 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
     return res.status(400).json({ error: 'Message requis.' });
   }
   try {
+    const cid = req.user.centre_id;
+    if (!cid) return res.status(403).json({ error: 'Centre non assigné.' });
+
     // 1. Requêtes SQL parallèles pour construire le contexte dynamique réel à vitesse maximale
     const [
       [studentsRows],
@@ -407,37 +438,39 @@ app.post('/api/ai/chat', authenticateToken, async (req, res) => {
       [sessionsData],
       [unpaidStudents]
     ] = await Promise.all([
-      pool.query('SELECT COUNT(*) AS count FROM etudiants'),
-      pool.query('SELECT COUNT(*) AS count FROM formations'),
-      pool.query('SELECT COUNT(*) AS count FROM sessions'),
-      pool.query('SELECT COALESCE(SUM(cout), 0) AS total FROM etudiants'),
-      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM paiements'),
-      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM depenses'),
-      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM disponibilites'),
+      pool.query('SELECT COUNT(*) AS count FROM etudiants WHERE centre_id = ?', [cid]),
+      pool.query('SELECT COUNT(*) AS count FROM formations WHERE centre_id = ?', [cid]),
+      pool.query('SELECT COUNT(*) AS count FROM sessions WHERE centre_id = ?', [cid]),
+      pool.query('SELECT COALESCE(SUM(cout), 0) AS total FROM etudiants WHERE centre_id = ?', [cid]),
+      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM paiements WHERE centre_id = ?', [cid]),
+      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM depenses WHERE centre_id = ?', [cid]),
+      pool.query('SELECT COALESCE(SUM(montant), 0) AS total FROM disponibilites WHERE centre_id = ?', [cid]),
       pool.query(`
         SELECT 
           s.id, s.code, s.det, s.closed,
           COUNT(e.id) AS etudiantCount,
           COALESCE(SUM(e.cout), 0) AS coutTotal,
-          COALESCE((SELECT SUM(p.montant) FROM paiements p WHERE p.sesId = s.id), 0) AS paidTotal,
-          COALESCE((SELECT SUM(d.montant) FROM depenses d WHERE d.sesId = s.id), 0) AS depenseTotal
+          COALESCE((SELECT SUM(p.montant) FROM paiements p WHERE p.sesId = s.id AND p.centre_id = ?), 0) AS paidTotal,
+          COALESCE((SELECT SUM(d.montant) FROM depenses d WHERE d.sesId = s.id AND d.centre_id = ?), 0) AS depenseTotal
         FROM sessions s
-        LEFT JOIN etudiants e ON e.sesId = s.id
+        LEFT JOIN etudiants e ON e.sesId = s.id AND e.centre_id = ?
+        WHERE s.centre_id = ?
         GROUP BY s.id, s.code, s.det, s.closed
-      `),
+      `, [cid, cid, cid, cid]),
       pool.query(`
         SELECT * FROM (
           SELECT 
             e.mat, e.nom, e.prenom, e.contact, e.cout, e.echeance,
             s.code AS sessionCode,
             f.label AS formationLabel,
-            COALESCE((SELECT SUM(p.montant) FROM paiements p WHERE p.etuId = e.id), 0) AS paidAmount
+            COALESCE((SELECT SUM(p.montant) FROM paiements p WHERE p.etuId = e.id AND p.centre_id = ?), 0) AS paidAmount
           FROM etudiants e
-          LEFT JOIN sessions s ON e.sesId = s.id
-          LEFT JOIN formations f ON e.formId = f.id
+          LEFT JOIN sessions s ON e.sesId = s.id AND s.centre_id = ?
+          LEFT JOIN formations f ON e.formId = f.id AND f.centre_id = ?
+          WHERE e.centre_id = ?
         ) AS t
         WHERE t.cout > t.paidAmount
-      `)
+      `, [cid, cid, cid, cid])
     ]);
 
     const studentsCount = studentsRows[0]?.count || 0;
@@ -561,6 +594,152 @@ CONSIGNES DE RÉPONSE ET RÈGLES DE CONDUITE :
   } catch (err) {
     console.error('[AI Chat Error]', err);
     res.status(500).json({ error: 'Une erreur est survenue lors du traitement de l\'analyse par l\'IA : ' + err.message });
+  }
+});
+
+// -------------------------------------------------------------
+// ROUTES SUPER ADMIN (SaaS)
+// -------------------------------------------------------------
+
+// Middleware pour vérifier que l'utilisateur est SuperAdmin
+function authenticateSuperAdmin(req, res, next) {
+  if (req.user.role !== 'SuperAdmin') {
+    return res.status(403).json({ error: 'Accès réservé au Super Administrateur.' });
+  }
+  next();
+}
+
+app.get('/api/superadmin/kpi', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  try {
+    const [[{ total_centres }]] = await pool.query('SELECT COUNT(*) AS total_centres FROM centres');
+    const [[{ centres_actifs }]] = await pool.query("SELECT COUNT(*) AS centres_actifs FROM centres WHERE statut = 'actif'");
+    const [[{ mrr }]] = await pool.query("SELECT COALESCE(SUM(montant_mensuel), 0) AS mrr FROM centres WHERE statut = 'actif'");
+    const [[{ total_encaisse }]] = await pool.query("SELECT COALESCE(SUM(montant), 0) AS total_encaisse FROM paiements_saas");
+    
+    res.json({
+      total_centres,
+      centres_actifs,
+      mrr: parseFloat(mrr),
+      total_encaisse: parseFloat(total_encaisse)
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/superadmin/centres', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  try {
+    const [centres] = await pool.query(`
+      SELECT c.*, 
+             (SELECT GROUP_CONCAT(DISTINCT mois SEPARATOR ',') FROM paiements_saas p WHERE p.centre_id = c.id) as mois_payes
+      FROM centres c
+      ORDER BY c.created_at DESC
+    `);
+    
+    const formattedCentres = centres.map(c => ({
+      ...c,
+      mois_payes: c.mois_payes ? c.mois_payes.split(',') : []
+    }));
+    
+    res.json(formattedCentres);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/superadmin/centres', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  const { nom_centre, prenom_admin, nom_admin, email_admin, pwd, telephone, montant_mensuel } = req.body;
+  const connection = await pool.getConnection();
+  try {
+    await connection.beginTransaction();
+    
+    const [insertCentre] = await connection.query(
+      'INSERT INTO centres (nom_centre, prenom_admin, nom_admin, email_admin, telephone, montant_mensuel) VALUES (?, ?, ?, ?, ?, ?)',
+      [nom_centre, prenom_admin, nom_admin, email_admin, telephone, montant_mensuel || 0]
+    );
+    const centreId = insertCentre.insertId;
+
+    const pwdHash = hashPassword(pwd);
+    // Create an Admin user for this centre
+    // ID user : generé à la volée (ex: Date.now())
+    const newUserId = Date.now() + Math.floor(Math.random() * 1000);
+    await connection.query(
+      'INSERT INTO users (id, centre_id, login, pwd, role, perms, legacy, nom, prenom, num) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [newUserId, centreId, email_admin, pwdHash, 'Admin', '{}', false, nom_admin, prenom_admin, telephone]
+    );
+
+    await connection.commit();
+    res.json({ success: true, centreId });
+  } catch (err) {
+    await connection.rollback();
+    res.status(500).json({ error: err.message });
+  } finally {
+    connection.release();
+  }
+});
+
+app.put('/api/superadmin/centres/:id', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  const centreId = req.params.id;
+  const { nom_centre, prenom_admin, nom_admin, telephone, montant_mensuel, statut } = req.body;
+  try {
+    await pool.query(
+      'UPDATE centres SET nom_centre=?, prenom_admin=?, nom_admin=?, telephone=?, montant_mensuel=?, statut=? WHERE id=?',
+      [nom_centre, prenom_admin, nom_admin, telephone, montant_mensuel, statut, centreId]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/superadmin/centres/:id', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  const centreId = req.params.id;
+  try {
+    await pool.query('DELETE FROM centres WHERE id = ?', [centreId]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/superadmin/centres/:id/status', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  const centreId = req.params.id;
+  const { statut } = req.body;
+  try {
+    await pool.query('UPDATE centres SET statut = ? WHERE id = ?', [statut, centreId]);
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/superadmin/centres/:id/password', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  const centreId = req.params.id;
+  const { password } = req.body;
+  if (!password) return res.status(400).json({ error: 'Mot de passe requis' });
+  try {
+    const pwdHash = hashPassword(password);
+    // Met à jour le mot de passe du compte admin (role = 'Admin' et centre_id = centreId)
+    const [result] = await pool.query("UPDATE users SET pwd = ? WHERE centre_id = ? AND role = 'Admin'", [pwdHash, centreId]);
+    if (result.affectedRows === 0) {
+       return res.status(404).json({ error: 'Aucun administrateur trouvé pour ce centre' });
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/superadmin/paiement', authenticateToken, authenticateSuperAdmin, async (req, res) => {
+  const { centre_id, montant, mois } = req.body;
+  try {
+    await pool.query(
+      'INSERT INTO paiements_saas (centre_id, montant, mois) VALUES (?, ?, ?)',
+      [centre_id, montant, mois || null]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
