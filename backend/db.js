@@ -60,6 +60,20 @@ async function initializeDatabase() {
       }
       console.log('[DB] Tables vérifiées/créées avec succès.');
 
+      // --- AUTOMATIC SAAS MIGRATIONS PART 1: ADD centre_id COLUMN ---
+      console.log('[DB] Vérification/Ajout de la colonne centre_id...');
+      const tablesToAlter = ['users', 'sessions', 'formations', 'etudiants', 'paiements', 'depenses', 'disponibilites', 'backups'];
+      for (const table of tablesToAlter) {
+        try {
+          await connection.query(`ALTER TABLE \`${table}\` ADD COLUMN centre_id BIGINT NULL`);
+          console.log(`[DB Migration] Colonne centre_id ajoutée/vérifiée dans la table ${table}.`);
+        } catch (err) {
+          if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+            console.warn(`[DB Migration Warning] Impossible d'ajouter centre_id à ${table}:`, err.message);
+          }
+        }
+      }
+
       // Seeder le Super Administrateur (SaaS)
       const SUPER_ADMIN_ID = 1716000000000;
       const [superAdminRows] = await connection.query('SELECT * FROM users WHERE login = ?', ['nassufsoule@gmail.com']);
@@ -111,22 +125,9 @@ async function initializeDatabase() {
         console.log('[DB] Seeding : Employé par défaut créé (login: abdou@gmail.com, ID: '+EMP_ID+')');
       }
 
-      // --- AUTOMATIC SAAS MIGRATIONS ---
-      console.log('[DB] Lancement des migrations automatiques SaaS...');
+      // --- AUTOMATIC SAAS MIGRATIONS PART 2 ---
+      console.log('[DB] Lancement des migrations automatiques SaaS (Partie 2)...');
       
-      // 1. S'assurer que la colonne centre_id existe dans toutes les tables
-      const tablesToAlter = ['users', 'sessions', 'formations', 'etudiants', 'paiements', 'depenses', 'disponibilites', 'backups'];
-      for (const table of tablesToAlter) {
-        try {
-          await connection.query(`ALTER TABLE \`${table}\` ADD COLUMN centre_id BIGINT NULL`);
-          console.log(`[DB Migration] Colonne centre_id ajoutée à la table ${table}.`);
-        } catch (err) {
-          if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
-            console.warn(`[DB Migration Warning] Impossible d'ajouter centre_id à ${table}:`, err.message);
-          }
-        }
-      }
-
       // 2. Remplir les enregistrements orphelins (centre_id IS NULL) avec le centre par défaut
       for (const table of tablesToAlter) {
         try {
