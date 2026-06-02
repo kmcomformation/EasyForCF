@@ -44,11 +44,11 @@ async function initializeDatabase() {
     connection = await pool.getConnection();
     console.log('[DB] Connexion réussie à MySQL/TiDB !');
 
-    // Séparer les requêtes du schéma statique (en enlevant les lignes vides et commentaires)
+    // Séparer les requêtes du schéma statique
     const queries = sqlSchema
       .split(';')
       .map(q => q.trim())
-      .filter(q => q.length > 0 && !q.startsWith('--'));
+      .filter(q => q.length > 0);
 
     console.log('[DB] Initialisation des tables...');
     for (const query of queries) {
