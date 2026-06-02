@@ -9,7 +9,7 @@ const dbConfig = {
   port: parseInt(process.env.DB_PORT || '3306'),
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
-  database: (process.env.VERCEL && (!process.env.DB_NAME || process.env.DB_NAME === 'comformation_db')) ? 'comformation' : (process.env.DB_NAME || 'comformation_db'),
+  database: process.env.DB_NAME || 'comformation_db',
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
