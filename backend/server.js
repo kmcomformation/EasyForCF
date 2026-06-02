@@ -36,7 +36,44 @@ app.use(async (req, res, next) => {
 });
 
 // Route diagnostic pour vérifier les variables d'environnement en production
-app.get('/api/diag', (req, res) => {
+app.get('/api/diag', async (req, res) => {
+  let tableList = [];
+  let createCentresError = null;
+  let createCentresResult = null;
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const [tables] = await connection.query('SHOW TABLES');
+    tableList = tables.map(t => Object.values(t)[0]);
+
+    try {
+      const [createRes] = await connection.query(`
+        CREATE TABLE IF NOT EXISTS centres (
+          id BIGINT AUTO_INCREMENT PRIMARY KEY,
+          nom_centre VARCHAR(150) NOT NULL,
+          prenom_admin VARCHAR(80) NOT NULL,
+          nom_admin VARCHAR(80) NOT NULL,
+          email_admin VARCHAR(100) UNIQUE NOT NULL,
+          telephone VARCHAR(30) NULL,
+          montant_mensuel DECIMAL(15, 2) NOT NULL DEFAULT 0,
+          statut VARCHAR(20) DEFAULT 'actif',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      createCentresResult = createRes;
+    } catch (createErr) {
+      createCentresError = {
+        message: createErr.message,
+        code: createErr.code,
+        errno: createErr.errno
+      };
+    }
+  } catch (err) {
+    createCentresError = { globalError: err.message };
+  } finally {
+    if (connection) connection.release();
+  }
+
   res.json({
     VERCEL: !!process.env.VERCEL,
     NODE_ENV: process.env.NODE_ENV,
@@ -45,6 +82,9 @@ app.get('/api/diag', (req, res) => {
     DB_USER: process.env.DB_USER,
     DB_NAME: process.env.DB_NAME,
     computedDatabase: process.env.DB_NAME || 'comformation_db',
+    tables: tableList,
+    createCentresResult,
+    createCentresError,
     DB_SSL: process.env.DB_SSL
   });
 });
