@@ -4,6 +4,8 @@ const path = require('path');
 const sqlSchema = require('./schema');
 require('dotenv').config();
 
+const initLogs = [];
+
 // Configuration du pool MySQL / TiDB
 const dbConfig = {
   host: process.env.DB_HOST || '127.0.0.1',
@@ -51,10 +53,18 @@ async function initializeDatabase() {
       .filter(q => q.length > 0);
 
     console.log('[DB] Initialisation des tables...');
+    initLogs.push('Starting table initialization...');
     for (const query of queries) {
-      await connection.query(query);
+      try {
+        await connection.query(query);
+        initLogs.push(`Success: ${query.substring(0, 50).replace(/\n/g, ' ')}...`);
+      } catch (queryErr) {
+        console.error(`[DB Query Error] Query: ${query}\nError:`, queryErr.message);
+        initLogs.push(`Error executing query (${query.substring(0, 50).replace(/\n/g, ' ')}...): ${queryErr.message}`);
+      }
     }
     console.log('[DB] Tables vérifiées/créées avec succès.');
+    initLogs.push('Table initialization phase complete.');
 
     // --- AUTOMATIC SAAS MIGRATIONS PART 1: ADD centre_id COLUMN ---
     console.log('[DB] Vérification/Ajout de la colonne centre_id...');
@@ -67,6 +77,16 @@ async function initializeDatabase() {
         if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
           console.warn(`[DB Migration Warning] Impossible d'ajouter centre_id à ${table}:`, err.message);
         }
+      }
+    }
+
+    // Vérifier/Ajouter la colonne "mois" à paiements_saas
+    try {
+      await connection.query('ALTER TABLE `paiements_saas` ADD COLUMN mois VARCHAR(50) NULL');
+      console.log('[DB Migration] Colonne mois ajoutée/vérifiée dans la table paiements_saas.');
+    } catch (err) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060 && err.code !== 'ER_NO_SUCH_TABLE') {
+        console.warn(`[DB Migration Warning] Impossible d'ajouter mois à paiements_saas:`, err.message);
       }
     }
 
@@ -189,8 +209,10 @@ async function initializeDatabase() {
     }
 
     console.log('[DB] Migrations automatiques SaaS terminées avec succès.');
+    initLogs.push('Migrations and seeding complete.');
   } catch (err) {
     console.error('[DB Error] Impossible d\'initialiser la base de données :', err.message);
+    initLogs.push(`Global database initialization error: ${err.message}`);
   } finally {
     if (connection) connection.release();
   }
@@ -258,5 +280,6 @@ module.exports = {
   pool,
   initializeDatabase,
   hashPassword,
-  seedDefaultUsers
+  seedDefaultUsers,
+  initLogs
 };

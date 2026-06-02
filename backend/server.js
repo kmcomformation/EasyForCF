@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
 const path = require('path');
-const { pool, initializeDatabase, hashPassword, seedDefaultUsers } = require('./db');
+const { pool, initializeDatabase, hashPassword, seedDefaultUsers, initLogs } = require('./db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -85,7 +85,8 @@ app.get('/api/diag', async (req, res) => {
     tables: tableList,
     createCentresResult,
     createCentresError,
-    DB_SSL: process.env.DB_SSL
+    DB_SSL: process.env.DB_SSL,
+    initLogs: initLogs
   });
 });
 
