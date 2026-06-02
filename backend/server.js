@@ -35,6 +35,20 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Route diagnostic pour vérifier les variables d'environnement en production
+app.get('/api/diag', (req, res) => {
+  res.json({
+    VERCEL: !!process.env.VERCEL,
+    NODE_ENV: process.env.NODE_ENV,
+    DB_HOST: process.env.DB_HOST,
+    DB_PORT: process.env.DB_PORT,
+    DB_USER: process.env.DB_USER,
+    DB_NAME: process.env.DB_NAME,
+    computedDatabase: (process.env.VERCEL && (!process.env.DB_NAME || process.env.DB_NAME === 'comformation_db')) ? 'comformation' : (process.env.DB_NAME || 'comformation_db'),
+    DB_SSL: process.env.DB_SSL
+  });
+});
+
 // Whitelist des colonnes valides pour chaque table SQL pour éviter toute injection ou erreur de champ
 const VALID_COLUMNS = {
   users: ['id', 'centre_id', 'login', 'pwd', 'role', 'perms', 'legacy', 'nom', 'prenom', 'num'],
