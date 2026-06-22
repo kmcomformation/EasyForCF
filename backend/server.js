@@ -196,9 +196,9 @@ app.post('/api/login', async (req, res) => {
       console.warn('[DB Warning] Échec vérification ou seeding :', dbErr.message);
     }
 
-    // Récupérer l'utilisateur correspondant à l'email (login) avec le statut de son centre
+    // Récupérer l'utilisateur correspondant à l'email (login) avec les infos de son centre
     const [users] = await pool.query(`
-      SELECT u.*, c.statut as centre_statut 
+      SELECT u.*, c.statut as centre_statut, c.nom_centre as centre_nom, c.logo as centre_logo
       FROM users u 
       LEFT JOIN centres c ON u.centre_id = c.id 
       WHERE u.login = ?
@@ -232,7 +232,9 @@ app.post('/api/login', async (req, res) => {
         centre_id: u.centre_id ? Number(u.centre_id) : null,
         login: u.login,
         role: u.role,
-        perms: u.perms ? (typeof u.perms === 'string' ? JSON.parse(u.perms) : u.perms) : {}
+        perms: u.perms ? (typeof u.perms === 'string' ? JSON.parse(u.perms) : u.perms) : {},
+        centre_nom: u.centre_nom || null,
+        centre_logo: u.centre_logo || null
       }
     });
 
@@ -245,7 +247,12 @@ app.post('/api/login', async (req, res) => {
 // Récupérer le profil utilisateur courant (vérification de session)
 app.get('/api/auth/me', authenticateToken, async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM users WHERE id = ?', [req.user.id]);
+    const [rows] = await pool.query(`
+      SELECT u.*, c.nom_centre as centre_nom, c.logo as centre_logo
+      FROM users u
+      LEFT JOIN centres c ON u.centre_id = c.id
+      WHERE u.id = ?
+    `, [req.user.id]);
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Utilisateur non trouvé.' });
     }
@@ -255,7 +262,9 @@ app.get('/api/auth/me', authenticateToken, async (req, res) => {
       centre_id: u.centre_id ? Number(u.centre_id) : null,
       login: u.login,
       role: u.role,
-      perms: u.perms ? JSON.parse(u.perms) : {}
+      perms: u.perms ? JSON.parse(u.perms) : {},
+      centre_nom: u.centre_nom || null,
+      centre_logo: u.centre_logo || null
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -725,14 +734,14 @@ app.get('/api/superadmin/centres', authenticateToken, authenticateSuperAdmin, as
 });
 
 app.post('/api/superadmin/centres', authenticateToken, authenticateSuperAdmin, async (req, res) => {
-  const { nom_centre, prenom_admin, nom_admin, email_admin, pwd, telephone, montant_mensuel } = req.body;
+  const { nom_centre, prenom_admin, nom_admin, email_admin, pwd, telephone, montant_mensuel, logo } = req.body;
   const connection = await pool.getConnection();
   try {
     await connection.beginTransaction();
     
     const [insertCentre] = await connection.query(
-      'INSERT INTO centres (nom_centre, prenom_admin, nom_admin, email_admin, telephone, montant_mensuel) VALUES (?, ?, ?, ?, ?, ?)',
-      [nom_centre, prenom_admin, nom_admin, email_admin, telephone, montant_mensuel || 0]
+      'INSERT INTO centres (nom_centre, prenom_admin, nom_admin, email_admin, telephone, montant_mensuel, logo) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [nom_centre, prenom_admin, nom_admin, email_admin, telephone, montant_mensuel || 0, logo || null]
     );
     const centreId = insertCentre.insertId;
 
@@ -757,11 +766,11 @@ app.post('/api/superadmin/centres', authenticateToken, authenticateSuperAdmin, a
 
 app.put('/api/superadmin/centres/:id', authenticateToken, authenticateSuperAdmin, async (req, res) => {
   const centreId = req.params.id;
-  const { nom_centre, prenom_admin, nom_admin, telephone, montant_mensuel, statut } = req.body;
+  const { nom_centre, prenom_admin, nom_admin, telephone, montant_mensuel, statut, logo } = req.body;
   try {
     await pool.query(
-      'UPDATE centres SET nom_centre=?, prenom_admin=?, nom_admin=?, telephone=?, montant_mensuel=?, statut=? WHERE id=?',
-      [nom_centre, prenom_admin, nom_admin, telephone, montant_mensuel, statut, centreId]
+      'UPDATE centres SET nom_centre=?, prenom_admin=?, nom_admin=?, telephone=?, montant_mensuel=?, statut=?, logo=? WHERE id=?',
+      [nom_centre, prenom_admin, nom_admin, telephone, montant_mensuel, statut, logo || null, centreId]
     );
     res.json({ success: true });
   } catch (err) {

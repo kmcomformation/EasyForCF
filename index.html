@@ -1177,7 +1177,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <button class="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
   <div class="logo">
     <img class="logo-img" id="header-logo-img" src="logo.jpeg" alt="CF">
-    <span class="logo-text">ComFormation</span>
+    <span class="logo-text" id="header-logo-text">ComFormation</span>
   </div>
   <div class="logo-sep"></div>
   <nav class="nav" id="main-nav">
@@ -2691,7 +2691,7 @@ function makeDraggable(modal,handle){
     document.onmouseup = () => { document.onmousemove=null; document.onmouseup=null; };
   };
 }
-function showConfirm(msg,cb){ document.getElementById('confirm-msg').textContent=msg; document.getElementById('confirm-yes').onclick=()=>{ closeModal('confirm'); cb(); }; openModal('confirm'); }
+function showConfirm(msg,cb){ document.getElementById('confirm-msg').innerHTML=msg; document.getElementById('confirm-yes').onclick=()=>{ closeModal('confirm'); cb(); }; openModal('confirm'); }
 
 /* ================================================================
    UTILS
@@ -3213,11 +3213,22 @@ function openRecu(etuId){
   const pays=paiements.filter(p=>p.etuId===etuId);
   const now=new Date().toLocaleDateString('fr-FR');
   const bCls=barColor(pct);
-  const logoSrc=window.LOGO_RECU||'';
+
+  const storedUser = localStorage.getItem('cf_user');
+  let centreNom = "ComFormation";
+  let logoSrc = window.LOGO_RECU || 'logo.jpeg';
+  if (storedUser) {
+    try {
+      const loggedUser = JSON.parse(storedUser);
+      if (loggedUser.centre_nom) centreNom = loggedUser.centre_nom;
+      if (loggedUser.centre_logo) logoSrc = loggedUser.centre_logo;
+    } catch(err) {}
+  }
+
   const html=`<div class="recu-wrap" id="recu-zone">
     <div class="recu-hdr">
-      <div class="recu-logo-area"><img class="recu-hdr-logo" src="${logoSrc}" alt="CF">
-        <div class="recu-logo-text"><h3>ComFormation</h3><p>Training Center</p></div>
+      <div class="recu-logo-area"><img class="recu-hdr-logo" src="${logoSrc}" alt="CF" style="height:36px;width:auto;">
+        <div class="recu-logo-text"><h3>${esc(centreNom)}</h3><p>Training Center</p></div>
       </div>
       <p style="font-size:9px;color:rgba(255,255,255,.55);margin-top:4px">Reçu généré le ${now}</p>
     </div>
@@ -3239,7 +3250,7 @@ function openRecu(etuId){
       <div style="margin-top:8px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text-m);margin-bottom:3px"><span>Progression</span><span>${pct}%</span></div>
         <div class="pbar"><div class="pbar-fill ${bCls}" style="width:${pct}%"></div></div></div>
       <div style="text-align:center;margin-top:10px;padding-top:8px;border-top:1px dashed var(--border)">
-        <p style="font-size:9px;color:var(--text-m)">Document généré automatiquement · ComFormation Training Center</p>
+        <p style="font-size:9px;color:var(--text-m)">Document généré automatiquement · ${esc(centreNom)} Training Center</p>
         <button class="print-btn" onclick="printRecu()"><i class="fas fa-print"></i> Imprimer / Enregistrer PDF</button>
       </div>
     </div></div>`;
@@ -3249,12 +3260,24 @@ function openRecu(etuId){
 function printRecu(){
   const zone=document.getElementById('recu-zone');
   if(!zone) return;
+
+  const storedUser = localStorage.getItem('cf_user');
+  let logoSrc = window.LOGO_RECU || 'logo.jpeg';
+  if (storedUser) {
+    try {
+      const loggedUser = JSON.parse(storedUser);
+      if (loggedUser.centre_logo) logoSrc = loggedUser.centre_logo;
+    } catch(err) {}
+  }
+  const isDefaultLogo = logoSrc === 'logo.jpeg';
+  const logoFilterStyle = isDefaultLogo ? 'filter:brightness(0) invert(1);' : '';
+
   const w=window.open('','_blank');
   if(!w){ alert('Veuillez autoriser les popups pour imprimer.'); return; }
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu ComFormation</title>
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu</title>
   <style>body{font-family:Georgia,serif;margin:0;padding:20px;background:#fff;color:#0f2248;}
   .recu-wrap{max-width:430px;margin:0 auto;font-size:11px;}.recu-hdr{background:linear-gradient(135deg,#0f2248,#1a3a72);color:#fff;border-radius:10px 10px 0 0;padding:14px;text-align:center;}
-  .recu-logo-area{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;}.recu-hdr-logo{height:36px;width:auto;filter:brightness(0) invert(1);}
+  .recu-logo-area{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;}.recu-hdr-logo{height:36px;width:auto;${logoFilterStyle}}
   .recu-logo-text h3{font-size:15px;font-weight:700;margin:0;}.recu-logo-text p{font-size:9px;color:rgba(255,255,255,.6);margin:2px 0 0;letter-spacing:1.5px;text-transform:uppercase;}
   .recu-stripe{height:3px;background:linear-gradient(90deg,#2bbf9b,#1a4eb8,#2bbf9b);}.recu-body{border:1px solid #dde5f0;border-top:none;border-radius:0 0 10px 10px;padding:14px;}
   .recu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #dde5f0;font-size:11px;}.recu-row span:first-child{color:#6b7ea4;}.recu-row span:last-child{font-weight:600;}
@@ -3599,11 +3622,22 @@ function renderRapport(){
   const totalSoldes=filteredEtu.filter(e=>{const p=getPaye(e.id);return p>=Number(e.cout)&&Number(e.cout)>0;}).length;
   const totalPartiels=filteredEtu.filter(e=>{const p=getPaye(e.id);return p>0&&p<Number(e.cout);}).length;
   const netBalance=totalEnc-totalDep;
-  const logoSrc=window.LOGO_RECU||'';
+
+  const storedUser = localStorage.getItem('cf_user');
+  let centreNom = "ComFormation";
+  let logoSrc = window.LOGO_RECU || 'logo.jpeg';
+  if (storedUser) {
+    try {
+      const loggedUser = JSON.parse(storedUser);
+      if (loggedUser.centre_nom) centreNom = loggedUser.centre_nom;
+      if (loggedUser.centre_logo) logoSrc = loggedUser.centre_logo;
+    } catch(err) {}
+  }
+
   let html=`<div id="rapport-print-zone">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--teal);">
-      <img src="${logoSrc}" style="height:44px;width:auto;" alt="CF">
-      <div><div style="font-size:15px;font-weight:700;color:var(--text)">ComFormation Training Center</div></div>
+      <img src="${logoSrc}" style="height:44px;width:auto;object-fit:contain;" alt="CF">
+      <div><div style="font-size:15px;font-weight:700;color:var(--text)">${esc(centreNom)} Training Center</div></div>
     </div>
     ${filterLabel?`<div class="rapport-filter-bar"><i class="fas fa-magnifying-glass"></i> Filtre actif : <strong>${filterLabel}</strong></div>`:''}
     <div class="rapport-grid" style="margin-bottom:16px;">
@@ -3945,11 +3979,12 @@ function delDisponibilite(id){
    ================================================================ */
 function confirmClear(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
-  showConfirm('<i class="fas fa-triangle-exclamation"></i> ATTENTION — Vider TOUTES les données ?\n\nÉtudiants, paiements, dépenses, sessions, formations, disponibilités ET bilans de session seront supprimés.\nCette action est IRRÉVERSIBLE.', async () => {
+  showConfirm('<i class="fas fa-triangle-exclamation"></i> ATTENTION — Vider TOUTES les données ?<br><br>Étudiants, paiements, dépenses, sessions, formations, disponibilités ET bilans de session seront supprimés.<br>Cette action est IRRÉVERSIBLE.', async () => {
     etudiants=[]; paiements=[]; depenses=[]; sessions=[]; formations=[]; disponibilites=[];
     nDispo=1; nEtu=1; nPay=1; nDep=1; nSes=1; nForm=1;
     saveAll(); populateSelects();
     renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
+    await IDB.set('cf6_sync_queue', []); // Vider la file d'attente obsolète pour éviter tout blocage
     await queueSyncOperation('CLEAR', 'all', 0, null);
   });
 }
@@ -4588,6 +4623,31 @@ function renderDashboard(){
    ================================================================ */
 function initApp(){
     setDateBadge();
+    
+    // Apply centre branding if available
+    const storedUser = localStorage.getItem('cf_user');
+    if (storedUser) {
+        try {
+            const loggedUser = JSON.parse(storedUser);
+            const headerLogoImg = document.getElementById('header-logo-img');
+            const headerLogoText = document.getElementById('header-logo-text');
+            if (loggedUser.centre_nom) {
+                if (headerLogoText) headerLogoText.textContent = loggedUser.centre_nom;
+                document.title = loggedUser.centre_nom + " – Gestion Centre de Formation";
+            } else {
+                if (headerLogoText) headerLogoText.textContent = "ComFormation";
+                document.title = "ComFormation – Gestion Centre de Formation";
+            }
+            if (loggedUser.centre_logo) {
+                if (headerLogoImg) headerLogoImg.src = loggedUser.centre_logo;
+            } else {
+                if (headerLogoImg) headerLogoImg.src = "logo.jpeg";
+            }
+        } catch (e) {
+            console.error('Error applying centre branding:', e);
+        }
+    }
+
     formations.forEach(f=>{ if(!f.label) f.label=f.intitule||f.int||''; });
     sessions.forEach(s=>{ if(s.closed===undefined) s.closed=false; });
     const savedKpi = LS('kpiVisible');

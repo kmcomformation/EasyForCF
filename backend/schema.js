@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS centres (
   telephone VARCHAR(30) NULL,
   montant_mensuel DECIMAL(15, 2) NOT NULL DEFAULT 0,
   statut VARCHAR(20) DEFAULT 'actif',
+  logo LONGTEXT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

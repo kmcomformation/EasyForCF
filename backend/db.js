@@ -90,6 +90,16 @@ async function initializeDatabase() {
       }
     }
 
+    // Vérifier/Ajouter la colonne "logo" à la table centres
+    try {
+      await connection.query('ALTER TABLE `centres` ADD COLUMN logo LONGTEXT NULL');
+      console.log('[DB Migration] Colonne logo ajoutée/vérifiée dans la table centres.');
+    } catch (err) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+        console.warn(`[DB Migration Warning] Impossible d'ajouter logo à centres:`, err.message);
+      }
+    }
+
     // Seeder le Super Administrateur (SaaS)
     const SUPER_ADMIN_ID = 1716000000000;
     const [superAdminRows] = await connection.query('SELECT * FROM users WHERE login = ?', ['nassufsoule@gmail.com']);
@@ -147,7 +157,12 @@ async function initializeDatabase() {
     // 2. Remplir les enregistrements orphelins (centre_id IS NULL) avec le centre par défaut
     for (const table of tablesToAlter) {
       try {
-        const [res] = await connection.query(`UPDATE \`${table}\` SET centre_id = ? WHERE centre_id IS NULL`, [defaultCentreId]);
+        let query = `UPDATE \`${table}\` SET centre_id = ? WHERE centre_id IS NULL`;
+        let params = [defaultCentreId];
+        if (table === 'users') {
+          query = `UPDATE \`${table}\` SET centre_id = ? WHERE centre_id IS NULL AND role != 'SuperAdmin'`;
+        }
+        const [res] = await connection.query(query, params);
         if (res.affectedRows > 0) {
           console.log(`[DB Migration] ${res.affectedRows} enregistrements orphelins associés au centre par défaut dans ${table}.`);
         }
