@@ -1520,10 +1520,11 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <div class="card-header">
       <span class="card-title"><i class="fas fa-chart-pie"></i> Tableau de Bord</span>
       <div class="toolbar" id="tdb-filters">
-        <select class="filter-select" id="tdb-f-ses" onchange="renderTDB()"><option value="">Toutes sessions</option></select>
-        <select class="filter-select" id="tdb-f-form" onchange="renderTDB()"><option value="">Toutes formations</option></select>
-        <button class="btn-secondary" onclick="resetTDBFilters()" style="font-size:11px;padding:5px 12px;"><i class="fas fa-rotate-left"></i> Réinitialiser</button>
-      </div>
+  <select class="filter-select" id="tdb-f-ses" onchange="renderTDB()"><option value="">Toutes sessions</option></select>
+  <select class="filter-select" id="tdb-f-form" onchange="renderTDB()"><option value="">Toutes formations</option></select>
+  <select class="filter-select" id="tdb-f-annee" onchange="renderTDB()"><option value="">Toutes années</option></select>
+  <button class="btn-secondary" onclick="resetTDBFilters()" style="font-size:11px;padding:5px 12px;"><i class="fas fa-rotate-left"></i> Réinitialiser</button>
+</div>
     </div>
     <div id="tdb-content" style="padding:16px;">
       <!-- KPI -->
@@ -3533,7 +3534,7 @@ function savePaiement(){
   };
   paiements.push(newPay);
   saveAll(); 
-  renderEtudiants(); renderPaiements(); renderTBD();populateUserFilters(); closeModal('pay');
+  renderEtudiants(); renderPaiements(); renderTDB();populateUserFilters(); closeModal('pay');
   queueSyncOperation('CREATE', 'paiements', id, newPay);
 }
 function renderPaiements(){
@@ -5923,7 +5924,6 @@ function parseInlineMarkdown(text) {
     // Code en ligne : `code`
     .replace(/`(.*?)`/g, '<code>$1</code>');
 }
-
 /* ================================================================
    TDB — TABLEAU DE BORD
    ================================================================ */
@@ -5933,40 +5933,89 @@ let tdbCharts = { doughnut: null, evolution: null };
 function populateTDBFilters() {
   const sEl = document.getElementById('tdb-f-ses');
   const fEl = document.getElementById('tdb-f-form');
-  if (!sEl || !fEl) return;
-  const curS = sEl.value, curF = fEl.value;
+  const aEl = document.getElementById('tdb-f-annee');
+  if (!sEl || !fEl || !aEl) return;
+  
+  const curS = sEl.value, curF = fEl.value, curA = aEl.value;
+  
+  // Sessions
   sEl.innerHTML = '<option value="">Toutes sessions</option>' + sessions.map(s => `<option value="${s.id}">${esc(s.code)} — ${esc(s.det)}</option>`).join('');
+  
+  // Formations
   fEl.innerHTML = '<option value="">Toutes formations</option>' + formations.map(f => `<option value="${f.id}">${esc(f.label||f.intitule||'—')}</option>`).join('');
+  
+  // Années - Extraire les années des paiements
+  const annees = new Set();
+  paiements.forEach(p => {
+    if (p.date) {
+      const annee = p.date.substring(0, 4);
+      if (annee) annees.add(annee);
+    }
+  });
+  depenses.forEach(d => {
+    if (d.date) {
+      const annee = d.date.substring(0, 4);
+      if (annee) annees.add(annee);
+    }
+  });
+  etudiants.forEach(e => {
+    if (e.date) {
+      const annee = e.date.substring(0, 4);
+      if (annee) annees.add(annee);
+    }
+  });
+  
+  const anneeActuelle = new Date().getFullYear().toString();
+  let anneesHtml = '<option value="">Toutes années</option>';
+  [...annees].sort().reverse().forEach(a => {
+    const selected = (a === anneeActuelle && curA === '') ? 'selected' : '';
+    anneesHtml += `<option value="${a}" ${selected}>${a}</option>`;
+  });
+  // Si aucune année n'est trouvée, ajouter l'année en cours
+  if (annees.size === 0) {
+    anneesHtml += `<option value="${anneeActuelle}" selected>${anneeActuelle}</option>`;
+  }
+  aEl.innerHTML = anneesHtml;
+  
   if (curS) sEl.value = curS;
   if (curF) fEl.value = curF;
+  // Ne pas restaurer curA car on a déjà mis l'année en cours par défaut
 }
 
 function getTDBFilters() {
   return {
     sesId: document.getElementById('tdb-f-ses')?.value || '',
-    formId: document.getElementById('tdb-f-form')?.value || ''
+    formId: document.getElementById('tdb-f-form')?.value || '',
+    annee: document.getElementById('tdb-f-annee')?.value || ''
   };
 }
 
 function resetTDBFilters() {
   const sEl = document.getElementById('tdb-f-ses');
   const fEl = document.getElementById('tdb-f-form');
+  const aEl = document.getElementById('tdb-f-annee');
   if (sEl) sEl.value = '';
   if (fEl) fEl.value = '';
+  if (aEl) aEl.value = new Date().getFullYear().toString();
   renderTDB();
 }
 
 function getTDBFilteredData(filters) {
-  const { sesId, formId } = filters;
+  const { sesId, formId, annee } = filters;
   let etu = etudiants;
   if (sesId) etu = etu.filter(e => String(e.sesId) === String(sesId));
   if (formId) etu = etu.filter(e => String(e.formId) === String(formId));
+  if (annee) {
+    etu = etu.filter(e => e.date && e.date.substring(0, 4) === annee);
+  }
   const etuIds = new Set(etu.map(e => e.id));
   let pay = paiements.filter(p => etuIds.has(p.etuId));
   if (sesId) pay = pay.filter(p => String(p.sesId) === String(sesId));
   if (formId) pay = pay.filter(p => String(p.formId) === String(formId));
+  if (annee) pay = pay.filter(p => p.date && p.date.substring(0, 4) === annee);
   let dep = depenses;
   if (sesId) dep = dep.filter(d => String(d.sesId) === String(sesId));
+  if (annee) dep = dep.filter(d => d.date && d.date.substring(0, 4) === annee);
   return { etudiants: etu, paiements: pay, depenses: dep, etuIds };
 }
 
@@ -6040,8 +6089,8 @@ function renderTDB() {
   if (topSesCount > 0) sortedSes = sortedSes.slice(0, topSesCount);
   renderTDBHorizontalBars('tdb-chart-sessions', sortedSes, 'purple');
 
-  // Évolution mensuelle
-  renderTDBEvolution(filteredPay, filteredDep);
+  // Évolution mensuelle - 12 mois de l'année en cours ou de l'année filtrée
+  renderTDBEvolution(filteredPay, filteredDep, filters.annee);
 
   // Doughnut
   renderTDBDoughnut(filteredEtu);
@@ -6079,20 +6128,19 @@ function renderTDBHorizontalBars(containerId, data, colorClass = '') {
   }).join('');
 }
 
-function renderTDBEvolution(paiements, depenses) {
+function renderTDBEvolution(paiements, depenses, anneeFiltre) {
   const container = document.getElementById('tdb-chart-evolution');
   if (!container) return;
   const wrapper = container.querySelector('.tdb-evolution-container') || container;
   
-  // 12 derniers mois
+  // 12 mois de l'année (Janvier à Décembre)
+  const annee = anneeFiltre || new Date().getFullYear().toString();
   const months = [];
-  const now = new Date();
-  for (let i = 11; i >= 0; i--) {
-    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    months.push(d);
+  for (let m = 0; m < 12; m++) {
+    months.push(new Date(parseInt(annee), m, 1));
   }
   
-  const monthLabels = months.map(d => d.toLocaleString('fr-FR', { month: 'short', year: 'numeric' }));
+  const monthLabels = months.map(d => d.toLocaleString('fr-FR', { month: 'short' }));
   const recettesByMonth = months.map(m => {
     const start = new Date(m.getFullYear(), m.getMonth(), 1);
     const end = new Date(m.getFullYear(), m.getMonth() + 1, 0);
@@ -6321,11 +6369,11 @@ function renderTDBLastPayments(paiements) {
     const cout = etu ? Number(etu.cout) : 0;
     const st = getStatut(paye, cout);
     return `<tr>
-      <td>${fmtDate(p.date)}</td>
-      <td><strong>${esc(p.nom || '')}</strong></td>
-      <td>${esc(getFormLabel(p.formId))}</td>
-      <td style="color:var(--success);font-weight:700;">${fmtM(p.montant)} FC</td>
-      <td><span class="badge ${st.c}">${st.l}</span></td>
+      <td style="padding:6px 10px;font-size:12px;">${fmtDate(p.date)}</td>
+      <td style="padding:6px 10px;font-size:12px;"><strong>${esc(p.nom || '')}</strong></td>
+      <td style="padding:6px 10px;font-size:12px;">${esc(getFormLabel(p.formId))}</td>
+      <td style="padding:6px 10px;font-size:12px;text-align:right;color:var(--success);font-weight:700;">${fmtM(p.montant)} FC</td>
+      <td style="padding:6px 10px;font-size:12px;"><span class="badge ${st.c}">${st.l}</span></td>
     </tr>`;
   }).join('');
 }
@@ -6352,9 +6400,9 @@ function renderTDBNonSoldes(etudiants) {
   
   tbody.innerHTML = nonSoldes.map(e => `
     <tr>
-      <td><strong>${esc(e.nom)} ${esc(e.prenom)}</strong></td>
-      <td>${esc(getFormLabel(e.formId))}</td>
-      <td style="color:var(--danger);font-weight:700;">${fmtM(e.reste)} FC</td>
+      <td style="padding:6px 10px;font-size:12px;"><strong>${esc(e.nom)} ${esc(e.prenom)}</strong></td>
+      <td style="padding:6px 10px;font-size:12px;">${esc(getFormLabel(e.formId))}</td>
+      <td style="padding:6px 10px;font-size:12px;text-align:right;color:var(--danger);font-weight:700;">${fmtM(e.reste)} FC</td>
     </tr>
   `).join('');
 }
