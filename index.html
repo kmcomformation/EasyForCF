@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ComFormation – Gestion Centre de Formation</title>
+<title>EasyFor – Gestion Centre de Formation</title>
 
 <!-- ============================================================
      PWA — Progressive Web App (installation comme app native)
@@ -12,14 +12,14 @@
 <!-- Couleur de la barre de statut du navigateur sur mobile -->
 <meta name="theme-color" content="#0f2248">
 <!-- Nom affiché lors de l'installation sur l'écran d'accueil -->
-<meta name="application-name" content="ComFormation">
+<meta name="application-name" content="EasyFor">
 <!-- Description pour les stores et le panneau d'installation -->
 <meta name="description" content="Gestion Centre de Formation — Étudiants, Paiements, Dépenses">
 
 <!-- Apple (iOS) — indispensable pour "Ajouter à l'écran d'accueil" -->
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ComFormation">
+<meta name="apple-mobile-web-app-title" content="EasyFor">
 
 <!-- Manifest PWA inline via data URI (évite un fichier externe) -->
 <link rel="manifest" id="pwa-manifest">
@@ -167,6 +167,7 @@ a{text-decoration:none;}
 .nav-btn[onclick*="depenses"] i { color: #ef4444 !important; }
 .nav-btn[onclick*="disponibilite"] i { color: #f59e0b !important; }
 .nav-btn[onclick*="dashboard"] i { color: #06b6d4 !important; }
+.nav-btn[onclick*="tdb"] i { color: #0ea5e9 !important; }
 .nav-btn[onclick*="sessions"] i { color: #8b5cf6 !important; }
 .nav-btn[onclick*="formations"] i { color: #ec4899 !important; }
 .nav-btn[onclick*="rapport"] i { color: #f97316 !important; }
@@ -377,6 +378,20 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .pwa-available  { background: var(--info-bg)    !important; border-color: var(--info)    !important; }
 .pwa-ios        { background: var(--warning-bg) !important; border-color: var(--warning) !important; }
 .pwa-none       { background: var(--bg)         !important; border-color: var(--border)  !important; }
+
+/* ---- TDB (Tableau de Bord global) — réutilise .stat-card / .card / .table-wrap ---- */
+.tdb-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.tdb-charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tdb-pbar-wrap{display:flex;align-items:center;gap:8px;min-width:120px;}
+.tdb-pbar-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden;min-width:60px;}
+.tdb-pbar-fill{height:100%;border-radius:3px;transition:width .3s;}
+@media(max-width:960px){
+  .tdb-charts-grid{grid-template-columns:1fr;}
+}
+@media(max-width:620px){
+  .tdb-kpi-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;padding-bottom:4px;}
+  .tdb-kpi-grid .stat-card{flex:0 0 220px;scroll-snap-align:start;}
+}
 @media(min-width:961px) and (max-width:1380px){
   .logo-text, .logo-sep {
     display: none !important;
@@ -1142,7 +1157,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="login-bg-orb orb-2"></div>
   <div class="login-box">
     <div class="login-logo-wrap" style="text-align: center; margin-bottom: 25px;">
-      <img src="logo.jpeg" alt="ComFormation Logo" style="max-height: 90px; width: auto; max-width: 100%; border-radius: 14px; object-fit: contain; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 2px solid rgba(255,255,255,0.4); padding: 2px; background: rgba(255,255,255,0.85); transition: transform 0.3s ease;">
+      <img src="logo.jpeg" alt="EasyFor Logo" style="max-height: 90px; width: auto; max-width: 100%; border-radius: 14px; object-fit: contain; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 2px solid rgba(255,255,255,0.4); padding: 2px; background: rgba(255,255,255,0.85); transition: transform 0.3s ease;">
     </div>
     <div class="login-badge"><i class="fas fa-graduation-cap"></i> CENTRE DE FORMATION</div>
     <h2>Connexion sécurisée</h2>
@@ -1177,7 +1192,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <button class="hamburger" onclick="toggleDrawer()"><span></span><span></span><span></span></button>
   <div class="logo">
     <img class="logo-img" id="header-logo-img" src="logo.jpeg" alt="CF">
-    <span class="logo-text" id="header-logo-text">ComFormation</span>
+    <span class="logo-text" id="header-logo-text">EasyFor</span>
   </div>
   <div class="logo-sep"></div>
   <nav class="nav" id="main-nav">
@@ -1185,6 +1200,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
     <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
    <button class="nav-btn" onclick="showSection('disponibilite')" id="nav-disponibilite"><i class="fas fa-wallet"></i> Disponibilité</button>
+<button class="nav-btn" onclick="showSection('tdb')" id="nav-tdb"><i class="fas fa-gauge-high"></i> TDB</button>
 <button class="nav-btn" onclick="showSection('dashboard')" id="nav-dashboard"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
     
     <button class="nav-btn admin-only" onclick="showSection('sessions')" id="nav-sessions"><i class="fas fa-calendar-days"></i> Sessions</button>
@@ -1233,6 +1249,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()" id="nav-m-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
     <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()" id="nav-m-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
     <button class="nav-btn" onclick="showSection('disponibilite');closeDrawerAll()" id="nav-m-disponibilite"><i class="fas fa-wallet"></i> Disponibilité</button>
+    <button class="nav-btn" onclick="showSection('tdb');closeDrawerAll()" id="nav-m-tdb"><i class="fas fa-gauge-high"></i> TDB</button>
     <button class="nav-btn" onclick="showSection('dashboard');closeDrawerAll()" id="nav-m-dashboard"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
     <button class="nav-btn admin-only" onclick="showSection('sessions');closeDrawerAll()"><i class="fas fa-calendar-days"></i> Sessions</button>
     <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()"><i class="fas fa-book-open"></i> Formations</button>
@@ -1400,6 +1417,79 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
         </table>
         <div class="empty" id="disp-empty" style="display:none;"><div class="e-ico"><i class="fas fa-wallet"></i></div><p>Aucune entrée de disponibilité.</p></div>
         <div class="total-row" id="disp-tot" style="display:none;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TDB — TABLEAU DE BORD GLOBAL -->
+  <div class="section" id="sec-tdb">
+    <div class="card" style="margin-bottom:12px;">
+      <div class="card-header">
+        <span class="card-title"><i class="fas fa-gauge-high"></i> Tableau de Bord (TDB)</span>
+        <div class="toolbar">
+          <select class="filter-select" id="tdb-f-ses" onchange="updateDashboard()"><option value="">Toutes sessions</option></select>
+          <select class="filter-select" id="tdb-f-form" onchange="updateDashboard()"><option value="">Toutes formations</option></select>
+        </div>
+      </div>
+      <div style="padding:14px;">
+        <div class="tdb-kpi-grid">
+          <div class="stat-card" style="padding:16px;">
+            <div class="stat-icon si-green" style="width:46px;height:46px;font-size:20px;"><i class="fas fa-sack-dollar"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-recettes" style="font-size:19px;">0 FC</div><div class="stat-label">Recettes</div></div>
+          </div>
+          <div class="stat-card" style="padding:16px;">
+            <div class="stat-icon si-red" style="width:46px;height:46px;font-size:20px;"><i class="fas fa-money-bill-trend-up"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-depenses" style="font-size:19px;">0 FC</div><div class="stat-label">Dépenses</div></div>
+          </div>
+          <div class="stat-card" style="padding:16px;">
+            <div class="stat-icon si-blue" style="width:46px;height:46px;font-size:20px;"><i class="fas fa-building-columns"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-solde" style="font-size:19px;">0 FC</div><div class="stat-label">Solde</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tdb-charts-grid">
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-line"></i> Évolution Recettes / Dépenses</span></div>
+        <div style="padding:14px;height:280px;position:relative;"><canvas id="tdb-chart-evolution"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title"><i class="fas fa-chart-pie"></i> Répartition des étudiants par formation</span></div>
+        <div style="padding:14px;height:280px;position:relative;"><canvas id="tdb-chart-formations"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="card-header"><span class="card-title"><i class="fas fa-clipboard-list"></i> Transactions récentes</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Étudiant / Libellé</th><th>Formation</th><th>Entrée</th><th>Sortie</th></tr></thead>
+          <tbody id="tbody-tdb-transactions"></tbody>
+        </table>
+        <div class="empty" id="tdb-transactions-empty" style="display:none;"><div class="e-ico"><i class="fas fa-clipboard-list"></i></div><p>Aucune opération.</p></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="card-header"><span class="card-title"><i class="fas fa-calendar-check"></i> Étudiants avec échéances</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Étudiant</th><th>Formation</th><th>Total formation</th><th>Total payé</th><th>Solde</th><th>Échéance</th><th>Statut</th></tr></thead>
+          <tbody id="tbody-tdb-echeances"></tbody>
+        </table>
+        <div class="empty" id="tdb-echeances-empty" style="display:none;"><div class="e-ico"><i class="fas fa-calendar-check"></i></div><p>Aucune échéance enregistrée.</p></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px;">
+      <div class="card-header"><span class="card-title"><i class="fas fa-book-open"></i> Formations — pourcentage de solde</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Formation</th><th>Étudiants</th><th>Montant attendu</th><th>Montant encaissé</th><th>% encaissé</th></tr></thead>
+          <tbody id="tbody-tdb-formations"></tbody>
+        </table>
+        <div class="empty" id="tdb-formations-empty" style="display:none;"><div class="e-ico"><i class="fas fa-book-open"></i></div><p>Aucune donnée.</p></div>
       </div>
     </div>
   </div>
@@ -1713,6 +1803,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-paiements"> <i class="fas fa-credit-card"></i> Paiements</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-depenses"> <i class="fas fa-arrow-trend-down"></i> Dépenses</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-disponibilite"> <i class="fas fa-wallet"></i> Disponibilité</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-tdb"> <i class="fas fa-gauge-high"></i> TDB (Tableau de Bord)</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-sec-dashboard" checked> <i class="fas fa-chart-bar"></i> Mon tableau de bord</label>
         </div>
         <div>
@@ -1810,7 +1901,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 <div id="pwa-install-bar">
   <span style="font-size:22px;"><i class="fas fa-mobile-screen-button"></i></span>
   <div class="pwa-txt">
-    <strong>Installer ComFormation</strong> comme application sur cet appareil pour un accès rapide hors connexion.
+    <strong>Installer EasyFor</strong> comme application sur cet appareil pour un accès rapide hors connexion.
   </div>
   <button class="pwa-btn-install" onclick="installPWA()"><i class="fas fa-download"></i> Installer</button>
   <button class="pwa-btn-dismiss" onclick="dismissPWA()" title="Fermer"><i class="fas fa-xmark"></i></button>
@@ -2440,7 +2531,7 @@ function doLogout(){
   window.location.reload();
 }
 function handleForgotPassword() {
-  alert("🔑 Pour réinitialiser votre mot de passe, veuillez contacter l'administrateur du centre ComFormation.");
+  alert("🔑 Pour réinitialiser votre mot de passe, veuillez contacter l'administrateur du centre EasyFor.");
 }
 
 function applyRoleUI(){
@@ -2485,8 +2576,8 @@ function applyRoleUI(){
     if(mobileDashBtn) mobileDashBtn.style.display = hasDash ? '' : 'none';
 
     // — Sections accessibles
-    const sections = ['etudiants','paiements','depenses','disponibilite'];
-    const permMap = {etudiants:'secEtudiants',paiements:'secPaiements',depenses:'secDepenses',disponibilite:'secDisponibilite'};
+    const sections = ['etudiants','paiements','depenses','disponibilite','tdb'];
+    const permMap = {etudiants:'secEtudiants',paiements:'secPaiements',depenses:'secDepenses',disponibilite:'secDisponibilite',tdb:'secTDB'};
     sections.forEach(s=>{
       const hasAccess = perms[permMap[s]] === true;
       const navBtn = document.getElementById('nav-'+s);
@@ -2518,7 +2609,7 @@ function applyRoleUI(){
     if(mobileDashBtn) mobileDashBtn.style.display = 'none';
 
     // Admin : afficher disponibilité et toutes les sections
-    const sections = ['etudiants','paiements','depenses','disponibilite'];
+    const sections = ['etudiants','paiements','depenses','disponibilite','tdb'];
     sections.forEach(s=>{
       const navBtn = document.getElementById('nav-'+s);
       if(navBtn) navBtn.style.display = '';
@@ -2541,7 +2632,7 @@ function hasPermission(key){
 }
 function getPermDef(u){
   if(!u || !u.perms || Object.keys(u.perms).length === 0) {
-    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
+    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secTDB:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
   }
   return u.perms;
 }
@@ -2565,6 +2656,7 @@ function readPermsFromForm(){
     secPaiements: document.getElementById('perm-sec-paiements')?.checked||false,
     secDepenses: document.getElementById('perm-sec-depenses')?.checked||false,
     secDisponibilite: document.getElementById('perm-sec-disponibilite')?.checked||false,
+    secTDB: document.getElementById('perm-sec-tdb')?.checked||false,
     secDashboard: document.getElementById('perm-sec-dashboard')?.checked||false,
     actAddEtu: document.getElementById('perm-act-add-etu')?.checked||false,
     actPay: document.getElementById('perm-act-pay')?.checked||false,
@@ -2580,6 +2672,7 @@ function applyPermsToForm(perms){
   const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.checked=!!v; };
   set('perm-sec-etudiants',perms.secEtudiants); set('perm-sec-paiements',perms.secPaiements);
   set('perm-sec-depenses',perms.secDepenses); set('perm-sec-disponibilite',perms.secDisponibilite);
+  set('perm-sec-tdb',perms.secTDB);
   set('perm-sec-dashboard',perms.secDashboard);
   set('perm-act-add-etu',perms.actAddEtu); set('perm-act-pay',perms.actPay);
   set('perm-act-add-dep',perms.actAddDep); set('perm-act-edit',perms.actEdit); set('perm-act-del',perms.actDel);
@@ -2644,6 +2737,7 @@ function showSection(id){
     depenses: renderDepenses, sessions: renderSessions,
     formations: renderFormations, users: renderUsers,
     disponibilite: renderDisponibilite,
+    tdb: updateDashboard,
     dashboard: renderDashboard,
     rapport: () => { populateRapportFilters(); renderRapport(); }
   };
@@ -2742,8 +2836,8 @@ function populateSelects(){
   const allF='<option value="">Toutes formations</option>';
   const setOpts=(id,html)=>{ const el=document.getElementById(id); if(el) el.innerHTML=html; };
   setOpts('etu-ses',base+sOpts); setOpts('dep-ses',base+sOpts); setOpts('etu-form',base+fOpts);
-  [['etu-f-ses',allS],['pay-f-ses',allS],['dep-f-ses',allS]].forEach(([id,pfx])=>setOpts(id,pfx+sOpts));
-  [['etu-f-form',allF],['pay-f-form',allF]].forEach(([id,pfx])=>setOpts(id,pfx+fOpts));
+  [['etu-f-ses',allS],['pay-f-ses',allS],['dep-f-ses',allS],['tdb-f-ses',allS]].forEach(([id,pfx])=>setOpts(id,pfx+sOpts));
+  [['etu-f-form',allF],['pay-f-form',allF],['tdb-f-form',allF]].forEach(([id,pfx])=>setOpts(id,pfx+fOpts));
   // Peuple les filtres par utilisateur (admin seulement)
   populateUserFilters();
   populateRapportFilters();
@@ -3087,6 +3181,7 @@ function saveEtudiant(){
     // Sauvegarder et rafraîchir l'affichage
     renderEtudiants();
     populateUserFilters();
+    refreshTDBIfActive();
     closeModal('etu');
 }
 function delEtudiant(id){
@@ -3098,6 +3193,7 @@ function delEtudiant(id){
     etudiants=etudiants.filter(x=>x.id!==id);
     paiements=paiements.filter(p=>p.etuId!==id);
     saveAll(); renderEtudiants(); renderPaiements();
+    refreshTDBIfActive();
     await queueSyncOperation('DELETE', 'etudiants', id, null);
   });
 }
@@ -3162,6 +3258,7 @@ function savePaiement(){
   paiements.push(newPay);
   saveAll(); 
   renderEtudiants(); renderPaiements(); populateUserFilters(); closeModal('pay');
+  refreshTDBIfActive();
   queueSyncOperation('CREATE', 'paiements', id, newPay);
 }
 function renderPaiements(){
@@ -3215,7 +3312,7 @@ function openRecu(etuId){
   const bCls=barColor(pct);
 
   const storedUser = localStorage.getItem('cf_user');
-  let centreNom = "ComFormation";
+  let centreNom = "EasyFor";
   let logoSrc = window.LOGO_RECU || 'logo.jpeg';
   if (storedUser) {
     try {
@@ -3371,6 +3468,7 @@ function saveDepense(){
     queueSyncOperation('CREATE', 'depenses', id, newDep);
   }
   renderDepenses(); updateStats(); populateUserFilters(); closeModal('dep');
+  refreshTDBIfActive();
 }
 
 function renderDepenses(){
@@ -3430,6 +3528,7 @@ function delDepense(id){
   showConfirm('Supprimer cette dépense ?', async ()=>{
     depenses=depenses.filter(x=>x.id!==id);
     saveAll(); renderDepenses(); updateStats();
+    refreshTDBIfActive();
     await queueSyncOperation('DELETE', 'depenses', id, null);
   });
 }
@@ -3624,7 +3723,7 @@ function renderRapport(){
   const netBalance=totalEnc-totalDep;
 
   const storedUser = localStorage.getItem('cf_user');
-  let centreNom = "ComFormation";
+  let centreNom = "EasyFor";
   let logoSrc = window.LOGO_RECU || 'logo.jpeg';
   if (storedUser) {
     try {
@@ -3735,7 +3834,7 @@ function printRapport(){
   if(!zone){ alert("Générez d'abord le rapport."); return; }
   const w=window.open('','_blank');
   if(!w){ alert('Veuillez autoriser les popups.'); return; }
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport ComFormation</title>
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Rapport EasyFor</title>
   <style>body{font-family:Georgia,serif;margin:0;padding:20px;background:#fff;color:#0f2248;font-size:12px;}
   .rapport-card{border:1px solid #dde5f0;border-radius:8px;padding:12px;margin-bottom:10px;}
   .rapport-card-title{font-size:13px;font-weight:700;margin-bottom:8px;}
@@ -3984,6 +4083,7 @@ function confirmClear(){
     nDispo=1; nEtu=1; nPay=1; nDep=1; nSes=1; nForm=1;
     saveAll(); populateSelects();
     renderEtudiants(); renderPaiements(); renderDepenses(); renderSessions(); renderFormations(); updateStats();
+    refreshTDBIfActive();
     await IDB.set('cf6_sync_queue', []); // Vider la file d'attente obsolète pour éviter tout blocage
     await queueSyncOperation('CLEAR', 'all', 0, null);
   });
@@ -4011,7 +4111,7 @@ function exportExcel(){
     // Feuille Bilans — métadonnées uniquement (les fichiers binaires ne passent pas en Excel)
     
     const d=new Date();
-    XLSX.writeFile(wb,`ComFormation_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.xlsx`);
+    XLSX.writeFile(wb,`EasyFor_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.xlsx`);
   }catch(err){ alert('Erreur export : '+err.message); }
 }
 function importExcel(){ if(currentRole!=='Admin'){ alert('Accès refusé.'); return; } document.getElementById('import-file').click(); }
@@ -4356,6 +4456,7 @@ async function importAndRestoreData(parsedData) {
   renderSessions();
   renderFormations();
   updateStats();
+  refreshTDBIfActive();
 
   sessions.forEach(s => queueBatch('CREATE', 'sessions', s.id, s));
   formations.forEach(f => queueBatch('CREATE', 'formations', f.id, f));
@@ -4386,8 +4487,8 @@ let pwaInstallEvent = null;
 /* ---- Manifest PWA (data URI) ---- */
 (function injectPWAManifest(){
   const manifest = {
-    name: 'ComFormation',
-    short_name: 'ComForm',
+    name: 'EasyFor',
+    short_name: 'EasyFor',
     description: 'Gestion Centre de Formation — Étudiants, Paiements, Dépenses',
     start_url: './',
     scope: './',
@@ -4398,11 +4499,11 @@ let pwaInstallEvent = null;
     lang: 'fr',
     icons: [
       {
-        src: 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="#0f2248"/><rect x="12" y="12" width="168" height="168" rx="24" fill="#1a3a72"/><text x="96" y="90" font-family="Georgia,serif" font-size="38" font-weight="700" fill="#2bbf9b" text-anchor="middle">CF</text><text x="96" y="118" font-family="Georgia,serif" font-size="14" fill="rgba(255,255,255,0.7)" text-anchor="middle" letter-spacing="1">ComFormation</text><line x1="32" y1="130" x2="160" y2="130" stroke="#2bbf9b" stroke-width="2.5" stroke-linecap="round"/></svg>`),
+        src: 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="#0f2248"/><rect x="12" y="12" width="168" height="168" rx="24" fill="#1a3a72"/><text x="96" y="90" font-family="Georgia,serif" font-size="38" font-weight="700" fill="#2bbf9b" text-anchor="middle">EF</text><text x="96" y="118" font-family="Georgia,serif" font-size="14" fill="rgba(255,255,255,0.7)" text-anchor="middle" letter-spacing="1">EasyFor</text><line x1="32" y1="130" x2="160" y2="130" stroke="#2bbf9b" stroke-width="2.5" stroke-linecap="round"/></svg>`),
         sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable'
       },
       {
-        src: 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="#0f2248"/><rect x="32" y="32" width="448" height="448" rx="60" fill="#1a3a72"/><text x="256" y="240" font-family="Georgia,serif" font-size="100" font-weight="700" fill="#2bbf9b" text-anchor="middle">CF</text><text x="256" y="310" font-family="Georgia,serif" font-size="38" fill="rgba(255,255,255,0.7)" text-anchor="middle" letter-spacing="2">ComFormation</text><line x1="80" y1="340" x2="432" y2="340" stroke="#2bbf9b" stroke-width="6" stroke-linecap="round"/></svg>`),
+        src: 'data:image/svg+xml;base64,' + btoa(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="80" fill="#0f2248"/><rect x="32" y="32" width="448" height="448" rx="60" fill="#1a3a72"/><text x="256" y="240" font-family="Georgia,serif" font-size="100" font-weight="700" fill="#2bbf9b" text-anchor="middle">EF</text><text x="256" y="310" font-family="Georgia,serif" font-size="38" fill="rgba(255,255,255,0.7)" text-anchor="middle" letter-spacing="2">EasyFor</text><line x1="80" y1="340" x2="432" y2="340" stroke="#2bbf9b" stroke-width="6" stroke-linecap="round"/></svg>`),
         sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable'
       }
     ]
@@ -4467,10 +4568,10 @@ function showInstallBar(mode) {
   const txt = bar.querySelector('.pwa-txt');
   const btnInstall = bar.querySelector('.pwa-btn-install');
   if (mode === 'ios') {
-    if (txt) txt.innerHTML = '<strong>Installer ComFormation sur iPhone/iPad</strong> : appuyez sur <strong>⎙ Partager</strong> puis <strong>Sur l\'écran d\'accueil</strong>.';
+    if (txt) txt.innerHTML = '<strong>Installer EasyFor sur iPhone/iPad</strong> : appuyez sur <strong>⎙ Partager</strong> puis <strong>Sur l\'écran d\'accueil</strong>.';
     if (btnInstall) btnInstall.style.display = 'none'; // Pas de prompt natif sur iOS
   } else {
-    if (txt) txt.innerHTML = 'Installer <strong>ComFormation</strong> comme application sur cet appareil pour un accès rapide hors connexion.';
+    if (txt) txt.innerHTML = 'Installer <strong>EasyFor</strong> comme application sur cet appareil pour un accès rapide hors connexion.';
     if (btnInstall) btnInstall.style.display = '';
   }
   bar.classList.add('visible');
@@ -4540,14 +4641,14 @@ function updatePwaSettingsBlock() {
     block.classList.add('pwa-installed');
     if (icon)  icon.innerHTML    = '<i class="fas fa-circle-check"></i>';
     if (title) title.textContent = 'Application installée et active';
-    if (desc)  desc.textContent  = 'ComFormation fonctionne comme une application native sur cet appareil.';
+    if (desc)  desc.textContent  = 'EasyFor fonctionne comme une application native sur cet appareil.';
     if (zone)  zone.innerHTML    = '<span class="badge b-success" style="font-size:12px;padding:5px 12px;"><i class="fas fa-circle-check"></i> Installée</span>';
   } else if (pwaInstallEvent) {
     // Chrome/Edge : prompt disponible
     block.classList.add('pwa-available');
     if (icon)  icon.innerHTML    = '<i class="fas fa-mobile-screen-button"></i>';
     if (title) title.textContent = 'Prêt à installer sur cet appareil';
-    if (desc)  desc.textContent  = 'Cliquez sur le bouton pour installer ComFormation comme application.';
+    if (desc)  desc.textContent  = 'Cliquez sur le bouton pour installer EasyFor comme application.';
     if (zone)  zone.innerHTML    = '<button class="btn-teal" onclick="installPWA()" style="font-size:13px;padding:8px 16px;"><i class="fas fa-download"></i> Installer maintenant</button>';
   } else if (isIOS) {
     // iOS Safari : instruction manuelle
@@ -4564,6 +4665,201 @@ function updatePwaSettingsBlock() {
     if (desc)  desc.textContent  = 'Utilisez Chrome, Edge (Android/PC) ou Safari (iOS) pour installer l\'application.';
     if (zone)  zone.innerHTML    = '';
   }
+}
+
+/* ================================================================
+   TDB — TABLEAU DE BORD GLOBAL (KPI, graphiques, tableaux)
+   Fonctions dédiées, appelées automatiquement à chaque changement
+   de données (voir refreshTDBIfActive dans les fonctions save/del).
+   ================================================================ */
+let tdbChartEvolution = null;
+let tdbChartFormations = null;
+
+function refreshTDBIfActive(){
+  const sec = document.getElementById('sec-tdb');
+  if(sec && sec.classList.contains('active') && typeof updateDashboard==='function') updateDashboard();
+}
+
+function getTDBFilters(){
+  return {
+    fs: document.getElementById('tdb-f-ses')?.value || '',
+    ff: document.getElementById('tdb-f-form')?.value || ''
+  };
+}
+function getTDBEtudiants(){
+  const {fs,ff} = getTDBFilters();
+  return etudiants.filter(e=>{
+    if(fs && String(e.sesId)!==String(fs)) return false;
+    if(ff && String(e.formId)!==String(ff)) return false;
+    return true;
+  });
+}
+function getTDBPaiements(){
+  const {fs,ff} = getTDBFilters();
+  return paiements.filter(p=>{
+    if(fs && String(p.sesId)!==String(fs)) return false;
+    if(ff && String(p.formId)!==String(ff)) return false;
+    return true;
+  });
+}
+function getTDBDepenses(){
+  const {fs} = getTDBFilters();
+  // Les dépenses ne sont pas rattachées à une formation, seul le filtre Session s'applique.
+  return depenses.filter(d=> !fs || String(d.sesId)===String(fs));
+}
+
+function updateDashboard(){
+  populateSelects();
+  updateDashboardKPIs();
+  updateDashboardCharts();
+  updateDashboardTransactions();
+  updateDashboardEcheances();
+  updateDashboardFormationStats();
+}
+
+function updateDashboardKPIs(){
+  const recettes = getTDBPaiements().reduce((a,p)=>a+Number(p.montant||0),0);
+  const depensesTotal = getTDBDepenses().reduce((a,d)=>a+Number(d.montant||0),0);
+  const solde = recettes - depensesTotal;
+  const elR=document.getElementById('tdb-kpi-recettes'); if(elR) elR.textContent=fmtM(recettes)+' FC';
+  const elD=document.getElementById('tdb-kpi-depenses'); if(elD) elD.textContent=fmtM(depensesTotal)+' FC';
+  const elS=document.getElementById('tdb-kpi-solde'); if(elS) elS.textContent=fmtM(solde)+' FC';
+}
+
+function updateDashboardCharts(){
+  if(typeof Chart==='undefined') return; // Chart.js se charge en tâche de fond, redessiné dès son chargement
+
+  /* --- Graphique 1 : évolution mensuelle Recettes / Dépenses --- */
+  const pays=getTDBPaiements(), deps=getTDBDepenses();
+  const monthKey = d => (d||'').slice(0,7); // YYYY-MM
+  const months = Array.from(new Set([...pays.map(p=>monthKey(p.date)), ...deps.map(d=>monthKey(d.date))].filter(Boolean))).sort();
+  const monthLabel = m => { const [y,mo]=m.split('-'); const d=new Date(Number(y),Number(mo)-1,1); return d.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'}); };
+  const recettesParMois = months.map(m=>pays.filter(p=>monthKey(p.date)===m).reduce((a,p)=>a+Number(p.montant||0),0));
+  const depensesParMois = months.map(m=>deps.filter(d=>monthKey(d.date)===m).reduce((a,d)=>a+Number(d.montant||0),0));
+
+  const ctx1=document.getElementById('tdb-chart-evolution');
+  if(ctx1){
+    if(tdbChartEvolution) tdbChartEvolution.destroy();
+    tdbChartEvolution = new Chart(ctx1, {
+      type:'line',
+      data:{
+        labels: months.map(monthLabel),
+        datasets:[
+          {label:'Recettes (FC)', data:recettesParMois, borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,.12)', tension:.35, fill:true},
+          {label:'Dépenses (FC)', data:depensesParMois, borderColor:'#dc2626', backgroundColor:'rgba(220,38,38,.12)', tension:.35, fill:true}
+        ]
+      },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}}, scales:{y:{beginAtZero:true}} }
+    });
+  }
+
+  /* --- Graphique 2 : répartition étudiants par formation (donut) --- */
+  const etus = getTDBEtudiants();
+  const byForm = {};
+  etus.forEach(e=>{ const key=e.formId||'—'; byForm[key]=(byForm[key]||0)+1; });
+  const formIds = Object.keys(byForm);
+  const labels = formIds.map(id=>id==='—'?'Non assigné':getFormLabel(id));
+  const data = formIds.map(id=>byForm[id]);
+  const colors = formIds.map((_,i)=>fcols[i%fcols.length]);
+
+  const ctx2=document.getElementById('tdb-chart-formations');
+  if(ctx2){
+    if(tdbChartFormations) tdbChartFormations.destroy();
+    tdbChartFormations = new Chart(ctx2, {
+      type:'doughnut',
+      data:{ labels, datasets:[{ data, backgroundColor:colors, borderWidth:2, borderColor:'var(--surface)' }] },
+      options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right',labels:{boxWidth:10,font:{size:11}}}} }
+    });
+  }
+}
+
+function updateDashboardTransactions(){
+  const pays = getTDBPaiements().map(p=>({
+    date:p.date, type:'paiement', label:p.nom||'—', formation:getFormLabel(p.formId), entree:Number(p.montant||0), sortie:0
+  }));
+  const deps = getTDBDepenses().map(d=>({
+    date:d.date, type:'depense', label:d.lib||'—', formation:getSesLabel(d.sesId), entree:0, sortie:Number(d.montant||0)
+  }));
+  const all = [...pays, ...deps].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,10);
+
+  const tbody=document.getElementById('tbody-tdb-transactions');
+  const empty=document.getElementById('tdb-transactions-empty');
+  if(!tbody) return;
+  if(!all.length){ tbody.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  tbody.innerHTML = all.map(o=>`<tr>
+    <td>${fmtDate(o.date)}</td>
+    <td><span class="badge ${o.type==='paiement'?'b-success':'b-danger'}" style="font-size:9px">${o.type==='paiement'?'Paiement':'Dépense'}</span></td>
+    <td>${esc(sanitize(o.label))}</td>
+    <td>${esc(o.formation)}</td>
+    <td style="color:var(--success);font-weight:700">${o.entree?fmtM(o.entree)+' FC':'—'}</td>
+    <td style="color:var(--danger);font-weight:700">${o.sortie?fmtM(o.sortie)+' FC':'—'}</td>
+  </tr>`).join('');
+}
+
+function updateDashboardEcheances(){
+  const rows = getTDBEtudiants().filter(e=>e.echeance).map(e=>{
+    const paye=getPaye(e.id), cout=Number(e.cout)||0, solde=Math.max(0,cout-paye);
+    const pct = cout>0?Math.min(100,Math.round(paye/cout*100)):0;
+    let statut, badgeClass;
+    if(solde<=0 && cout>0){ statut='Soldé'; badgeClass='b-success'; }
+    else if(e.echeance < today()){ statut='En retard'; badgeClass='b-danger'; }
+    else { statut='À payer'; badgeClass='b-warning'; }
+    return {e,paye,cout,solde,pct,statut,badgeClass};
+  }).sort((a,b)=>(a.e.echeance||'').localeCompare(b.e.echeance||''));
+
+  const tbody=document.getElementById('tbody-tdb-echeances');
+  const empty=document.getElementById('tdb-echeances-empty');
+  if(!tbody) return;
+  if(!rows.length){ tbody.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  tbody.innerHTML = rows.map(r=>`<tr>
+    <td><strong>${esc(r.e.nom)} ${esc(r.e.prenom)}</strong></td>
+    <td>${esc(getFormLabel(r.e.formId))}</td>
+    <td>${fmtM(r.cout)} FC</td>
+    <td style="color:var(--success)">${fmtM(r.paye)} FC</td>
+    <td style="color:${r.solde>0?'var(--warning)':'var(--text-m)'}">${fmtM(r.solde)} FC</td>
+    <td>${fmtDate(r.e.echeance)}</td>
+    <td>
+      <span class="badge ${r.badgeClass}">${r.statut}</span>
+      <div class="tdb-pbar-wrap" style="margin-top:4px;">
+        <div class="tdb-pbar-track"><div class="tdb-pbar-fill ${barColor(r.pct)}" style="width:${r.pct}%"></div></div>
+        <span style="font-size:9px;color:var(--text-m)">${r.pct}%</span>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function updateDashboardFormationStats(){
+  const etus = getTDBEtudiants();
+  const {ff} = getTDBFilters();
+  const formList = ff ? formations.filter(f=>String(f.id)===String(ff)) : formations;
+  const rows = formList.map(f=>{
+    const list = etus.filter(e=>String(e.formId)===String(f.id));
+    const attendu = list.reduce((a,e)=>a+Number(e.cout||0),0);
+    const encaisse = list.reduce((a,e)=>a+getPaye(e.id),0);
+    const pct = attendu>0?Math.round(encaisse/attendu*100):0;
+    return {label:f.label||f.intitule||'—', nb:list.length, attendu, encaisse, pct};
+  }).filter(r=>r.nb>0);
+
+  const tbody=document.getElementById('tbody-tdb-formations');
+  const empty=document.getElementById('tdb-formations-empty');
+  if(!tbody) return;
+  if(!rows.length){ tbody.innerHTML=''; if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  const pctColor = p => p>=80?'pf-green':p>=50?'pf-amber':'pf-red';
+  tbody.innerHTML = rows.map(r=>`<tr>
+    <td><strong>${esc(r.label)}</strong></td>
+    <td>${r.nb}</td>
+    <td>${fmtM(r.attendu)} FC</td>
+    <td style="color:var(--success)">${fmtM(r.encaisse)} FC</td>
+    <td>
+      <div class="tdb-pbar-wrap">
+        <div class="tdb-pbar-track"><div class="tdb-pbar-fill ${pctColor(r.pct)}" style="width:${Math.min(100,r.pct)}%"></div></div>
+        <span style="font-size:9px;color:var(--text-m)">${r.pct}%</span>
+      </div>
+    </td>
+  </tr>`).join('');
 }
 
 /* ================================================================
@@ -4635,8 +4931,8 @@ function initApp(){
                 if (headerLogoText) headerLogoText.textContent = loggedUser.centre_nom;
                 document.title = loggedUser.centre_nom + " – Gestion Centre de Formation";
             } else {
-                if (headerLogoText) headerLogoText.textContent = "ComFormation";
-                document.title = "ComFormation – Gestion Centre de Formation";
+                if (headerLogoText) headerLogoText.textContent = "EasyFor";
+                document.title = "EasyFor – Gestion Centre de Formation";
             }
             if (loggedUser.centre_logo) {
                 if (headerLogoImg) headerLogoImg.src = loggedUser.centre_logo;
@@ -4721,7 +5017,7 @@ function genererMessageWhatsApp(etu) {
     }
     
     message += `\nMerci de regulariser votre situation dans les plus brefs delais.\n\n`;
-    message += `Cordialement,\nDG, ComFormation\n`;
+    message += `Cordialement,\nDG, EasyFor\n`;
     
     return encodeURIComponent(message);
 }
@@ -4990,7 +5286,7 @@ function exportExcelBackup(){
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(formations.map(f=>({Formation:f.label||f.intitule||''}))),'Formations');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(disponibilites.map(d=>({ID:d.id,Responsable:d.responsable||'',Montant:Number(d.montant)||0,Detail:d.detail||'',Date:d.date||''}))),'Disponibilite');
     const d=new Date();
-    const fn=`ComFormation_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.xlsx`;
+    const fn=`EasyFor_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.xlsx`;
     // Générer le binaire et le stocker en base64 pour permettre le sync ultérieur
     const wbout = XLSX.write(wb, {bookType:'xlsx', type:'binary'});
     const b64 = btoa(wbout);
@@ -5007,7 +5303,7 @@ function exportJSONBackup(){
   const snap=getAppSnapshot();
   const json=JSON.stringify(snap,null,2);
   const d=new Date();
-  const fn=`ComFormation_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.json`;
+  const fn=`EasyFor_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.json`;
   const blob=new Blob([json],{type:'application/json'});
   const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=fn; a.click();
   const id='bk_'+Date.now();
@@ -5087,6 +5383,7 @@ document.addEventListener('click', e => {
   }
 
   (function loadXLSX(){ if(typeof XLSX!=='undefined') return; const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'; s.onerror=()=>console.warn('XLSX library not loaded'); document.head.appendChild(s); })();
+  (function loadChartJS(){ if(typeof Chart!=='undefined') return; const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js'; s.onload=()=>{ if(document.getElementById('sec-tdb')?.classList.contains('active')) updateDashboardCharts(); }; s.onerror=()=>console.warn('Chart.js library not loaded'); document.head.appendChild(s); })();
 
   // Lancer la synchronisation périodique Snappy en temps réel (toutes les 3 secondes)
   setInterval(pullLatestDataFromServer, 3000);
@@ -5186,7 +5483,7 @@ function startNewAIChat(closeHistory = true) {
   }
   
   // Message de bienvenue par défaut
-  appendAIChatBubble("ai", "Bonjour ! Je suis **ComFormation AI**, votre assistant d'analyse financière et de gestion. 🚀\n\nQue souhaitez-vous analyser aujourd'hui ? Cliquez sur une suggestion rapide ci-dessous ou posez-moi directement votre question.");
+  appendAIChatBubble("ai", "Bonjour ! Je suis **EasyFor AI**, votre assistant d'analyse financière et de gestion. 🚀\n\nQue souhaitez-vous analyser aujourd'hui ? Cliquez sur une suggestion rapide ci-dessous ou posez-moi directement votre question.");
 
   // Mettre à jour l'historique de rendu si visible
   const historyPanel = document.getElementById('cf-ai-history-panel');
@@ -5285,7 +5582,7 @@ function loadAIChat(chatId, closeHistory = true) {
       cfAiChatHistory.push(item);
     });
   } else {
-    appendAIChatBubble("ai", "Bonjour ! Je suis **ComFormation AI**, votre assistant d'analyse financière et de gestion. 🚀\n\nQue souhaitez-vous analyser aujourd'hui ? Cliquez sur une suggestion rapide ci-dessous ou posez-moi directement votre question.");
+    appendAIChatBubble("ai", "Bonjour ! Je suis **EasyFor AI**, votre assistant d'analyse financière et de gestion. 🚀\n\nQue souhaitez-vous analyser aujourd'hui ? Cliquez sur une suggestion rapide ci-dessous ou posez-moi directement votre question.");
   }
 }
 
@@ -5557,7 +5854,7 @@ function parseInlineMarkdown(text) {
         <i class="fas fa-brain"></i>
       </div>
       <div class="cf-ai-title-group">
-        <div class="cf-ai-title">ComFormation AI</div>
+        <div class="cf-ai-title">EasyFor AI</div>
         <div class="cf-ai-subtitle">Assistant Intelligent</div>
       </div>
     </div>
