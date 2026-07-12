@@ -3457,6 +3457,7 @@ function saveEtudiant(){
     
     // Sauvegarder et rafraîchir l'affichage
     renderEtudiants();
+    renderTDB();
     populateUserFilters();
     closeModal('etu');
 }
@@ -3532,7 +3533,7 @@ function savePaiement(){
   };
   paiements.push(newPay);
   saveAll(); 
-  renderEtudiants(); renderPaiements(); populateUserFilters(); closeModal('pay');
+  renderEtudiants(); renderPaiements(); renderTBD();populateUserFilters(); closeModal('pay');
   queueSyncOperation('CREATE', 'paiements', id, newPay);
 }
 function renderPaiements(){
@@ -3741,7 +3742,7 @@ function saveDepense(){
     saveAll();
     queueSyncOperation('CREATE', 'depenses', id, newDep);
   }
-  renderDepenses(); updateStats(); populateUserFilters(); closeModal('dep');
+  renderDepenses(); updateStats(); renderTDB(); populateUserFilters(); closeModal('dep');
 }
 
 function renderDepenses(){
@@ -5006,8 +5007,8 @@ function initApp(){
                 if (headerLogoText) headerLogoText.textContent = loggedUser.centre_nom;
                 document.title = loggedUser.centre_nom + " – Gestion Centre de Formation";
             } else {
-                if (headerLogoText) headerLogoText.textContent = "ComFormation";
-                document.title = "ComFormation – Gestion Centre de Formation";
+                if (headerLogoText) headerLogoText.textContent = "EasyFor";
+                document.title = "EasyFor – Gestion Centre de Formation";
             }
             if (loggedUser.centre_logo) {
                 if (headerLogoImg) headerLogoImg.src = loggedUser.centre_logo;
@@ -5027,9 +5028,18 @@ function initApp(){
     renderEtudiants(); renderPaiements(); renderDepenses();
     renderSessions(); renderFormations(); renderUsers(); renderDisponibilite(); updateStats();
     
+    // AJOUT : Initialiser le tableau de bord TDB
+    populateTDBFilters();
+    renderTDB();
+    
     verifierRappelsQuotidiens();
     
-    if(currentRole!=='Admin'){
+    // Si l'utilisateur est admin, afficher TDB par défaut
+    if(currentRole === 'Admin'){
+        // Ne rien faire, TDB est déjà actif via showSection('tdb') dans boot()
+        // Mais on s'assure que le tableau est rendu
+        renderTDB();
+    } else if(currentRole !== 'Admin'){
         const u=users.find(x=>x.id===currentUserId);
         const perms=u&&u.perms?u.perms:{};
         if(perms.secDashboard!==false && currentRole!=='Admin'){
