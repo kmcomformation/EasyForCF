@@ -1379,6 +1379,111 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   #tdb-filters select { flex: 1; min-width: 100px; }
   .tdb-chart-body .table-wrap { margin: 0; }
 }
+/* ============================================================
+   TDB — AMÉLIORATIONS VISUELLES
+   ============================================================ */
+
+/* Évolution - Enlever le quadrillage */
+.tdb-evolution-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Résumé paiements - Style tableau sans quadrillage */
+.tdb-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.tdb-summary-table tr {
+  border-bottom: none !important;
+}
+.tdb-summary-table td {
+  padding: 8px 4px;
+  border: none !important;
+  background: transparent !important;
+}
+.tdb-summary-table .tdb-label {
+  color: var(--text-m);
+  font-weight: 500;
+}
+.tdb-summary-table .tdb-value {
+  font-weight: 700;
+  text-align: right;
+}
+.tdb-summary-table .tdb-value.success { color: var(--success); }
+.tdb-summary-table .tdb-value.warning { color: var(--warning); }
+.tdb-summary-table .tdb-value.danger { color: var(--danger); }
+.tdb-summary-table .tdb-value.info { color: var(--info); }
+
+/* Amélioration des cartes tableaux */
+.tdb-chart-card .table-wrap {
+  margin: 0 !important;
+  overflow-x: auto;
+}
+.tdb-chart-card .table-wrap table {
+  min-width: 100%;
+  width: 100%;
+}
+.tdb-chart-card .table-wrap th,
+.tdb-chart-card .table-wrap td {
+  padding: 8px 10px !important;
+  font-size: 12px !important;
+  white-space: nowrap;
+}
+.tdb-chart-card .table-wrap th {
+  background: var(--bg);
+  font-weight: 700;
+  font-size: 10px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-m);
+  border-bottom: 1px solid var(--border);
+}
+.tdb-chart-card .table-wrap td {
+  border-bottom: 1px solid var(--border);
+}
+.tdb-chart-card .table-wrap tr:last-child td {
+  border-bottom: none;
+}
+
+/* Ajustement des en-têtes de tableau pour éviter le débordement */
+.tdb-chart-card .table-wrap th:first-child,
+.tdb-chart-card .table-wrap td:first-child {
+  padding-left: 14px !important;
+}
+.tdb-chart-card .table-wrap th:last-child,
+.tdb-chart-card .table-wrap td:last-child {
+  padding-right: 14px !important;
+}
+
+/* Conteneur des cartes tableaux avec padding */
+.tdb-chart-body.table-body-padded {
+  padding: 0 !important;
+}
+.tdb-chart-body.table-body-padded .table-wrap {
+  margin: 0 !important;
+}
+
+/* Responsive - Tableaux */
+@media (max-width: 620px) {
+  .tdb-chart-card .table-wrap {
+    margin: 0 !important;
+  }
+  .tdb-chart-card .table-wrap th,
+  .tdb-chart-card .table-wrap td {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+  }
+  .tdb-chart-card .table-wrap th:first-child,
+  .tdb-chart-card .table-wrap td:first-child {
+    padding-left: 10px !important;
+  }
+  .tdb-chart-card .table-wrap th:last-child,
+  .tdb-chart-card .table-wrap td:last-child {
+    padding-right: 10px !important;
+  }
+}
 </style>
 </head>
 <body>
@@ -1597,46 +1702,57 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       </div>
 
       <!-- Ligne 3 : Répartition des paiements -->
-      <div class="tdb-row-2">
-        <div class="tdb-chart-card" style="flex:1.2;">
-          <div class="tdb-chart-header">
-            <span class="tdb-chart-title"><i class="fas fa-chart-pie"></i> Répartition des paiements</span>
-          </div>
-          <div class="tdb-chart-body" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
-            <div class="tdb-doughnut-container" id="tdb-doughnut" style="flex:0 0 180px;height:180px;"></div>
-            <div class="tdb-doughnut-legend" id="tdb-doughnut-legend" style="flex:1;min-width:140px;"></div>
-          </div>
-        </div>
-        <div class="tdb-chart-card" style="flex:1;">
-          <div class="tdb-chart-header">
-            <span class="tdb-chart-title"><i class="fas fa-circle-info"></i> Résumé paiements</span>
-          </div>
-          <div class="tdb-chart-body">
-            <div id="tdb-paiement-summary"></div>
-          </div>
-        </div>
-      </div>
+      <div class="tdb-chart-card" style="flex:1;">
+  <div class="tdb-chart-header">
+    <span class="tdb-chart-title"><i class="fas fa-circle-info"></i> Résumé paiements</span>
+  </div>
+  <div class="tdb-chart-body" style="padding:8px 14px;">
+    <div id="tdb-paiement-summary"></div>
+  </div>
+</div>
 
       <!-- Ligne 4 : Deux tableaux -->
-      <div class="tdb-row-2">
-        <div class="tdb-chart-card">
-          <div class="tdb-chart-header">
-            <span class="tdb-chart-title"><i class="fas fa-clock-rotate-left"></i> 5 Derniers paiements</span>
-            <button class="btn-secondary" onclick="showSection('paiements')" style="font-size:10px;padding:3px 10px;"><i class="fas fa-arrow-right"></i> Voir tout</button>
-          </div>
-          <div class="tdb-chart-body" style="padding:0;">
-            <div class="table-wrap"><table><thead><tr><th>Date</th><th>Étudiant</th><th>Formation</th><th>Montant</th><th>Statut</th></tr></thead><tbody id="tdb-last-payments"></tbody></table></div>
-          </div>
-        </div>
-        <div class="tdb-chart-card">
-          <div class="tdb-chart-header">
-            <span class="tdb-chart-title"><i class="fas fa-triangle-exclamation"></i> 5 Étudiants non soldés</span>
-            <button class="btn-secondary" onclick="document.getElementById('etu-f-stat').value='nonpaye';renderEtudiants();showSection('etudiants');" style="font-size:10px;padding:3px 10px;"><i class="fas fa-arrow-right"></i> Voir tout</button>
-          </div>
-          <div class="tdb-chart-body" style="padding:0;">
-            <div class="table-wrap"><table><thead><tr><th>Étudiant</th><th>Formation</th><th>Reste à payer</th></tr></thead><tbody id="tdb-non-soldes"></tbody></table></div>
-          </div>
-        </div>
+      <!-- Ligne 4 : Deux tableaux -->
+<div class="tdb-row-2">
+  <div class="tdb-chart-card">
+    <div class="tdb-chart-header">
+      <span class="tdb-chart-title"><i class="fas fa-clock-rotate-left"></i> 5 Derniers paiements</span>
+      <button class="btn-secondary" onclick="showSection('paiements')" style="font-size:10px;padding:3px 10px;"><i class="fas fa-arrow-right"></i> Voir tout</button>
+    </div>
+    <div class="tdb-chart-body table-body-padded">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left;min-width:80px;">Date</th>
+              <th style="text-align:left;min-width:100px;">Étudiant</th>
+              <th style="text-align:left;min-width:80px;">Formation</th>
+              <th style="text-align:right;min-width:80px;">Montant</th>
+              <th style="text-align:left;min-width:70px;">Statut</th>
+            </tr>
+          </thead>
+          <tbody id="tdb-last-payments"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="tdb-chart-card">
+    <div class="tdb-chart-header">
+      <span class="tdb-chart-title"><i class="fas fa-triangle-exclamation"></i> 5 Étudiants non soldés</span>
+      <button class="btn-secondary" onclick="document.getElementById('etu-f-stat').value='nonpaye';renderEtudiants();showSection('etudiants');" style="font-size:10px;padding:3px 10px;"><i class="fas fa-arrow-right"></i> Voir tout</button>
+    </div>
+    <div class="tdb-chart-body table-body-padded">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align:left;min-width:120px;">Étudiant</th>
+              <th style="text-align:left;min-width:80px;">Formation</th>
+              <th style="text-align:right;min-width:90px;">Reste à payer</th>
+            </tr>
+          </thead>
+          <tbody id="tdb-non-soldes"></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -6228,20 +6344,20 @@ function renderTDBEvolution(paiements, depenses, anneeFiltre) {
           }
         }
       },
-      scales: {
-        x: {
-          grid: { color: gridColor, drawBorder: false },
-          ticks: { color: textColor, font: { size: 10 } }
-        },
-        y: {
-          grid: { color: gridColor, drawBorder: false },
-          ticks: { 
-            color: textColor, 
-            font: { size: 10 },
-            callback: function(value) { return fmtM(value); }
-          }
-        }
-      }
+     scales: {
+  x: {
+    grid: { display: false, drawBorder: false },
+    ticks: { color: textColor, font: { size: 10 } }
+  },
+  y: {
+    grid: { display: false, drawBorder: false },
+    ticks: { 
+      color: textColor, 
+      font: { size: 10 },
+      callback: function(value) { return fmtM(value); }
+    }
+  }
+}
     }
   });
 }
@@ -6334,20 +6450,33 @@ function renderTDBPaiementSummary(etudiants) {
   });
   const totalReste = Math.max(0, totalCout - totalPaye);
   const nbEtu = etudiants.length;
+  const tauxRecouvrement = totalCout > 0 ? Math.round((totalPaye / totalCout) * 100) : 0;
+  
+  const tauxColor = tauxRecouvrement >= 80 ? 'success' : (tauxRecouvrement >= 50 ? 'warning' : 'danger');
   
   container.innerHTML = `
-    <div class="tdb-summary-grid">
-      <div class="tdb-summary-item"><span class="label">Étudiants</span><span class="value">${nbEtu}</span></div>
-      <div class="tdb-summary-item"><span class="label">Coût total</span><span class="value">${fmtM(totalCout)} FC</span></div>
-      <div class="tdb-summary-item"><span class="label">Total payé</span><span class="value" style="color:var(--success)">${fmtM(totalPaye)} FC</span></div>
-      <div class="tdb-summary-item"><span class="label">Reste à payer</span><span class="value" style="color:var(--warning)">${fmtM(totalReste)} FC</span></div>
-      <div class="tdb-summary-item" style="grid-column:1/-1;border-bottom:none;padding-top:6px;">
-        <span class="label">Taux de recouvrement</span>
-        <span class="value" style="color:${totalCout > 0 && totalPaye/totalCout >= 0.8 ? 'var(--success)' : 'var(--warning)'}">
-          ${totalCout > 0 ? Math.round((totalPaye/totalCout)*100) : 0}%
-        </span>
-      </div>
-    </div>
+    <table class="tdb-summary-table">
+      <tr>
+        <td class="tdb-label">👨‍🎓 Nombre d'étudiants</td>
+        <td class="tdb-value info">${nbEtu}</td>
+      </tr>
+      <tr>
+        <td class="tdb-label">💰 Coût total</td>
+        <td class="tdb-value info">${fmtM(totalCout)} FC</td>
+      </tr>
+      <tr>
+        <td class="tdb-label">✅ Total payé</td>
+        <td class="tdb-value success">${fmtM(totalPaye)} FC</td>
+      </tr>
+      <tr>
+        <td class="tdb-label">⏳ Reste à payer</td>
+        <td class="tdb-value warning">${fmtM(totalReste)} FC</td>
+      </tr>
+      <tr>
+        <td class="tdb-label">📊 Taux de recouvrement</td>
+        <td class="tdb-value ${tauxColor}">${tauxRecouvrement}%</td>
+      </tr>
+    </table>
   `;
 }
 
@@ -6359,7 +6488,7 @@ function renderTDBLastPayments(paiements) {
   const top5 = sorted.slice(0, 5);
   
   if (top5.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-m);padding:20px;">Aucun paiement</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-m);padding:20px;font-size:12px;">Aucun paiement enregistré</td></tr>';
     return;
   }
   
@@ -6368,12 +6497,14 @@ function renderTDBLastPayments(paiements) {
     const etu = etudiants.find(e => e.id === p.etuId);
     const cout = etu ? Number(etu.cout) : 0;
     const st = getStatut(paye, cout);
+    const nomComplet = p.nom || (etu ? (etu.nom + ' ' + etu.prenom) : '');
+    const formation = getFormLabel(p.formId);
     return `<tr>
-      <td style="padding:6px 10px;font-size:12px;">${fmtDate(p.date)}</td>
-      <td style="padding:6px 10px;font-size:12px;"><strong>${esc(p.nom || '')}</strong></td>
-      <td style="padding:6px 10px;font-size:12px;">${esc(getFormLabel(p.formId))}</td>
-      <td style="padding:6px 10px;font-size:12px;text-align:right;color:var(--success);font-weight:700;">${fmtM(p.montant)} FC</td>
-      <td style="padding:6px 10px;font-size:12px;"><span class="badge ${st.c}">${st.l}</span></td>
+      <td style="text-align:left;">${fmtDate(p.date)}</td>
+      <td style="text-align:left;"><strong>${esc(nomComplet)}</strong></td>
+      <td style="text-align:left;">${esc(formation)}</td>
+      <td style="text-align:right;color:var(--success);font-weight:700;">${fmtM(p.montant)} FC</td>
+      <td style="text-align:left;"><span class="badge ${st.c}">${st.l}</span></td>
     </tr>`;
   }).join('');
 }
@@ -6394,17 +6525,20 @@ function renderTDBNonSoldes(etudiants) {
     .slice(0, 5);
   
   if (nonSoldes.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-m);padding:20px;">Aucun étudiant non soldé</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-m);padding:20px;font-size:12px;">Aucun étudiant non soldé</td></tr>';
     return;
   }
   
-  tbody.innerHTML = nonSoldes.map(e => `
+  tbody.innerHTML = nonSoldes.map(e => {
+    const nomComplet = (e.nom || '') + ' ' + (e.prenom || '');
+    const formation = getFormLabel(e.formId);
+    return `
     <tr>
-      <td style="padding:6px 10px;font-size:12px;"><strong>${esc(e.nom)} ${esc(e.prenom)}</strong></td>
-      <td style="padding:6px 10px;font-size:12px;">${esc(getFormLabel(e.formId))}</td>
-      <td style="padding:6px 10px;font-size:12px;text-align:right;color:var(--danger);font-weight:700;">${fmtM(e.reste)} FC</td>
-    </tr>
-  `).join('');
+      <td style="text-align:left;"><strong>${esc(nomComplet)}</strong></td>
+      <td style="text-align:left;">${esc(formation)}</td>
+      <td style="text-align:right;color:var(--danger);font-weight:700;">${fmtM(e.reste)} FC</td>
+    </tr>`;
+  }).join('');
 }
 </script>
 
