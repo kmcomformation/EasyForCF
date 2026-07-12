@@ -3195,24 +3195,16 @@ function showSection(id){
   const nb = document.getElementById('nav-'+id);
   if(nb) nb.classList.add('active');
   const map = {
-    etudiants: renderEtudiants, 
-    paiements: renderPaiements,
-    depenses: renderDepenses, 
-    sessions: renderSessions,
-    formations: renderFormations, 
-    users: renderUsers,
+    etudiants: renderEtudiants, paiements: renderPaiements,
+    depenses: renderDepenses, sessions: renderSessions,
+    formations: renderFormations, users: renderUsers,
     disponibilite: renderDisponibilite,
     dashboard: renderDashboard,
-    tdb: function() { 
-        populateTDBFilters(); 
-        renderTDB(); 
-    },
     rapport: () => { populateRapportFilters(); renderRapport(); }
   };
   if(map[id]) map[id]();
   updateStats();
 }
-
 function toggleDrawer(){ document.getElementById('nav-drawer').classList.toggle('open'); }
 function closeDrawerOutside(e){ if(e.target===document.getElementById('nav-drawer')) closeDrawerAll(); }
 function closeDrawerAll(){ document.getElementById('nav-drawer').classList.remove('open'); }
@@ -5220,7 +5212,7 @@ function initApp(){
     renderEtudiants(); renderPaiements(); renderDepenses();
     renderSessions(); renderFormations(); renderUsers(); renderDisponibilite(); updateStats();
     
-    // IMPORTANT: Initialiser le tableau de bord TDB
+    // AJOUT : Initialiser le tableau de bord TDB
     populateTDBFilters();
     renderTDB();
     
@@ -5228,12 +5220,9 @@ function initApp(){
     
     // Si l'utilisateur est admin, afficher TDB par défaut
     if(currentRole === 'Admin'){
-        // On s'assure que le TDB est bien affiché
-        const tdbSection = document.getElementById('sec-tdb');
-        if (tdbSection) {
-            tdbSection.classList.add('active');
-        }
-        renderTDB(); // Re-render pour être sûr
+        // Ne rien faire, TDB est déjà actif via showSection('tdb') dans boot()
+        // Mais on s'assure que le tableau est rendu
+        renderTDB();
     } else if(currentRole !== 'Admin'){
         const u=users.find(x=>x.id===currentUserId);
         const perms=u&&u.perms?u.perms:{};
@@ -5645,21 +5634,13 @@ document.addEventListener('click', e => {
           loggedUser.id = isNaN(Number(loggedUser.id)) ? loggedUser.id : Number(loggedUser.id);
           currentRole = loggedUser.role;
           currentUserId = loggedUser.id;
-         if(loginScreen) loginScreen.style.display = 'none';
+          if(loginScreen) loginScreen.style.display = 'none';
 document.getElementById('app').style.display = 'flex';
 applyRoleUI();
 initApp();
 // Afficher TDB par défaut après connexion
 if (typeof showSection === 'function') {
   showSection('tdb');
-} else {
-  // Fallback : forcer l'affichage du TDB
-  const tdbSec = document.getElementById('sec-tdb');
-  if (tdbSec) {
-    tdbSec.classList.add('active');
-    populateTDBFilters();
-    renderTDB();
-  }
 }
 triggerSync();
           if (typeof checkAIChatbotVisibility === 'function') checkAIChatbotVisibility();
@@ -6181,6 +6162,7 @@ function populateTDBFilters() {
   
   if (curS) sEl.value = curS;
   if (curF) fEl.value = curF;
+  // Ne pas restaurer curA car on a déjà mis l'année en cours par défaut
 }
 
 function getTDBFilters() {
@@ -6451,6 +6433,11 @@ function renderTDBDoughnut(etudiants) {
   const container = document.getElementById('tdb-doughnut');
   if (!container) return;
   
+  if (!etudiants || etudiants.length === 0) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-m);font-size:12px;">Aucun étudiant</div>';
+    return;
+  }
+  
   let soldes = 0, partiels = 0, impayes = 0;
   let montantSoldes = 0, montantPartiels = 0, montantImpayes = 0;
   
@@ -6474,9 +6461,13 @@ function renderTDBDoughnut(etudiants) {
   });
   
   const totalEtudiants = soldes + partiels + impayes;
-  const totalMontant = montantSoldes + montantPartiels + montantImpayes;
   
-  // Données pour le graphique (nombre d'étudiants)
+  // Si aucun étudiant avec coût > 0
+  if (totalEtudiants === 0) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text-m);font-size:12px;">Aucun coût enregistré</div>';
+    return;
+  }
+  
   const data = [soldes, partiels, impayes];
   const labels = ['Soldés', 'Partiels', 'Impayés'];
   const colors = ['#16a34a', '#f59e0b', '#dc2626'];
@@ -6486,7 +6477,6 @@ function renderTDBDoughnut(etudiants) {
     'rgba(220,38,38,0.8)'
   ];
   
-  // Créer un canvas
   let canvas = container.querySelector('canvas');
   if (!canvas) {
     canvas = document.createElement('canvas');
@@ -6537,7 +6527,6 @@ function renderTDBDoughnut(etudiants) {
     }
   });
   
-  // Légende avec nombre, pourcentage et montant
   const legendContainer = document.getElementById('tdb-doughnut-legend');
   if (legendContainer) {
     const montants = [montantSoldes, montantPartiels, montantImpayes];
@@ -6558,15 +6547,25 @@ function renderTDBPaiementSummary(etudiants) {
   const container = document.getElementById('tdb-paiement-summary');
   if (!container) return;
   
+  if (!etudiants || etudiants.length === 0) {
+    container.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text-m);font-size:12px;">Aucun étudiant</div>';
+    return;
+  }
+  
   let totalCout = 0, totalPaye = 0;
   etudiants.forEach(e => {
     totalCout += Number(e.cout) || 0;
     totalPaye += getPaye(e.id);
   });
+  
+  if (totalCout === 0) {
+    container.innerHTML = '<div style="padding:12px;text-align:center;color:var(--text-m);font-size:12px;">Aucun coût enregistré</div>';
+    return;
+  }
+  
   const totalReste = Math.max(0, totalCout - totalPaye);
   const nbEtu = etudiants.length;
   const tauxRecouvrement = totalCout > 0 ? Math.round((totalPaye / totalCout) * 100) : 0;
-  
   const tauxColor = tauxRecouvrement >= 80 ? 'success' : (tauxRecouvrement >= 50 ? 'warning' : 'danger');
   
   container.innerHTML = `
@@ -6599,21 +6598,21 @@ function renderTDBLastPayments(paiements) {
   const tbody = document.getElementById('tdb-last-payments');
   if (!tbody) return;
   
-  const sorted = [...paiements].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-  const top5 = sorted.slice(0, 5);
-  
-  if (top5.length === 0) {
+  if (!paiements || paiements.length === 0) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-m);padding:20px;font-size:12px;">Aucun paiement enregistré</td></tr>';
     return;
   }
   
+  const sorted = [...paiements].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const top5 = sorted.slice(0, 5);
+  
   tbody.innerHTML = top5.map(p => {
-    const paye = getPaye(p.etuId);
     const etu = etudiants.find(e => e.id === p.etuId);
+    const nomComplet = p.nom || (etu ? (etu.nom + ' ' + etu.prenom) : 'Inconnu');
+    const formation = getFormLabel(p.formId);
+    const paye = getPaye(p.etuId);
     const cout = etu ? Number(etu.cout) : 0;
     const st = getStatut(paye, cout);
-    const nomComplet = p.nom || (etu ? (etu.nom + ' ' + etu.prenom) : '');
-    const formation = getFormLabel(p.formId);
     return `<tr>
       <td style="text-align:left;">${fmtDate(p.date)}</td>
       <td style="text-align:left;"><strong>${esc(nomComplet)}</strong></td>
@@ -6627,6 +6626,11 @@ function renderTDBLastPayments(paiements) {
 function renderTDBNonSoldes(etudiants) {
   const tbody = document.getElementById('tdb-non-soldes');
   if (!tbody) return;
+  
+  if (!etudiants || etudiants.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-m);padding:20px;font-size:12px;">Aucun étudiant</td></tr>';
+    return;
+  }
   
   const nonSoldes = etudiants
     .map(e => {
