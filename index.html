@@ -24,6 +24,7 @@
 <!-- Manifest PWA inline via data URI (évite un fichier externe) -->
 <link rel="manifest" id="pwa-manifest">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 /* ═══ Font Awesome Icon Integration ═══════════════════════════════ */
@@ -1132,6 +1133,252 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     right: 16px;
   }
 }
+
+/* ============================================================
+   TDB — TABLEAU DE BORD STYLES
+   ============================================================ */
+.tdb-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.tdb-kpi-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: tdbKpiIn 0.6s ease forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+.tdb-kpi-card:nth-child(1) { animation-delay: 0.05s; }
+.tdb-kpi-card:nth-child(2) { animation-delay: 0.15s; }
+.tdb-kpi-card:nth-child(3) { animation-delay: 0.25s; }
+.tdb-kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+@keyframes tdbKpiIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+.tdb-kpi-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.tdb-kpi-info {
+  flex: 1;
+}
+.tdb-kpi-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.2;
+}
+.tdb-kpi-label {
+  font-size: 11px;
+  color: var(--text-m);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.tdb-row-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.tdb-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+.tdb-chart-card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.tdb-chart-header {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.tdb-chart-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tdb-chart-title i {
+  font-size: 14px;
+  color: var(--teal);
+}
+.tdb-chart-body {
+  padding: 12px 14px;
+}
+.tdb-chart-body .table-wrap {
+  margin: 0 -14px;
+}
+
+/* Horizontal bars */
+.tdb-hbar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tdb-hbar-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tdb-hbar-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text);
+  min-width: 60px;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tdb-hbar-track {
+  flex: 1;
+  height: 18px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+.tdb-hbar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  background: linear-gradient(90deg, var(--teal), #2a9d8f);
+  min-width: 4px;
+}
+.tdb-hbar-value {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-m);
+  min-width: 50px;
+  text-align: right;
+}
+.tdb-hbar-item .tdb-hbar-fill[data-color="blue"] { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.tdb-hbar-item .tdb-hbar-fill[data-color="purple"] { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+.tdb-hbar-item .tdb-hbar-fill[data-color="green"] { background: linear-gradient(90deg, #10b981, #059669); }
+.tdb-hbar-item .tdb-hbar-fill[data-color="orange"] { background: linear-gradient(90deg, #f59e0b, #d97706); }
+.tdb-hbar-item .tdb-hbar-fill[data-color="pink"] { background: linear-gradient(90deg, #ec4899, #db2777); }
+.tdb-hbar-item .tdb-hbar-fill[data-color="teal"] { background: linear-gradient(90deg, #14b8a6, #0d9488); }
+
+/* Doughnut */
+.tdb-doughnut-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.tdb-doughnut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tdb-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tdb-legend-item:last-child { border-bottom: none; }
+.tdb-legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.tdb-legend-label {
+  flex: 1;
+}
+.tdb-legend-value {
+  font-weight: 600;
+}
+
+/* Evolution chart placeholder */
+.tdb-evolution-container {
+  height: 220px;
+  min-height: 180px;
+  width: 100%;
+  position: relative;
+}
+.tdb-evolution-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Paiement summary */
+.tdb-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 16px;
+}
+.tdb-summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.tdb-summary-item .label { color: var(--text-m); }
+.tdb-summary-item .value { font-weight: 600; }
+
+/* Responsive */
+@media (max-width: 960px) {
+  .tdb-row-2 { grid-template-columns: 1fr; }
+  .tdb-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 620px) {
+  .tdb-kpi-grid {
+    display: flex !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 10px !important;
+    padding: 4px 2px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  .tdb-kpi-grid::-webkit-scrollbar { display: none !important; }
+  .tdb-kpi-card {
+    flex: 0 0 160px !important;
+    scroll-snap-align: start !important;
+    padding: 12px 14px !important;
+  }
+  .tdb-kpi-value { font-size: 18px !important; }
+  .tdb-doughnut-container { flex: 0 0 140px !important; height: 140px !important; }
+  .tdb-evolution-container { height: 160px !important; }
+  #tdb-filters .toolbar { flex-wrap: wrap; }
+  #tdb-filters select { flex: 1; min-width: 100px; }
+  .tdb-chart-body .table-wrap { margin: 0; }
+}
 </style>
 </head>
 <body>
@@ -1180,18 +1427,16 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     <span class="logo-text" id="header-logo-text">EasyFor</span>
   </div>
   <div class="logo-sep"></div>
-  <nav class="nav" id="main-nav">
-    <button class="nav-btn active" onclick="showSection('etudiants')" id="nav-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
-    <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
-    <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
-   <button class="nav-btn" onclick="showSection('disponibilite')" id="nav-disponibilite"><i class="fas fa-wallet"></i> Disponibilité</button>
-<button class="nav-btn" onclick="showSection('dashboard')" id="nav-dashboard"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
-    
-    <button class="nav-btn admin-only" onclick="showSection('sessions')" id="nav-sessions"><i class="fas fa-calendar-days"></i> Sessions</button>
-    <button class="nav-btn admin-only" onclick="showSection('formations')" id="nav-formations"><i class="fas fa-book-open"></i> Formations</button>
-    <button class="nav-btn admin-only" onclick="showSection('rapport')" id="nav-rapport"><i class="fas fa-chart-pie"></i> Rapports</button>
-    <button class="nav-btn admin-only" onclick="showSection('users')" id="nav-users"><i class="fas fa-users"></i> Utilisateurs</button>
-  </nav>
+ <nav class="nav" id="main-nav">
+  <button class="nav-btn active" onclick="showSection('tdb')" id="nav-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
+  <button class="nav-btn" onclick="showSection('etudiants')" id="nav-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
+  <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
+  <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
+  <button class="nav-btn admin-only" onclick="showSection('sessions')" id="nav-sessions"><i class="fas fa-calendar-days"></i> Sessions</button>
+  <button class="nav-btn admin-only" onclick="showSection('formations')" id="nav-formations"><i class="fas fa-book-open"></i> Formations</button>
+  <button class="nav-btn admin-only" onclick="showSection('rapport')" id="nav-rapport"><i class="fas fa-chart-pie"></i> Rapports</button>
+  <button class="nav-btn admin-only" onclick="showSection('users')" id="nav-users"><i class="fas fa-users"></i> Utilisateurs</button>
+</nav>
   <div class="header-right">
     <span class="hdr-badge" id="sync-badge" style="background:rgba(43,191,155,.2);color:var(--teal);border:1px solid rgba(43,191,155,.3);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;white-space:nowrap;margin-right:2px;display:none;"><i class="fas fa-cloud"></i> <span class="sync-text">Synchronisé</span></span>
     <span class="hdr-badge" id="date-badge"></span>
@@ -1228,21 +1473,21 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 
 <!-- Mobile Drawer -->
 <div class="nav-drawer" id="nav-drawer" onclick="closeDrawerOutside(event)">
+
   <div class="nav-drawer-inner">
-    <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()" id="nav-m-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
-    <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()" id="nav-m-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
-    <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()" id="nav-m-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
-    <button class="nav-btn" onclick="showSection('disponibilite');closeDrawerAll()" id="nav-m-disponibilite"><i class="fas fa-wallet"></i> Disponibilité</button>
-    <button class="nav-btn" onclick="showSection('dashboard');closeDrawerAll()" id="nav-m-dashboard"><i class="fas fa-chart-bar"></i> Mon Tableau de bord</button>
-    <button class="nav-btn admin-only" onclick="showSection('sessions');closeDrawerAll()"><i class="fas fa-calendar-days"></i> Sessions</button>
-    <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()"><i class="fas fa-book-open"></i> Formations</button>
-    <button class="nav-btn admin-only" onclick="showSection('rapport');closeDrawerAll()"><i class="fas fa-chart-pie"></i> Rapports</button>
-    <button class="nav-btn admin-only" onclick="showSection('users');closeDrawerAll()"><i class="fas fa-users"></i> Utilisateurs</button>
-    <div style="height:1px;background:rgba(255,255,255,.1);margin:6px 4px;"></div>
-    <button class="nav-btn" onclick="toggleDark();closeDrawerAll()"><i class="fas fa-moon"></i> Mode sombre</button>
-    <button class="nav-btn" onclick="toggleFullscreen();closeDrawerAll()"><i class="fas fa-expand"></i> Plein écran</button>
-    <button class="nav-btn admin-only" style="color:var(--danger)" onclick="confirmClear();closeDrawerAll()"><i class="fas fa-trash"></i> Vider données</button>
-  </div>
+  <button class="nav-btn" onclick="showSection('tdb');closeDrawerAll()" id="nav-m-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
+  <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()" id="nav-m-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
+  <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()" id="nav-m-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
+  <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()" id="nav-m-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
+  <button class="nav-btn admin-only" onclick="showSection('sessions');closeDrawerAll()"><i class="fas fa-calendar-days"></i> Sessions</button>
+  <button class="nav-btn admin-only" onclick="showSection('formations');closeDrawerAll()"><i class="fas fa-book-open"></i> Formations</button>
+  <button class="nav-btn admin-only" onclick="showSection('rapport');closeDrawerAll()"><i class="fas fa-chart-pie"></i> Rapports</button>
+  <button class="nav-btn admin-only" onclick="showSection('users');closeDrawerAll()"><i class="fas fa-users"></i> Utilisateurs</button>
+  <div style="height:1px;background:rgba(255,255,255,.1);margin:6px 4px;"></div>
+  <button class="nav-btn" onclick="toggleDark();closeDrawerAll()"><i class="fas fa-moon"></i> Mode sombre</button>
+  <button class="nav-btn" onclick="toggleFullscreen();closeDrawerAll()"><i class="fas fa-expand"></i> Plein écran</button>
+  <button class="nav-btn admin-only" style="color:var(--danger)" onclick="confirmClear();closeDrawerAll()"><i class="fas fa-trash"></i> Vider données</button>
+</div>s
 </div>
 
 <main>
@@ -1269,9 +1514,135 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       <div><div class="stat-num" id="s-sessions">0</div><div class="stat-label">Sessions actives</div></div>
     </div>
   </div>
+  <!-- TDB - TABLEAU DE BORD -->
+<div class="section active" id="sec-tdb">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title"><i class="fas fa-chart-pie"></i> Tableau de Bord</span>
+      <div class="toolbar" id="tdb-filters">
+        <select class="filter-select" id="tdb-f-ses" onchange="renderTDB()"><option value="">Toutes sessions</option></select>
+        <select class="filter-select" id="tdb-f-form" onchange="renderTDB()"><option value="">Toutes formations</option></select>
+        <button class="btn-secondary" onclick="resetTDBFilters()" style="font-size:11px;padding:5px 12px;"><i class="fas fa-rotate-left"></i> Réinitialiser</button>
+      </div>
+    </div>
+    <div id="tdb-content" style="padding:16px;">
+      <!-- KPI -->
+      <div class="tdb-kpi-grid" id="tdb-kpi-grid">
+        <div class="tdb-kpi-card" id="tdb-kpi-recette">
+          <div class="tdb-kpi-icon" style="background:var(--info-bg);color:var(--info);"><i class="fas fa-coins"></i></div>
+          <div class="tdb-kpi-info">
+            <div class="tdb-kpi-value" id="tdb-recette">0</div>
+            <div class="tdb-kpi-label">Recette</div>
+          </div>
+        </div>
+        <div class="tdb-kpi-card" id="tdb-kpi-depense">
+          <div class="tdb-kpi-icon" style="background:var(--danger-bg);color:var(--danger);"><i class="fas fa-arrow-trend-down"></i></div>
+          <div class="tdb-kpi-info">
+            <div class="tdb-kpi-value" id="tdb-depense">0</div>
+            <div class="tdb-kpi-label">Dépense</div>
+          </div>
+        </div>
+        <div class="tdb-kpi-card" id="tdb-kpi-solde">
+          <div class="tdb-kpi-icon" style="background:var(--success-bg);color:var(--success);"><i class="fas fa-chart-line"></i></div>
+          <div class="tdb-kpi-info">
+            <div class="tdb-kpi-value" id="tdb-solde">0</div>
+            <div class="tdb-kpi-label">Solde</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ligne 1 : Top Formations + Top Sessions -->
+      <div class="tdb-row-2">
+        <div class="tdb-chart-card">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-medal"></i> Top Formations</span>
+            <select class="filter-select" id="tdb-top-form-nb" onchange="renderTDB()" style="font-size:11px;padding:4px 8px;min-width:80px;">
+              <option value="3">Top 3</option>
+              <option value="5" selected>Top 5</option>
+              <option value="10">Top 10</option>
+              <option value="0">Toutes</option>
+            </select>
+          </div>
+          <div class="tdb-chart-body" id="tdb-chart-formations">
+            <div class="tdb-hbar-container"></div>
+          </div>
+        </div>
+        <div class="tdb-chart-card">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-calendar-days"></i> Top Sessions</span>
+            <select class="filter-select" id="tdb-top-ses-nb" onchange="renderTDB()" style="font-size:11px;padding:4px 8px;min-width:80px;">
+              <option value="3">Top 3</option>
+              <option value="5" selected>Top 5</option>
+              <option value="10">Top 10</option>
+              <option value="0">Toutes</option>
+            </select>
+          </div>
+          <div class="tdb-chart-body" id="tdb-chart-sessions">
+            <div class="tdb-hbar-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ligne 2 : Évolution -->
+      <div class="tdb-row-1">
+        <div class="tdb-chart-card">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-chart-area"></i> Évolution Recette / Dépense par mois</span>
+          </div>
+          <div class="tdb-chart-body" id="tdb-chart-evolution">
+            <div class="tdb-evolution-container"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ligne 3 : Répartition des paiements -->
+      <div class="tdb-row-2">
+        <div class="tdb-chart-card" style="flex:1.2;">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-chart-pie"></i> Répartition des paiements</span>
+          </div>
+          <div class="tdb-chart-body" style="display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+            <div class="tdb-doughnut-container" id="tdb-doughnut" style="flex:0 0 180px;height:180px;"></div>
+            <div class="tdb-doughnut-legend" id="tdb-doughnut-legend" style="flex:1;min-width:140px;"></div>
+          </div>
+        </div>
+        <div class="tdb-chart-card" style="flex:1;">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-circle-info"></i> Résumé paiements</span>
+          </div>
+          <div class="tdb-chart-body">
+            <div id="tdb-paiement-summary"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ligne 4 : Deux tableaux -->
+      <div class="tdb-row-2">
+        <div class="tdb-chart-card">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-clock-rotate-left"></i> 5 Derniers paiements</span>
+            <button class="btn-secondary" onclick="showSection('paiements')" style="font-size:10px;padding:3px 10px;"><i class="fas fa-arrow-right"></i> Voir tout</button>
+          </div>
+          <div class="tdb-chart-body" style="padding:0;">
+            <div class="table-wrap"><table><thead><tr><th>Date</th><th>Étudiant</th><th>Formation</th><th>Montant</th><th>Statut</th></tr></thead><tbody id="tdb-last-payments"></tbody></table></div>
+          </div>
+        </div>
+        <div class="tdb-chart-card">
+          <div class="tdb-chart-header">
+            <span class="tdb-chart-title"><i class="fas fa-triangle-exclamation"></i> 5 Étudiants non soldés</span>
+            <button class="btn-secondary" onclick="document.getElementById('etu-f-stat').value='nonpaye';renderEtudiants();showSection('etudiants');" style="font-size:10px;padding:3px 10px;"><i class="fas fa-arrow-right"></i> Voir tout</button>
+          </div>
+          <div class="tdb-chart-body" style="padding:0;">
+            <div class="table-wrap"><table><thead><tr><th>Étudiant</th><th>Formation</th><th>Reste à payer</th></tr></thead><tbody id="tdb-non-soldes"></tbody></table></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- ÉTUDIANTS -->
-  <div class="section active" id="sec-etudiants">
+<div class="section" id="sec-etudiants">
     <div class="card">
       <div class="card-header">
         <span class="card-title"><i class="fas fa-graduation-cap"></i> Liste des Étudiants</span>
@@ -3086,6 +3457,7 @@ function saveEtudiant(){
     
     // Sauvegarder et rafraîchir l'affichage
     renderEtudiants();
+    renderTDB();
     populateUserFilters();
     closeModal('etu');
 }
@@ -3161,7 +3533,7 @@ function savePaiement(){
   };
   paiements.push(newPay);
   saveAll(); 
-  renderEtudiants(); renderPaiements(); populateUserFilters(); closeModal('pay');
+  renderEtudiants(); renderPaiements(); renderTBD();populateUserFilters(); closeModal('pay');
   queueSyncOperation('CREATE', 'paiements', id, newPay);
 }
 function renderPaiements(){
@@ -3370,7 +3742,7 @@ function saveDepense(){
     saveAll();
     queueSyncOperation('CREATE', 'depenses', id, newDep);
   }
-  renderDepenses(); updateStats(); populateUserFilters(); closeModal('dep');
+  renderDepenses(); updateStats(); renderTDB(); populateUserFilters(); closeModal('dep');
 }
 
 function renderDepenses(){
@@ -4635,8 +5007,8 @@ function initApp(){
                 if (headerLogoText) headerLogoText.textContent = loggedUser.centre_nom;
                 document.title = loggedUser.centre_nom + " – Gestion Centre de Formation";
             } else {
-                if (headerLogoText) headerLogoText.textContent = "ComFormation";
-                document.title = "ComFormation – Gestion Centre de Formation";
+                if (headerLogoText) headerLogoText.textContent = "EasyFor";
+                document.title = "EasyFor – Gestion Centre de Formation";
             }
             if (loggedUser.centre_logo) {
                 if (headerLogoImg) headerLogoImg.src = loggedUser.centre_logo;
@@ -4656,9 +5028,18 @@ function initApp(){
     renderEtudiants(); renderPaiements(); renderDepenses();
     renderSessions(); renderFormations(); renderUsers(); renderDisponibilite(); updateStats();
     
+    // AJOUT : Initialiser le tableau de bord TDB
+    populateTDBFilters();
+    renderTDB();
+    
     verifierRappelsQuotidiens();
     
-    if(currentRole!=='Admin'){
+    // Si l'utilisateur est admin, afficher TDB par défaut
+    if(currentRole === 'Admin'){
+        // Ne rien faire, TDB est déjà actif via showSection('tdb') dans boot()
+        // Mais on s'assure que le tableau est rendu
+        renderTDB();
+    } else if(currentRole !== 'Admin'){
         const u=users.find(x=>x.id===currentUserId);
         const perms=u&&u.perms?u.perms:{};
         if(perms.secDashboard!==false && currentRole!=='Admin'){
@@ -5069,11 +5450,15 @@ document.addEventListener('click', e => {
           loggedUser.id = isNaN(Number(loggedUser.id)) ? loggedUser.id : Number(loggedUser.id);
           currentRole = loggedUser.role;
           currentUserId = loggedUser.id;
-          if (loginScreen) loginScreen.style.display = 'none';
-          document.getElementById('app').style.display = 'flex';
-          applyRoleUI();
-          initApp();
-          triggerSync();
+          if(loginScreen) loginScreen.style.display = 'none';
+document.getElementById('app').style.display = 'flex';
+applyRoleUI();
+initApp();
+// Afficher TDB par défaut après connexion
+if (typeof showSection === 'function') {
+  showSection('tdb');
+}
+triggerSync();
           if (typeof checkAIChatbotVisibility === 'function') checkAIChatbotVisibility();
         }
       } catch (e) {
@@ -5537,6 +5922,441 @@ function parseInlineMarkdown(text) {
     .replace(/_(.*?)_/g, '<em>$1</em>')
     // Code en ligne : `code`
     .replace(/`(.*?)`/g, '<code>$1</code>');
+}
+
+/* ================================================================
+   TDB — TABLEAU DE BORD
+   ================================================================ */
+
+let tdbCharts = { doughnut: null, evolution: null };
+
+function populateTDBFilters() {
+  const sEl = document.getElementById('tdb-f-ses');
+  const fEl = document.getElementById('tdb-f-form');
+  if (!sEl || !fEl) return;
+  const curS = sEl.value, curF = fEl.value;
+  sEl.innerHTML = '<option value="">Toutes sessions</option>' + sessions.map(s => `<option value="${s.id}">${esc(s.code)} — ${esc(s.det)}</option>`).join('');
+  fEl.innerHTML = '<option value="">Toutes formations</option>' + formations.map(f => `<option value="${f.id}">${esc(f.label||f.intitule||'—')}</option>`).join('');
+  if (curS) sEl.value = curS;
+  if (curF) fEl.value = curF;
+}
+
+function getTDBFilters() {
+  return {
+    sesId: document.getElementById('tdb-f-ses')?.value || '',
+    formId: document.getElementById('tdb-f-form')?.value || ''
+  };
+}
+
+function resetTDBFilters() {
+  const sEl = document.getElementById('tdb-f-ses');
+  const fEl = document.getElementById('tdb-f-form');
+  if (sEl) sEl.value = '';
+  if (fEl) fEl.value = '';
+  renderTDB();
+}
+
+function getTDBFilteredData(filters) {
+  const { sesId, formId } = filters;
+  let etu = etudiants;
+  if (sesId) etu = etu.filter(e => String(e.sesId) === String(sesId));
+  if (formId) etu = etu.filter(e => String(e.formId) === String(formId));
+  const etuIds = new Set(etu.map(e => e.id));
+  let pay = paiements.filter(p => etuIds.has(p.etuId));
+  if (sesId) pay = pay.filter(p => String(p.sesId) === String(sesId));
+  if (formId) pay = pay.filter(p => String(p.formId) === String(formId));
+  let dep = depenses;
+  if (sesId) dep = dep.filter(d => String(d.sesId) === String(sesId));
+  return { etudiants: etu, paiements: pay, depenses: dep, etuIds };
+}
+
+function animateKPIValue(el, target, prefix = '', suffix = '') {
+  if (!el) return;
+  const duration = 800;
+  const start = 0;
+  const startTime = performance.now();
+  const isFloat = target % 1 !== 0;
+  function update(time) {
+    const progress = Math.min(1, (time - startTime) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    const current = start + (target - start) * eased;
+    el.textContent = prefix + (isFloat ? current.toFixed(1) : Math.round(current).toLocaleString('fr-FR')) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+    else el.textContent = prefix + (isFloat ? target.toFixed(1) : Math.round(target).toLocaleString('fr-FR')) + suffix;
+  }
+  requestAnimationFrame(update);
+}
+
+function renderTDB() {
+  populateTDBFilters();
+  const filters = getTDBFilters();
+  const { etudiants: filteredEtu, paiements: filteredPay, depenses: filteredDep } = getTDBFilteredData(filters);
+  
+  // KPI
+  const recette = filteredPay.reduce((s, p) => s + Number(p.montant || 0), 0);
+  const depense = filteredDep.reduce((s, d) => s + Number(d.montant || 0), 0);
+  const solde = recette - depense;
+  
+  animateKPIValue(document.getElementById('tdb-recette'), recette, '', '');
+  animateKPIValue(document.getElementById('tdb-depense'), depense, '', '');
+  animateKPIValue(document.getElementById('tdb-solde'), solde, '', '');
+  
+  const soldeEl = document.getElementById('tdb-solde');
+  if (soldeEl) {
+    soldeEl.style.color = solde >= 0 ? 'var(--success)' : 'var(--danger)';
+  }
+
+  // Top Formations
+  const formRecettes = {};
+  filteredPay.forEach(p => {
+    const fid = p.formId;
+    if (fid) {
+      if (!formRecettes[fid]) formRecettes[fid] = 0;
+      formRecettes[fid] += Number(p.montant || 0);
+    }
+  });
+  const topFormCount = parseInt(document.getElementById('tdb-top-form-nb')?.value || 5);
+  let sortedForms = Object.entries(formRecettes)
+    .map(([id, total]) => ({ id: Number(id), total, label: getFormLabel(id) }))
+    .filter(f => f.total > 0)
+    .sort((a, b) => b.total - a.total);
+  if (topFormCount > 0) sortedForms = sortedForms.slice(0, topFormCount);
+  renderTDBHorizontalBars('tdb-chart-formations', sortedForms, 'blue');
+
+  // Top Sessions
+  const sesRecettes = {};
+  filteredPay.forEach(p => {
+    const sid = p.sesId;
+    if (sid) {
+      if (!sesRecettes[sid]) sesRecettes[sid] = 0;
+      sesRecettes[sid] += Number(p.montant || 0);
+    }
+  });
+  const topSesCount = parseInt(document.getElementById('tdb-top-ses-nb')?.value || 5);
+  let sortedSes = Object.entries(sesRecettes)
+    .map(([id, total]) => ({ id: Number(id), total, label: getSesLabel(id) }))
+    .filter(s => s.total > 0)
+    .sort((a, b) => b.total - a.total);
+  if (topSesCount > 0) sortedSes = sortedSes.slice(0, topSesCount);
+  renderTDBHorizontalBars('tdb-chart-sessions', sortedSes, 'purple');
+
+  // Évolution mensuelle
+  renderTDBEvolution(filteredPay, filteredDep);
+
+  // Doughnut
+  renderTDBDoughnut(filteredEtu);
+
+  // Résumé paiements
+  renderTDBPaiementSummary(filteredEtu);
+
+  // 5 derniers paiements
+  renderTDBLastPayments(filteredPay);
+
+  // 5 non soldés
+  renderTDBNonSoldes(filteredEtu);
+}
+
+function renderTDBHorizontalBars(containerId, data, colorClass = '') {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const wrapper = container.querySelector('.tdb-hbar-container') || container;
+  if (!data || data.length === 0) {
+    wrapper.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-m);font-size:12px;">Aucune donnée disponible</div>';
+    return;
+  }
+  const maxVal = Math.max(...data.map(d => d.total));
+  const colors = ['blue', 'purple', 'green', 'orange', 'pink', 'teal', 'blue', 'purple', 'green', 'orange'];
+  wrapper.innerHTML = data.map((item, i) => {
+    const pct = maxVal > 0 ? (item.total / maxVal) * 100 : 0;
+    const color = colorClass || colors[i % colors.length];
+    return `<div class="tdb-hbar-item">
+      <span class="tdb-hbar-label" title="${esc(item.label)}">${esc(item.label)}</span>
+      <div class="tdb-hbar-track">
+        <div class="tdb-hbar-fill" data-color="${color}" style="width:${pct}%;"></div>
+      </div>
+      <span class="tdb-hbar-value">${fmtM(item.total)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderTDBEvolution(paiements, depenses) {
+  const container = document.getElementById('tdb-chart-evolution');
+  if (!container) return;
+  const wrapper = container.querySelector('.tdb-evolution-container') || container;
+  
+  // 12 derniers mois
+  const months = [];
+  const now = new Date();
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push(d);
+  }
+  
+  const monthLabels = months.map(d => d.toLocaleString('fr-FR', { month: 'short', year: 'numeric' }));
+  const recettesByMonth = months.map(m => {
+    const start = new Date(m.getFullYear(), m.getMonth(), 1);
+    const end = new Date(m.getFullYear(), m.getMonth() + 1, 0);
+    const startStr = start.toISOString().split('T')[0];
+    const endStr = end.toISOString().split('T')[0];
+    return paiements.filter(p => p.date && p.date >= startStr && p.date <= endStr)
+      .reduce((s, p) => s + Number(p.montant || 0), 0);
+  });
+  const depensesByMonth = months.map(m => {
+    const start = new Date(m.getFullYear(), m.getMonth(), 1);
+    const end = new Date(m.getFullYear(), m.getMonth() + 1, 0);
+    const startStr = start.toISOString().split('T')[0];
+    const endStr = end.toISOString().split('T')[0];
+    return depenses.filter(d => d.date && d.date >= startStr && d.date <= endStr)
+      .reduce((s, d) => s + Number(d.montant || 0), 0);
+  });
+
+  // Créer un canvas si inexistant
+  let canvas = wrapper.querySelector('canvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    wrapper.innerHTML = '';
+    wrapper.appendChild(canvas);
+  }
+
+  // Détruire l'ancien graphique
+  if (tdbCharts.evolution) {
+    try { tdbCharts.evolution.destroy(); } catch(e) {}
+    tdbCharts.evolution = null;
+  }
+
+  const ctx = canvas.getContext('2d');
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#e6edf3' : '#0f2248';
+  const gridColor = isDark ? '#21262d' : '#dde5f0';
+
+  tdbCharts.evolution = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: monthLabels,
+      datasets: [
+        {
+          label: 'Dépenses',
+          data: depensesByMonth,
+          backgroundColor: isDark ? 'rgba(248,81,73,0.5)' : 'rgba(220,38,38,0.5)',
+          borderColor: isDark ? '#f85149' : '#dc2626',
+          borderWidth: 1,
+          order: 2,
+          borderRadius: 3,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Recettes',
+          data: recettesByMonth,
+          type: 'line',
+          borderColor: isDark ? '#3fb950' : '#16a34a',
+          backgroundColor: isDark ? 'rgba(63,185,80,0.1)' : 'rgba(22,163,74,0.1)',
+          pointBackgroundColor: isDark ? '#3fb950' : '#16a34a',
+          pointBorderColor: isDark ? '#3fb950' : '#16a34a',
+          fill: true,
+          tension: 0.3,
+          order: 1,
+          yAxisID: 'y'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: {
+            color: textColor,
+            font: { size: 11, family: "'DM Sans',sans-serif" },
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ctx.dataset.label + ': ' + fmtM(ctx.parsed.y) + ' FC';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: gridColor, drawBorder: false },
+          ticks: { color: textColor, font: { size: 10 } }
+        },
+        y: {
+          grid: { color: gridColor, drawBorder: false },
+          ticks: { 
+            color: textColor, 
+            font: { size: 10 },
+            callback: function(value) { return fmtM(value); }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderTDBDoughnut(etudiants) {
+  const container = document.getElementById('tdb-doughnut');
+  if (!container) return;
+  
+  let soldes = 0, partiels = 0, impayes = 0;
+  etudiants.forEach(e => {
+    const paye = getPaye(e.id);
+    const cout = Number(e.cout) || 0;
+    if (cout === 0) return;
+    if (paye >= cout) soldes++;
+    else if (paye > 0) partiels++;
+    else impayes++;
+  });
+  
+  const total = soldes + partiels + impayes;
+  const data = [soldes, partiels, impayes];
+  const labels = ['Soldés', 'Partiels', 'Impayés'];
+  const colors = ['#16a34a', '#f59e0b', '#dc2626'];
+  const bgColors = [
+    'rgba(22,163,74,0.8)',
+    'rgba(245,158,11,0.8)',
+    'rgba(220,38,38,0.8)'
+  ];
+  
+  // Créer un canvas
+  let canvas = container.querySelector('canvas');
+  if (!canvas) {
+    canvas = document.createElement('canvas');
+    container.innerHTML = '';
+    container.appendChild(canvas);
+  }
+  
+  if (tdbCharts.doughnut) {
+    try { tdbCharts.doughnut.destroy(); } catch(e) {}
+    tdbCharts.doughnut = null;
+  }
+  
+  const ctx = canvas.getContext('2d');
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textColor = isDark ? '#e6edf3' : '#0f2248';
+  
+  tdbCharts.doughnut = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: bgColors,
+        borderColor: isDark ? '#161b22' : '#fff',
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
+      },
+      cutout: '65%'
+    }
+  });
+  
+  // Légende
+  const legendContainer = document.getElementById('tdb-doughnut-legend');
+  if (legendContainer) {
+    const totalMontant = data.reduce((s, v) => s + v, 0);
+    legendContainer.innerHTML = labels.map((label, i) => {
+      const pct = totalMontant > 0 ? Math.round((data[i] / totalMontant) * 100) : 0;
+      return `<div class="tdb-legend-item">
+        <span class="tdb-legend-color" style="background:${colors[i]};"></span>
+        <span class="tdb-legend-label">${label}</span>
+        <span class="tdb-legend-value">${data[i]} (${pct}%)</span>
+      </div>`;
+    }).join('');
+  }
+}
+
+function renderTDBPaiementSummary(etudiants) {
+  const container = document.getElementById('tdb-paiement-summary');
+  if (!container) return;
+  
+  let totalCout = 0, totalPaye = 0;
+  etudiants.forEach(e => {
+    totalCout += Number(e.cout) || 0;
+    totalPaye += getPaye(e.id);
+  });
+  const totalReste = Math.max(0, totalCout - totalPaye);
+  const nbEtu = etudiants.length;
+  
+  container.innerHTML = `
+    <div class="tdb-summary-grid">
+      <div class="tdb-summary-item"><span class="label">Étudiants</span><span class="value">${nbEtu}</span></div>
+      <div class="tdb-summary-item"><span class="label">Coût total</span><span class="value">${fmtM(totalCout)} FC</span></div>
+      <div class="tdb-summary-item"><span class="label">Total payé</span><span class="value" style="color:var(--success)">${fmtM(totalPaye)} FC</span></div>
+      <div class="tdb-summary-item"><span class="label">Reste à payer</span><span class="value" style="color:var(--warning)">${fmtM(totalReste)} FC</span></div>
+      <div class="tdb-summary-item" style="grid-column:1/-1;border-bottom:none;padding-top:6px;">
+        <span class="label">Taux de recouvrement</span>
+        <span class="value" style="color:${totalCout > 0 && totalPaye/totalCout >= 0.8 ? 'var(--success)' : 'var(--warning)'}">
+          ${totalCout > 0 ? Math.round((totalPaye/totalCout)*100) : 0}%
+        </span>
+      </div>
+    </div>
+  `;
+}
+
+function renderTDBLastPayments(paiements) {
+  const tbody = document.getElementById('tdb-last-payments');
+  if (!tbody) return;
+  
+  const sorted = [...paiements].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  const top5 = sorted.slice(0, 5);
+  
+  if (top5.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-m);padding:20px;">Aucun paiement</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = top5.map(p => {
+    const paye = getPaye(p.etuId);
+    const etu = etudiants.find(e => e.id === p.etuId);
+    const cout = etu ? Number(etu.cout) : 0;
+    const st = getStatut(paye, cout);
+    return `<tr>
+      <td>${fmtDate(p.date)}</td>
+      <td><strong>${esc(p.nom || '')}</strong></td>
+      <td>${esc(getFormLabel(p.formId))}</td>
+      <td style="color:var(--success);font-weight:700;">${fmtM(p.montant)} FC</td>
+      <td><span class="badge ${st.c}">${st.l}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderTDBNonSoldes(etudiants) {
+  const tbody = document.getElementById('tdb-non-soldes');
+  if (!tbody) return;
+  
+  const nonSoldes = etudiants
+    .map(e => {
+      const paye = getPaye(e.id);
+      const cout = Number(e.cout) || 0;
+      const reste = Math.max(0, cout - paye);
+      return { ...e, reste };
+    })
+    .filter(e => e.reste > 0)
+    .sort((a, b) => b.reste - a.reste)
+    .slice(0, 5);
+  
+  if (nonSoldes.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:var(--text-m);padding:20px;">Aucun étudiant non soldé</td></tr>';
+    return;
+  }
+  
+  tbody.innerHTML = nonSoldes.map(e => `
+    <tr>
+      <td><strong>${esc(e.nom)} ${esc(e.prenom)}</strong></td>
+      <td>${esc(getFormLabel(e.formId))}</td>
+      <td style="color:var(--danger);font-weight:700;">${fmtM(e.reste)} FC</td>
+    </tr>
+  `).join('');
 }
 </script>
 
