@@ -1484,6 +1484,63 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     padding-right: 10px !important;
   }
 }
+/* Doughnut - Légende améliorée */
+.tdb-doughnut-container {
+  flex: 0 0 170px;
+  height: 170px;
+  min-width: 140px;
+}
+.tdb-doughnut-container canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+.tdb-doughnut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.tdb-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text);
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tdb-legend-item:last-child { border-bottom: none; }
+.tdb-legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+.tdb-legend-label {
+  flex: 0 0 auto;
+  font-weight: 600;
+}
+.tdb-legend-value {
+  flex: 1;
+  text-align: right;
+  font-size: 11px;
+  color: var(--text-m);
+}
+
+@media (max-width: 620px) {
+  .tdb-doughnut-container {
+    flex: 0 0 140px !important;
+    height: 140px !important;
+    min-width: 120px;
+  }
+  .tdb-legend-item {
+    font-size: 11px;
+    padding: 4px 0;
+  }
+  .tdb-legend-value {
+    font-size: 10px;
+  }
+}
 </style>
 </head>
 <body>
@@ -1701,17 +1758,27 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
         </div>
       </div>
 
-      <!-- Ligne 3 : Répartition des paiements -->
-      <div class="tdb-chart-card" style="flex:1;">
-  <div class="tdb-chart-header">
-    <span class="tdb-chart-title"><i class="fas fa-circle-info"></i> Résumé paiements</span>
+     <!-- Ligne 3 : Répartition des paiements + Résumé -->
+<div class="tdb-row-2">
+  <div class="tdb-chart-card" style="flex:1.2;">
+    <div class="tdb-chart-header">
+      <span class="tdb-chart-title"><i class="fas fa-chart-pie"></i> Répartition des paiements</span>
+    </div>
+    <div class="tdb-chart-body" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:8px 14px;">
+      <div class="tdb-doughnut-container" id="tdb-doughnut" style="flex:0 0 170px;height:170px;"></div>
+      <div class="tdb-doughnut-legend" id="tdb-doughnut-legend" style="flex:1;min-width:140px;"></div>
+    </div>
   </div>
-  <div class="tdb-chart-body" style="padding:8px 14px;">
-    <div id="tdb-paiement-summary"></div>
+  <div class="tdb-chart-card" style="flex:1;">
+    <div class="tdb-chart-header">
+      <span class="tdb-chart-title"><i class="fas fa-circle-info"></i> Résumé paiements</span>
+    </div>
+    <div class="tdb-chart-body" style="padding:8px 14px;">
+      <div id="tdb-paiement-summary"></div>
+    </div>
   </div>
 </div>
 
-      <!-- Ligne 4 : Deux tableaux -->
       <!-- Ligne 4 : Deux tableaux -->
 <div class="tdb-row-2">
   <div class="tdb-chart-card">
@@ -6367,16 +6434,31 @@ function renderTDBDoughnut(etudiants) {
   if (!container) return;
   
   let soldes = 0, partiels = 0, impayes = 0;
+  let montantSoldes = 0, montantPartiels = 0, montantImpayes = 0;
+  
   etudiants.forEach(e => {
     const paye = getPaye(e.id);
     const cout = Number(e.cout) || 0;
     if (cout === 0) return;
-    if (paye >= cout) soldes++;
-    else if (paye > 0) partiels++;
-    else impayes++;
+    const reste = Math.max(0, cout - paye);
+    
+    if (paye >= cout) {
+      soldes++;
+      montantSoldes += cout;
+    } else if (paye > 0) {
+      partiels++;
+      montantPartiels += paye;
+      montantImpayes += reste;
+    } else {
+      impayes++;
+      montantImpayes += cout;
+    }
   });
   
-  const total = soldes + partiels + impayes;
+  const totalEtudiants = soldes + partiels + impayes;
+  const totalMontant = montantSoldes + montantPartiels + montantImpayes;
+  
+  // Données pour le graphique (nombre d'étudiants)
   const data = [soldes, partiels, impayes];
   const labels = ['Soldés', 'Partiels', 'Impayés'];
   const colors = ['#16a34a', '#f59e0b', '#dc2626'];
@@ -6401,7 +6483,6 @@ function renderTDBDoughnut(etudiants) {
   
   const ctx = canvas.getContext('2d');
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const textColor = isDark ? '#e6edf3' : '#0f2248';
   
   tdbCharts.doughnut = new Chart(ctx, {
     type: 'doughnut',
@@ -6418,22 +6499,38 @@ function renderTDBDoughnut(etudiants) {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { display: false }
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const label = context.label || '';
+              const value = context.parsed || 0;
+              const pct = totalEtudiants > 0 ? Math.round((value / totalEtudiants) * 100) : 0;
+              let montant = 0;
+              if (label === 'Soldés') montant = montantSoldes;
+              else if (label === 'Partiels') montant = montantPartiels;
+              else if (label === 'Impayés') montant = montantImpayes;
+              return `${label}: ${value} étudiant(s) (${pct}%) - ${fmtM(montant)} FC`;
+            }
+          }
+        }
       },
       cutout: '65%'
     }
   });
   
-  // Légende
+  // Légende avec nombre, pourcentage et montant
   const legendContainer = document.getElementById('tdb-doughnut-legend');
   if (legendContainer) {
-    const totalMontant = data.reduce((s, v) => s + v, 0);
+    const montants = [montantSoldes, montantPartiels, montantImpayes];
     legendContainer.innerHTML = labels.map((label, i) => {
-      const pct = totalMontant > 0 ? Math.round((data[i] / totalMontant) * 100) : 0;
+      const pct = totalEtudiants > 0 ? Math.round((data[i] / totalEtudiants) * 100) : 0;
       return `<div class="tdb-legend-item">
         <span class="tdb-legend-color" style="background:${colors[i]};"></span>
-        <span class="tdb-legend-label">${label}</span>
-        <span class="tdb-legend-value">${data[i]} (${pct}%)</span>
+        <span class="tdb-legend-label"><strong>${label}</strong></span>
+        <span class="tdb-legend-value" style="font-size:11px;color:var(--text-m);">
+          ${data[i]} étudiant(s) · ${pct}% · ${fmtM(montants[i])} FC
+        </span>
       </div>`;
     }).join('');
   }
