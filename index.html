@@ -24,6 +24,8 @@
 <!-- Manifest PWA inline via data URI (évite un fichier externe) -->
 <link rel="manifest" id="pwa-manifest">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 /* ═══ Font Awesome Icon Integration ═══════════════════════════════ */
@@ -1133,6 +1135,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   }
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
 
@@ -1181,6 +1184,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="logo-sep"></div>
   <nav class="nav" id="main-nav">
+    <button class="nav-btn" onclick="showSection('tdb')" id="nav-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
     <button class="nav-btn active" onclick="showSection('etudiants')" id="nav-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
     <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
     <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
@@ -1227,8 +1231,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 </header>
 
 <!-- Mobile Drawer -->
+
 <div class="nav-drawer" id="nav-drawer" onclick="closeDrawerOutside(event)">
   <div class="nav-drawer-inner">
+    <button class="nav-btn" onclick="showSection('tdb');closeDrawerAll()" id="nav-m-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
     <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()" id="nav-m-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
     <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()" id="nav-m-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
     <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()" id="nav-m-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
@@ -1269,6 +1275,183 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       <div><div class="stat-num" id="s-sessions">0</div><div class="stat-label">Sessions actives</div></div>
     </div>
   </div>
+
+  <!-- ================================================================
+   TABLEAU DE BORD TDB (NOUVEAU)
+   ================================================================ -->
+<div class="section" id="sec-tdb">
+    <!-- 1. Filtres -->
+    <div style="background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); padding:12px 16px; margin-bottom:16px; display:flex; flex-wrap:wrap; align-items:center; gap:10px; box-shadow:var(--shadow);">
+        <div style="display:flex; flex-wrap:wrap; gap:8px; flex:1;">
+            <div style="display:flex; align-items:center; gap:6px; background:var(--bg); padding:4px 12px 4px 8px; border-radius:8px; border:1px solid var(--border);">
+                <i class="fas fa-calendar" style="color:var(--teal);"></i>
+                <select id="tdb-filtre-annee" style="background:transparent; border:none; padding:6px 0; font-size:13px; color:var(--text); outline:none; font-weight:500; cursor:pointer;">
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; background:var(--bg); padding:4px 12px 4px 8px; border-radius:8px; border:1px solid var(--border);">
+                <i class="fas fa-book-open" style="color:var(--teal);"></i>
+                <select id="tdb-filtre-formation" style="background:transparent; border:none; padding:6px 0; font-size:13px; color:var(--text); outline:none; font-weight:500; cursor:pointer;">
+                    <option value="">Toutes formations</option>
+                </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px; background:var(--bg); padding:4px 12px 4px 8px; border-radius:8px; border:1px solid var(--border);">
+                <i class="fas fa-calendar-days" style="color:var(--teal);"></i>
+                <select id="tdb-filtre-session" style="background:transparent; border:none; padding:6px 0; font-size:13px; color:var(--text); outline:none; font-weight:500; cursor:pointer;">
+                    <option value="">Toutes sessions</option>
+                </select>
+            </div>
+            <button class="btn-secondary" onclick="resetTDBFilters()" style="font-size:11px; padding:6px 12px;">
+                <i class="fas fa-rotate-right"></i> Réinitialiser
+            </button>
+        </div>
+        <div style="display:flex; gap:6px;">
+            <button class="btn-secondary" onclick="exportTDBPDF()" style="font-size:11px; padding:6px 12px;">
+                <i class="fas fa-file-pdf"></i> PDF
+            </button>
+            <button class="btn-secondary" onclick="exportTDBExcel()" style="font-size:11px; padding:6px 12px;">
+                <i class="fas fa-file-excel"></i> Excel
+            </button>
+        </div>
+    </div>
+
+    <!-- 2. KPI (5 cartes) -->
+    <div class="stats-grid" id="tdb-kpi-grid" style="grid-template-columns:repeat(5,1fr); margin-bottom:16px;">
+        <div class="stat-card" id="tdb-kpi-recettes">
+            <div class="stat-icon si-green"><i class="fas fa-wallet"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-recettes-val">0 FC</div><div class="stat-label">Recettes</div><div class="stat-sub" id="tdb-kpi-recettes-evol">+0%</div></div>
+        </div>
+        <div class="stat-card" id="tdb-kpi-attendu">
+            <div class="stat-icon si-blue"><i class="fas fa-bullseye"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-attendu-val">0 FC</div><div class="stat-label">Montant attendu</div><div class="stat-sub" id="tdb-kpi-attendu-evol">+0%</div></div>
+        </div>
+        <div class="stat-card" id="tdb-kpi-depenses">
+            <div class="stat-icon si-red"><i class="fas fa-arrow-trend-down"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-depenses-val">0 FC</div><div class="stat-label">Dépenses</div><div class="stat-sub" id="tdb-kpi-depenses-evol">+0%</div></div>
+        </div>
+        <div class="stat-card" id="tdb-kpi-solde">
+            <div class="stat-icon si-purple"><i class="fas fa-scale-balanced"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-solde-val">0 FC</div><div class="stat-label">Solde</div><div class="stat-sub" id="tdb-kpi-solde-evol">+0%</div></div>
+        </div>
+        <div class="stat-card" id="tdb-kpi-taux">
+            <div class="stat-icon si-amber"><i class="fas fa-percent"></i></div>
+            <div><div class="stat-num" id="tdb-kpi-taux-val">0%</div><div class="stat-label">Taux de recouvrement</div><div class="stat-sub" id="tdb-kpi-taux-evol">+0%</div></div>
+        </div>
+    </div>
+
+    <!-- 3. Graphique principal (pleine largeur) -->
+    <div style="background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); padding:16px; margin-bottom:16px; box-shadow:var(--shadow);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span style="font-weight:700; font-size:15px; color:var(--text);"><i class="fas fa-chart-line" style="color:var(--teal);"></i> Évolution mensuelle des finances (Recette/Dépense)</span>
+            <span style="font-size:11px; color:var(--text-m);">Période analysée : <span id="tdb-periode-label">01 Janvier 2026 - 31 Décembre 2026</span></span>
+        </div>
+        <div id="tdb-graph-principal" style="width:100%; height:300px; position:relative;">
+            <canvas id="tdb-canvas-principal"></canvas>
+        </div>
+    </div>
+
+    <!-- 4. Deux graphiques horizontaux -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <!-- Top Sessions -->
+        <div style="background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); padding:14px; box-shadow:var(--shadow);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-weight:700; font-size:14px; color:var(--text);"><i class="fas fa-users" style="color:var(--blue);"></i> Top Sessions</span>
+                <select id="tdb-top-sessions-limit" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; color:var(--text); outline:none;" onchange="renderTDB()">
+                    <option value="3">Top 3</option>
+                    <option value="6" selected>Top 6</option>
+                    <option value="10">Top 10</option>
+                    <option value="15">Top 15</option>
+                    <option value="20">Top 20</option>
+                </select>
+            </div>
+            <div id="tdb-graph-sessions" style="width:100%; height:220px; position:relative;">
+                <canvas id="tdb-canvas-sessions"></canvas>
+            </div>
+        </div>
+        <!-- Top Formations -->
+        <div style="background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); padding:14px; box-shadow:var(--shadow);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-weight:700; font-size:14px; color:var(--text);"><i class="fas fa-book-open" style="color:var(--purple);"></i> Top Formations</span>
+                <select id="tdb-top-formations-limit" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:3px 8px; font-size:11px; color:var(--text); outline:none;" onchange="renderTDB()">
+                    <option value="3">Top 3</option>
+                    <option value="6" selected>Top 6</option>
+                    <option value="10">Top 10</option>
+                    <option value="15">Top 15</option>
+                    <option value="20">Top 20</option>
+                </select>
+            </div>
+            <div id="tdb-graph-formations" style="width:100%; height:220px; position:relative;">
+                <canvas id="tdb-canvas-formations"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. État des paiements (3 cartes cliquables) -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+        <div class="stat-card" id="tdb-paye" style="cursor:pointer; border-left:4px solid var(--success);" onclick="filterTDBByStatus('solde')">
+            <div style="display:flex; flex-direction:column; width:100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:700; color:var(--success);"><i class="fas fa-circle-check"></i> Payé</span>
+                    <span class="badge b-success" id="tdb-paye-pct">0%</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                    <span style="font-size:15px; font-weight:700; color:var(--text);" id="tdb-paye-montant">0 FC</span>
+                    <span style="font-size:12px; color:var(--text-m);"><span id="tdb-paye-nb">0</span> étudiants</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card" id="tdb-partiel" style="cursor:pointer; border-left:4px solid var(--warning);" onclick="filterTDBByStatus('partiel')">
+            <div style="display:flex; flex-direction:column; width:100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:700; color:var(--warning);"><i class="fas fa-hourglass-half"></i> Partiel</span>
+                    <span class="badge b-warning" id="tdb-partiel-pct">0%</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                    <span style="font-size:15px; font-weight:700; color:var(--text);" id="tdb-partiel-montant">0 FC</span>
+                    <span style="font-size:12px; color:var(--text-m);"><span id="tdb-partiel-nb">0</span> étudiants</span>
+                </div>
+            </div>
+        </div>
+        <div class="stat-card" id="tdb-impaye" style="cursor:pointer; border-left:4px solid var(--danger);" onclick="filterTDBByStatus('nonpaye')">
+            <div style="display:flex; flex-direction:column; width:100%;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:13px; font-weight:700; color:var(--danger);"><i class="fas fa-circle-xmark"></i> Impayé</span>
+                    <span class="badge b-danger" id="tdb-impaye-pct">0%</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                    <span style="font-size:15px; font-weight:700; color:var(--text);" id="tdb-impaye-montant">0 FC</span>
+                    <span style="font-size:12px; color:var(--text-m);"><span id="tdb-impaye-nb">0</span> étudiants</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Activités et Échéances -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <!-- Activités récentes -->
+        <div style="background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); padding:14px; box-shadow:var(--shadow);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-weight:700; font-size:14px; color:var(--text);"><i class="fas fa-clock-rotate-left" style="color:var(--teal);"></i> Activités récentes</span>
+                <button class="btn-secondary" onclick="showSection('etudiants')" style="font-size:10px; padding:4px 10px;">Voir tout</button>
+            </div>
+            <div id="tdb-activites" style="max-height:220px; overflow-y:auto; font-size:12px;">
+                <!-- Rempli dynamiquement -->
+            </div>
+        </div>
+        <!-- Échéances dépassées -->
+        <div style="background:var(--surface); border-radius:var(--radius-lg); border:1px solid var(--border); padding:14px; box-shadow:var(--shadow);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-weight:700; font-size:14px; color:var(--text);"><i class="fas fa-triangle-exclamation" style="color:var(--danger);"></i> Échéances dépassées</span>
+                <button class="btn-secondary" onclick="showRappelsAutomatiques()" style="font-size:10px; padding:4px 10px;">Voir tout</button>
+            </div>
+            <div id="tdb-echeances" style="max-height:220px; overflow-y:auto; font-size:12px;">
+                <!-- Rempli dynamiquement -->
+            </div>
+        </div>
+    </div>
+</div>
 
   <!-- ÉTUDIANTS -->
   <div class="section active" id="sec-etudiants">
@@ -4658,15 +4841,19 @@ function initApp(){
     
     verifierRappelsQuotidiens();
     
-    if(currentRole!=='Admin'){
-        const u=users.find(x=>x.id===currentUserId);
-        const perms=u&&u.perms?u.perms:{};
-        if(perms.secDashboard!==false && currentRole!=='Admin'){
-            showSection('dashboard');
-        } else if(perms.secEtudiants!==false){
-            showSection('etudiants');
-        }
+    if (currentRole === 'Admin') {
+    showSection('tdb');
+} else if (currentRole !== 'Admin') {
+    const u = users.find(x => x.id === currentUserId);
+    const perms = u && u.perms ? u.perms : {};
+    if (perms.secDashboard !== false) {
+        showSection('dashboard');
+    } else if (perms.secEtudiants !== false) {
+        showSection('etudiants');
+    } else {
+        showSection('dashboard');
     }
+}
 }
 /* ================================================================
    FONCTIONS DE RAPPELS AUTOMATIQUES
@@ -5026,6 +5213,655 @@ document.addEventListener('click', e => {
   }
 });
 
+
+/* ================================================================
+   TABLEAU DE BORD TDB
+   ================================================================ */
+
+// État du filtre par statut (clic sur Payé/Partiel/Impayé)
+let tdbFiltreStatut = null; // null = tous, 'solde', 'partiel', 'nonpaye'
+
+// Références aux graphiques Chart.js
+let tdbChartPrincipal = null;
+let tdbChartSessions = null;
+let tdbChartFormations = null;
+
+// Données filtrées (mises en cache pour les graphiques)
+let tdbData = {
+    etudiantsFiltres: [],
+    paiementsFiltres: [],
+    depensesFiltres: [],
+    recettesParMois: [],
+    depensesParMois: [],
+    topSessions: [],
+    topFormations: [],
+    totalRecettes: 0,
+    totalAttendu: 0,
+    totalDepenses: 0,
+    solde: 0,
+    tauxRecouvrement: 0,
+    statsPaiements: { solde: { montant: 0, nb: 0, pct: 0 }, partiel: { montant: 0, nb: 0, pct: 0 }, nonpaye: { montant: 0, nb: 0, pct: 0 } },
+    activites: [],
+    echeances: []
+};
+
+// Fonction principale de rendu du TDB
+function renderTDB() {
+    // Récupérer les filtres
+    const annee = document.getElementById('tdb-filtre-annee').value;
+    const formationId = document.getElementById('tdb-filtre-formation').value;
+    const sessionId = document.getElementById('tdb-filtre-session').value;
+    
+    // Mettre à jour le label de période
+    document.getElementById('tdb-periode-label').textContent = `01 Janvier ${annee} - 31 Décembre ${annee}`;
+    
+    // 1. Filtrer les données
+    const resultats = filtrerDonneesTDB(annee, formationId, sessionId);
+    tdbData = resultats;
+    
+    // 2. Mettre à jour les KPI
+    mettreAJourKPITDB(resultats);
+    
+    // 3. Mettre à jour les stats de paiement
+    mettreAJourStatsPaiementTDB(resultats);
+    
+    // 4. Mettre à jour les graphiques
+    mettreAJourGraphiquesTDB(resultats);
+    
+    // 5. Mettre à jour les activités et échéances
+    mettreAJourActivitesEcheancesTDB(resultats);
+}
+
+// Filtrer les données selon les critères TDB
+function filtrerDonneesTDB(annee, formationId, sessionId) {
+    // Filtrer les étudiants
+    let etudiantsFiltres = etudiants.filter(e => {
+        // Filtre année (via date d'inscription)
+        if (annee && e.date) {
+            const anneeEtu = e.date.substring(0, 4);
+            if (anneeEtu !== annee) return false;
+        }
+        // Filtre formation
+        if (formationId && String(e.formId) !== String(formationId)) return false;
+        // Filtre session
+        if (sessionId && String(e.sesId) !== String(sessionId)) return false;
+        // Filtre statut (Payé/Partiel/Impayé)
+        if (tdbFiltreStatut) {
+            const paye = getPaye(e.id);
+            const statut = getStatut(paye, e.cout);
+            if (statut.k !== tdbFiltreStatut) return false;
+        }
+        return true;
+    });
+    
+    // IDs des étudiants filtrés
+    const etuIds = new Set(etudiantsFiltres.map(e => e.id));
+    
+    // Filtrer les paiements
+    let paiementsFiltres = paiements.filter(p => etuIds.has(p.etuId));
+    
+    // Filtrer les dépenses
+    let depensesFiltres = depenses;
+    if (annee) {
+        depensesFiltres = depensesFiltres.filter(d => {
+            if (d.date) {
+                const anneeDep = d.date.substring(0, 4);
+                return anneeDep === annee;
+            }
+            return false;
+        });
+    }
+    if (sessionId) {
+        depensesFiltres = depensesFiltres.filter(d => String(d.sesId) === String(sessionId));
+    }
+    
+    // Calcul des totaux
+    const totalRecettes = paiementsFiltres.reduce((sum, p) => sum + Number(p.montant || 0), 0);
+    const totalAttendu = etudiantsFiltres.reduce((sum, e) => sum + Number(e.cout || 0), 0);
+    const totalDepenses = depensesFiltres.reduce((sum, d) => sum + Number(d.montant || 0), 0);
+    const solde = totalRecettes - totalDepenses;
+    const tauxRecouvrement = totalAttendu > 0 ? (totalRecettes / totalAttendu) * 100 : 0;
+    
+    // Statistiques par statut de paiement
+    const statsPaiements = { solde: { montant: 0, nb: 0, pct: 0 }, partiel: { montant: 0, nb: 0, pct: 0 }, nonpaye: { montant: 0, nb: 0, pct: 0 } };
+    etudiantsFiltres.forEach(e => {
+        const paye = getPaye(e.id);
+        const statut = getStatut(paye, e.cout);
+        if (statut.k === 'solde') {
+            statsPaiements.solde.montant += paye;
+            statsPaiements.solde.nb += 1;
+        } else if (statut.k === 'partiel') {
+            statsPaiements.partiel.montant += paye;
+            statsPaiements.partiel.nb += 1;
+        } else {
+            statsPaiements.nonpaye.montant += paye;
+            statsPaiements.nonpaye.nb += 1;
+        }
+    });
+    const totalEtudiants = etudiantsFiltres.length || 1;
+    statsPaiements.solde.pct = (statsPaiements.solde.nb / totalEtudiants) * 100;
+    statsPaiements.partiel.pct = (statsPaiements.partiel.nb / totalEtudiants) * 100;
+    statsPaiements.nonpaye.pct = (statsPaiements.nonpaye.nb / totalEtudiants) * 100;
+    
+    // Recettes par mois
+    const recettesParMois = Array(12).fill(0);
+    paiementsFiltres.forEach(p => {
+        if (p.date) {
+            const mois = parseInt(p.date.substring(5, 7)) - 1;
+            if (mois >= 0 && mois < 12) {
+                recettesParMois[mois] += Number(p.montant || 0);
+            }
+        }
+    });
+    
+    // Dépenses par mois
+    const depensesParMois = Array(12).fill(0);
+    depensesFiltres.forEach(d => {
+        if (d.date) {
+            const mois = parseInt(d.date.substring(5, 7)) - 1;
+            if (mois >= 0 && mois < 12) {
+                depensesParMois[mois] += Number(d.montant || 0);
+            }
+        }
+    });
+    
+    // Top Sessions par recettes
+    const sessionRecettes = {};
+    paiementsFiltres.forEach(p => {
+        const sesId = p.sesId;
+        if (sesId) {
+            if (!sessionRecettes[sesId]) sessionRecettes[sesId] = 0;
+            sessionRecettes[sesId] += Number(p.montant || 0);
+        }
+    });
+    const topSessions = Object.entries(sessionRecettes)
+        .map(([id, montant]) => {
+            const session = sessions.find(s => String(s.id) === String(id));
+            return { id, label: session ? (session.code + ' — ' + session.det) : 'Session ' + id, montant };
+        })
+        .sort((a, b) => b.montant - a.montant);
+    
+    // Top Formations par recettes
+    const formationRecettes = {};
+    paiementsFiltres.forEach(p => {
+        const formId = p.formId;
+        if (formId) {
+            if (!formationRecettes[formId]) formationRecettes[formId] = 0;
+            formationRecettes[formId] += Number(p.montant || 0);
+        }
+    });
+    const topFormations = Object.entries(formationRecettes)
+        .map(([id, montant]) => {
+            const formation = formations.find(f => String(f.id) === String(id));
+            return { id, label: formation ? (formation.label || formation.intitule) : 'Formation ' + id, montant };
+        })
+        .sort((a, b) => b.montant - a.montant);
+    
+    // Activités récentes (paiements + dépenses + nouveaux étudiants)
+    const activites = [];
+    paiementsFiltres.slice(-5).forEach(p => {
+        activites.push({
+            date: p.date,
+            heure: '—',
+            action: 'Paiement enregistré',
+            objet: p.nom || 'Étudiant',
+            montant: p.montant,
+            type: 'paiement'
+        });
+    });
+    depensesFiltres.slice(-5).forEach(d => {
+        activites.push({
+            date: d.date,
+            heure: '—',
+            action: 'Dépense enregistrée',
+            objet: d.lib || 'Dépense',
+            montant: -d.montant,
+            type: 'depense'
+        });
+    });
+    etudiantsFiltres.slice(-5).forEach(e => {
+        activites.push({
+            date: e.date,
+            heure: '—',
+            action: 'Nouvel étudiant',
+            objet: (e.nom || '') + ' ' + (e.prenom || ''),
+            montant: 0,
+            type: 'etudiant'
+        });
+    });
+    activites.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    
+    // Échéances dépassées
+    const today = new Date().toISOString().split('T')[0];
+    const echeances = [];
+    etudiantsFiltres.forEach(e => {
+        if (e.echeance && e.echeance < today) {
+            const paye = getPaye(e.id);
+            const cout = Number(e.cout || 0);
+            const reste = Math.max(0, cout - paye);
+            if (reste > 0) {
+                const statut = getStatut(paye, cout);
+                const jours = Math.floor((new Date(today) - new Date(e.echeance)) / (1000 * 60 * 60 * 24));
+                echeances.push({
+                    date: e.echeance,
+                    facture: 'FAC-' + String(e.id).padStart(6, '0'),
+                    nom: (e.nom || '') + ' ' + (e.prenom || ''),
+                    reste: reste,
+                    jours: jours,
+                    statut: statut.k
+                });
+            }
+        }
+    });
+    echeances.sort((a, b) => b.jours - a.jours);
+    
+    return {
+        etudiantsFiltres,
+        paiementsFiltres,
+        depensesFiltres,
+        recettesParMois,
+        depensesParMois,
+        topSessions,
+        topFormations,
+        totalRecettes,
+        totalAttendu,
+        totalDepenses,
+        solde,
+        tauxRecouvrement,
+        statsPaiements,
+        activites: activites.slice(0, 10),
+        echeances: echeances.slice(0, 10)
+    };
+}
+
+// Mettre à jour les KPI
+function mettreAJourKPITDB(data) {
+    // Recettes
+    document.getElementById('tdb-kpi-recettes-val').textContent = fmtM(data.totalRecettes) + ' FC';
+    // Montant attendu
+    document.getElementById('tdb-kpi-attendu-val').textContent = fmtM(data.totalAttendu) + ' FC';
+    // Dépenses
+    document.getElementById('tdb-kpi-depenses-val').textContent = fmtM(data.totalDepenses) + ' FC';
+    // Solde
+    const soldeEl = document.getElementById('tdb-kpi-solde-val');
+    soldeEl.textContent = fmtM(data.solde) + ' FC';
+    soldeEl.style.color = data.solde >= 0 ? 'var(--success)' : 'var(--danger)';
+    // Taux de recouvrement
+    document.getElementById('tdb-kpi-taux-val').textContent = data.tauxRecouvrement.toFixed(2) + '%';
+}
+
+// Mettre à jour les stats de paiement
+function mettreAJourStatsPaiementTDB(data) {
+    const stats = data.statsPaiements;
+    // Payé
+    document.getElementById('tdb-paye-pct').textContent = stats.solde.pct.toFixed(1) + '%';
+    document.getElementById('tdb-paye-montant').textContent = fmtM(stats.solde.montant) + ' FC';
+    document.getElementById('tdb-paye-nb').textContent = stats.solde.nb;
+    // Partiel
+    document.getElementById('tdb-partiel-pct').textContent = stats.partiel.pct.toFixed(1) + '%';
+    document.getElementById('tdb-partiel-montant').textContent = fmtM(stats.partiel.montant) + ' FC';
+    document.getElementById('tdb-partiel-nb').textContent = stats.partiel.nb;
+    // Impayé
+    document.getElementById('tdb-impaye-pct').textContent = stats.nonpaye.pct.toFixed(1) + '%';
+    document.getElementById('tdb-impaye-montant').textContent = fmtM(stats.nonpaye.montant) + ' FC';
+    document.getElementById('tdb-impaye-nb').textContent = stats.nonpaye.nb;
+}
+
+// Mettre à jour les graphiques
+function mettreAJourGraphiquesTDB(data) {
+    const moisLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'];
+    
+    // ----- GRAPHIQUE PRINCIPAL (combiné) -----
+    const ctxPrincipal = document.getElementById('tdb-canvas-principal').getContext('2d');
+    
+    if (tdbChartPrincipal) {
+        tdbChartPrincipal.destroy();
+    }
+    
+    tdbChartPrincipal = new Chart(ctxPrincipal, {
+        type: 'bar',
+        data: {
+            labels: moisLabels,
+            datasets: [
+                {
+                    label: 'Dépenses (KMF)',
+                    data: data.depensesParMois.map(v => v / 1000),
+                    backgroundColor: 'rgba(220, 38, 38, 0.65)',
+                    borderColor: 'rgba(220, 38, 38, 1)',
+                    borderWidth: 1,
+                    borderRadius: 3,
+                    order: 2
+                },
+                {
+                    label: 'Recettes (KMF)',
+                    data: data.recettesParMois.map(v => v / 1000),
+                    type: 'line',
+                    borderColor: '#2bbf9b',
+                    backgroundColor: 'rgba(43, 191, 155, 0.1)',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#2bbf9b',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    tension: 0.3,
+                    fill: true,
+                    order: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        boxWidth: 12,
+                        padding: 15,
+                        font: { size: 11, weight: '600' },
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y.toFixed(0) + ' KMF';
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { callback: function(value) { return value + ' KMF'; } },
+                    grid: { color: 'rgba(0,0,0,0.06)' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+    
+    // ----- TOP SESSIONS (barres horizontales) -----
+    const limitSessions = parseInt(document.getElementById('tdb-top-sessions-limit').value) || 6;
+    const topSessions = data.topSessions.slice(0, limitSessions);
+    
+    const ctxSessions = document.getElementById('tdb-canvas-sessions').getContext('2d');
+    
+    if (tdbChartSessions) {
+        tdbChartSessions.destroy();
+    }
+    
+    const colorsSessions = ['#1a4eb8', '#2bbf9b', '#d97706', '#7c3aed', '#dc2626', '#0891b2', '#be185d', '#16a34a', '#f97316', '#6366f1'];
+    
+    tdbChartSessions = new Chart(ctxSessions, {
+        type: 'bar',
+        data: {
+            labels: topSessions.map(s => s.label.length > 25 ? s.label.substring(0, 22) + '…' : s.label),
+            datasets: [{
+                data: topSessions.map(s => s.montant / 1000),
+                backgroundColor: topSessions.map((_, i) => colorsSessions[i % colorsSessions.length] + 'CC'),
+                borderColor: topSessions.map((_, i) => colorsSessions[i % colorsSessions.length]),
+                borderWidth: 1,
+                borderRadius: 3
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.x.toFixed(0) + ' KMF';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { callback: function(value) { return value + ' KMF'; } },
+                    grid: { color: 'rgba(0,0,0,0.06)' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+    
+    // ----- TOP FORMATIONS (barres horizontales) -----
+    const limitFormations = parseInt(document.getElementById('tdb-top-formations-limit').value) || 6;
+    const topFormations = data.topFormations.slice(0, limitFormations);
+    
+    const ctxFormations = document.getElementById('tdb-canvas-formations').getContext('2d');
+    
+    if (tdbChartFormations) {
+        tdbChartFormations.destroy();
+    }
+    
+    const colorsFormations = ['#7c3aed', '#ec4899', '#2bbf9b', '#f59e0b', '#3b82f6', '#ef4444', '#14b8a6', '#8b5cf6', '#f97316', '#059669'];
+    
+    tdbChartFormations = new Chart(ctxFormations, {
+        type: 'bar',
+        data: {
+            labels: topFormations.map(f => f.label.length > 25 ? f.label.substring(0, 22) + '…' : f.label),
+            datasets: [{
+                data: topFormations.map(f => f.montant / 1000),
+                backgroundColor: topFormations.map((_, i) => colorsFormations[i % colorsFormations.length] + 'CC'),
+                borderColor: topFormations.map((_, i) => colorsFormations[i % colorsFormations.length]),
+                borderWidth: 1,
+                borderRadius: 3
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.x.toFixed(0) + ' KMF';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: { callback: function(value) { return value + ' KMF'; } },
+                    grid: { color: 'rgba(0,0,0,0.06)' }
+                },
+                y: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+// Mettre à jour les activités et échéances
+function mettreAJourActivitesEcheancesTDB(data) {
+    // Activités récentes
+    const activitesContainer = document.getElementById('tdb-activites');
+    if (data.activites.length === 0) {
+        activitesContainer.innerHTML = '<div style="text-align:center;color:var(--text-m);padding:12px;font-size:12px;">Aucune activité récente</div>';
+    } else {
+        activitesContainer.innerHTML = data.activites.map(a => {
+            let icon = '';
+            let color = '';
+            if (a.type === 'paiement') {
+                icon = '<i class="fas fa-credit-card" style="color:var(--success);"></i>';
+                color = 'color:var(--success);';
+            } else if (a.type === 'depense') {
+                icon = '<i class="fas fa-arrow-trend-down" style="color:var(--danger);"></i>';
+                color = 'color:var(--danger);';
+            } else {
+                icon = '<i class="fas fa-user-plus" style="color:var(--blue);"></i>';
+                color = 'color:var(--blue);';
+            }
+            const montantStr = a.montant !== 0 ? (a.montant > 0 ? '+ ' : '') + fmtM(Math.abs(a.montant)) + ' FC' : '—';
+            return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    ${icon}
+                    <span style="font-size:11px;">${a.action}</span>
+                    <span style="font-size:11px;color:var(--text-m);">${a.objet}</span>
+                </div>
+                <span style="font-size:11px;${color}font-weight:600;">${montantStr}</span>
+            </div>`;
+        }).join('');
+    }
+    
+    // Échéances dépassées
+    const echeancesContainer = document.getElementById('tdb-echeances');
+    if (data.echeances.length === 0) {
+        echeancesContainer.innerHTML = '<div style="text-align:center;color:var(--text-m);padding:12px;font-size:12px;">Aucune échéance dépassée</div>';
+    } else {
+        echeancesContainer.innerHTML = data.echeances.map(e => {
+            let statutColor = '';
+            let statutLabel = '';
+            if (e.statut === 'solde') {
+                statutColor = 'var(--success)';
+                statutLabel = 'Payé';
+            } else if (e.statut === 'partiel') {
+                statutColor = 'var(--warning)';
+                statutLabel = 'Partiel';
+            } else {
+                statutColor = 'var(--danger)';
+                statutLabel = 'Impayé';
+            }
+            return `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+                <div>
+                    <span style="font-size:11px;font-weight:600;">${e.nom}</span>
+                    <span style="font-size:10px;color:var(--text-m);margin-left:6px;">${fmtDate(e.date)}</span>
+                    <span style="font-size:10px;color:var(--text-m);margin-left:6px;">${e.facture}</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span style="font-size:11px;font-weight:600;color:var(--danger);">${fmtM(e.reste)} FC</span>
+                    <span style="font-size:10px;color:var(--text-m);">${e.jours}j</span>
+                    <span class="badge" style="background:${statutColor}22;color:${statutColor};font-size:9px;">${statutLabel}</span>
+                </div>
+            </div>`;
+        }).join('');
+    }
+}
+
+// Filtrer le TDB par statut (clic sur Payé/Partiel/Impayé)
+function filterTDBByStatus(statut) {
+    if (tdbFiltreStatut === statut) {
+        // Désactiver le filtre (toggle)
+        tdbFiltreStatut = null;
+        // Réinitialiser les styles des cartes
+        document.getElementById('tdb-paye').style.borderLeftColor = 'var(--success)';
+        document.getElementById('tdb-partiel').style.borderLeftColor = 'var(--warning)';
+        document.getElementById('tdb-impaye').style.borderLeftColor = 'var(--danger)';
+        document.querySelectorAll('#tdb-paye, #tdb-partiel, #tdb-impaye').forEach(el => {
+            el.style.background = 'var(--surface)';
+        });
+    } else {
+        tdbFiltreStatut = statut;
+        // Mettre en surbrillance la carte sélectionnée
+        document.querySelectorAll('#tdb-paye, #tdb-partiel, #tdb-impaye').forEach(el => {
+            el.style.background = 'var(--surface)';
+            el.style.borderLeftColor = 'var(--border)';
+        });
+        const map = {
+            'solde': 'tdb-paye',
+            'partiel': 'tdb-partiel',
+            'nonpaye': 'tdb-impaye'
+        };
+        const el = document.getElementById(map[statut]);
+        if (el) {
+            el.style.background = 'rgba(43,191,155,0.05)';
+            el.style.borderLeftColor = statut === 'solde' ? 'var(--success)' : statut === 'partiel' ? 'var(--warning)' : 'var(--danger)';
+        }
+    }
+    renderTDB();
+}
+
+// Réinitialiser tous les filtres du TDB
+function resetTDBFilters() {
+    document.getElementById('tdb-filtre-annee').value = '2026';
+    document.getElementById('tdb-filtre-formation').value = '';
+    document.getElementById('tdb-filtre-session').value = '';
+    tdbFiltreStatut = null;
+    document.querySelectorAll('#tdb-paye, #tdb-partiel, #tdb-impaye').forEach(el => {
+        el.style.background = 'var(--surface)';
+        el.style.borderLeftColor = '';
+    });
+    renderTDB();
+}
+
+// Peupler les filtres du TDB
+function populateTDBFilters() {
+    // Formations
+    const formSelect = document.getElementById('tdb-filtre-formation');
+    if (formSelect) {
+        const currentVal = formSelect.value;
+        formSelect.innerHTML = '<option value="">Toutes formations</option>' +
+            formations.map(f => `<option value="${f.id}">${esc(f.label || f.intitule || '—')}</option>`).join('');
+        if (currentVal) formSelect.value = currentVal;
+    }
+    // Sessions
+    const sesSelect = document.getElementById('tdb-filtre-session');
+    if (sesSelect) {
+        const currentVal = sesSelect.value;
+        sesSelect.innerHTML = '<option value="">Toutes sessions</option>' +
+            sessions.map(s => `<option value="${s.id}">${esc(s.code)} — ${esc(s.det)}</option>`).join('');
+        if (currentVal) sesSelect.value = currentVal;
+    }
+}
+
+// Export PDF (simulé avec impression)
+function exportTDBPDF() {
+    // Pour l'instant, ouvre la fenêtre d'impression
+    window.print();
+}
+
+// Export Excel du TDB (simulé)
+function exportTDBExcel() {
+    // Pour l'instant, on utilise l'export existant
+    if (currentRole === 'Admin') {
+        exportExcel();
+    } else {
+        alert('Export Excel réservé aux administrateurs.');
+    }
+}
+
+// Initialiser le TDB (à appeler après le chargement)
+function initTDB() {
+    populateTDBFilters();
+    renderTDB();
+    // Écouteurs d'événements
+    document.getElementById('tdb-filtre-annee').addEventListener('change', renderTDB);
+    document.getElementById('tdb-filtre-formation').addEventListener('change', renderTDB);
+    document.getElementById('tdb-filtre-session').addEventListener('change', renderTDB);
+}
+
+// Surcharger la fonction showSection pour gérer le TDB
+const originalShowSection = showSection;
+showSection = function(id) {
+    originalShowSection(id);
+    if (id === 'tdb') {
+        // S'assurer que Chart.js est chargé
+        if (typeof Chart !== 'undefined') {
+            initTDB();
+        } else {
+            // Recharger la librairie si besoin
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js';
+            script.onload = initTDB;
+            document.head.appendChild(script);
+        }
+    }
+};
 /* ================================================================
    BOOT — async : attend le chargement IndexedDB avant d'initialiser */
 (async function boot() {
