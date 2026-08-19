@@ -362,27 +362,43 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .pbar-fill{height:100%;border-radius:3px;transition:width .4s;}
 .print-btn{margin-top:10px;background:linear-gradient(135deg,var(--teal),#1a8f72);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:opacity .15s;}
 .print-btn:hover{opacity:.9;}
-
-/* ATTESTATION — Certificat officiel */
-.att-wrap{max-width:680px;margin:0 auto;font-family:Georgia,'Times New Roman',serif;}
-.att-border{border:3px solid var(--gold);border-radius:4px;padding:6px;background:linear-gradient(135deg,rgba(200,151,42,.04),rgba(15,34,72,.02));}
-.att-inner{border:1px solid var(--gold);border-radius:2px;padding:28px 32px;text-align:center;position:relative;}
-.att-seal{position:absolute;top:18px;right:22px;width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:9px;font-weight:800;text-align:center;letter-spacing:.5px;line-height:1.2;transform:rotate(-8deg);}
-.att-hdr{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;}
-.att-hdr img{height:42px;width:auto;object-fit:contain;}
-.att-hdr h3{font-size:16px;font-weight:800;color:var(--navy);margin:0;}
-.att-hdr p{font-size:9px;color:var(--text-m);letter-spacing:2px;text-transform:uppercase;margin:2px 0 0;}
-.att-title{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:3px;text-transform:uppercase;margin:18px 0 4px;}
-.att-title-sub{width:80px;height:2px;background:var(--gold);margin:0 auto 18px;}
-.att-lead{font-size:12px;color:var(--text-m);margin-bottom:6px;}
-.att-name{font-size:24px;font-weight:800;color:var(--navy);margin:4px 0 14px;border-bottom:1px solid var(--gold);display:inline-block;padding:0 20px 6px;}
-.att-body-txt{font-size:12.5px;color:var(--text);line-height:1.9;max-width:520px;margin:0 auto;}
-.att-body-txt strong{color:var(--navy);}
-.att-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:34px;text-align:left;}
-.att-meta{font-size:9px;color:var(--text-m);}
-.att-meta div{margin-bottom:2px;}
-.att-sign{text-align:center;font-size:10px;color:var(--text-m);}
-.att-sign-line{width:150px;border-top:1px solid var(--text-m);margin:32px auto 4px;}
+/* ATTESTATION — Certificat officiel (modèle ComFormation) */
+.att-card{container-type:inline-size;position:relative;width:100%;aspect-ratio:1536/1024;background:#fff;overflow:hidden;border-radius:8px;box-shadow:0 4px 24px rgba(15,34,72,.15);font-family:Georgia,'Times New Roman',serif;}
+.att-decor-gold-l{position:absolute;left:-16cqw;top:-15cqw;width:30cqw;height:140cqw;border-radius:50%;background:linear-gradient(135deg,#f0b840,#c8972a);}
+.att-decor-navy-l{position:absolute;left:-10cqw;top:-6cqw;width:24cqw;height:122cqw;border-radius:50%;background:linear-gradient(160deg,#12295a,#0f2248 60%,#1a3a72);}
+.att-decor-gold-b{position:absolute;left:-10cqw;bottom:-78cqw;width:170cqw;height:96cqw;border-radius:50%;background:linear-gradient(135deg,#f0b840,#c8972a);}
+.att-decor-navy-b{position:absolute;left:-6cqw;bottom:-70cqw;width:160cqw;height:88cqw;border-radius:50%;background:linear-gradient(160deg,#0f2248,#1a3a72);}
+.att-frame{position:absolute;inset:2.2cqw;border:.15cqw solid #c8972a;border-radius:2px;}
+.att-content{position:absolute;inset:0;padding:4.5cqw 6cqw;display:flex;flex-direction:column;}
+.att-logo-row{display:flex;align-items:center;gap:1cqw;}
+.att-logo-row img{height:6.5cqw;width:auto;object-fit:contain;}
+.att-logo-txt h4{font-size:2.4cqw;font-weight:800;color:#0f2248;margin:0;font-family:'DM Sans',sans-serif;}
+.att-logo-txt p{font-size:1cqw;color:#4b5a78;margin:.2cqw 0 0;font-family:'DM Sans',sans-serif;}
+.att-badge{position:absolute;top:4.5cqw;right:5cqw;width:15cqw;text-align:center;z-index:3;}
+.att-badge-circle{width:15cqw;height:15cqw;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6cf6e,#c8972a 70%,#a67a1e);display:flex;align-items:center;justify-content:center;box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.25);margin:0 auto;}
+.att-badge-inner{width:82%;height:82%;border-radius:50%;background:#fff;border:.3cqw solid #c8972a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5%;}
+.att-badge-stars{font-size:1cqw;color:#c8972a;letter-spacing:.15cqw;margin-bottom:.3cqw;}
+.att-badge-inner p{font-size:.8cqw;font-weight:800;color:#0f2248;line-height:1.35;margin:0;text-transform:uppercase;font-family:'DM Sans',sans-serif;}
+.att-ribbons{display:flex;justify-content:center;gap:.3cqw;margin-top:-.3cqw;}
+.att-ribbon{width:3.2cqw;height:6cqw;background:#0f2248;clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%);}
+.att-title-block{text-align:center;margin-top:5.5cqw;}
+.att-title{font-size:6cqw;font-weight:700;color:#0f2248;letter-spacing:.35cqw;margin:0;line-height:1;}
+.att-subtitle-row{display:flex;align-items:center;justify-content:center;gap:1.4cqw;margin-top:.8cqw;}
+.att-subtitle-row .ln{width:9cqw;height:1px;background:#c8972a;}
+.att-subtitle{font-size:2.3cqw;font-weight:700;color:#c8972a;letter-spacing:.5cqw;}
+.att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.1cqw;padding:0 4cqw;}
+.att-lead{font-size:1.3cqw;color:#0f2248;}
+.att-blank{display:block;width:78%;border-bottom:1px dotted #6b7ea4;padding-bottom:.4cqw;font-size:1.6cqw;font-weight:700;color:#0f2248;}
+.att-para{font-size:1.1cqw;color:#2a3a5c;line-height:1.6;max-width:88%;}
+.att-footer-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:2cqw;}
+.att-fait{font-size:1.05cqw;color:#0f2248;}
+.att-fait .dots{display:inline-block;min-width:16cqw;border-bottom:1px dotted #6b7ea4;margin-left:.3cqw;}
+.att-sign{text-align:center;}
+.att-sign p{font-size:1.1cqw;font-weight:800;color:#0f2248;margin:0 0 1.8cqw;}
+.att-sign .line{width:9cqw;height:1px;background:#c8972a;margin:0 auto .6cqw;}
+.att-sign span{font-size:1cqw;font-weight:800;color:#0f2248;}
+.att-contact{display:flex;gap:1.6cqw;margin-top:1.5cqw;font-size:.9cqw;color:#4b5a78;font-family:'DM Sans',sans-serif;}
+.att-contact span{display:flex;align-items:center;gap:.4cqw;}
 
 .pbar-modal{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px;}
 .pbar-modal-fill{height:100%;border-radius:3px;transition:width .3s;}
@@ -3511,7 +3527,6 @@ function printRecu(){
   </style></head><body>${zone.outerHTML}</body></html>`);
   w.document.close(); w.focus(); setTimeout(()=>w.print(),800);
 }
-
 function openAttestation(etuId){
   const e=etudiants.find(x=>x.id===etuId);
   if(!e) return;
@@ -3530,80 +3545,116 @@ function openAttestation(etuId){
       if (loggedUser.centre_logo) logoSrc = loggedUser.centre_logo;
     } catch(err) {}
   }
-  const numero = `ATT-${e.mat}`;
+  const lieu = 'Moroni';
+  const email = 'km.comformation@comores.km';
   const now = new Date().toLocaleDateString('fr-FR');
 
-  const html = `<div class="att-wrap" id="att-zone">
-    <div class="att-border"><div class="att-inner">
-      <div class="att-seal">CENTRE<br>AGRÉÉ</div>
-      <div class="att-hdr">
-        <img src="${logoSrc}" alt="logo">
-        <div><h3>${esc(centreNom)}</h3><p>Training Center</p></div>
-      </div>
-      <div class="att-title">Attestation de Formation</div>
-      <div class="att-title-sub"></div>
-      <p class="att-lead">Le Centre ${esc(centreNom)} certifie que :</p>
-      <div class="att-name">${esc(sanitize(e.nom))} ${esc(sanitize(e.prenom))}</div>
-      <p class="att-body-txt">
-        Matricule <strong>${esc(e.mat)}</strong>, a suivi la formation
-        <strong>« ${esc(getFormLabel(e.formId))} »</strong> dispensée durant la session
-        <strong>${esc(getSesLabel(e.sesId))}</strong>, et a intégralement soldé les frais de
-        formation d'un montant de <strong>${fmtM(e.cout)} FC</strong>.<br><br>
-        En foi de quoi la présente attestation lui est délivrée pour servir et valoir ce que de droit.
-      </p>
-      <div class="att-footer">
-        <div class="att-meta">
-          <div>N° attestation : <strong>${numero}</strong></div>
-          <div>Date d'inscription : ${fmtDate(e.date)}</div>
-          <div>Délivrée le : ${now}</div>
+  const html = `
+    <div class="att-card" id="att-zone">
+      <div class="att-decor-gold-l"></div>
+      <div class="att-decor-navy-l"></div>
+      <div class="att-decor-gold-b"></div>
+      <div class="att-decor-navy-b"></div>
+      <div class="att-frame"></div>
+      <div class="att-content">
+        <div class="att-logo-row">
+          <img src="${logoSrc}" alt="logo">
+          <div class="att-logo-txt">
+            <h4>${esc(centreNom)}</h4>
+            <p>Se former aujourd'hui, réussir demain</p>
+          </div>
         </div>
-        <div class="att-sign">
-          <div class="att-sign-line"></div>
-          Le Directeur / La Directrice
+        <div class="att-badge">
+          <div class="att-badge-circle">
+            <div class="att-badge-inner">
+              <div class="att-badge-stars">★★★★★</div>
+              <p>Formation<br>Pratique<br>&amp;<br>Professionnelle</p>
+            </div>
+          </div>
+          <div class="att-ribbons"><div class="att-ribbon"></div><div class="att-ribbon"></div></div>
+        </div>
+        <div class="att-title-block">
+          <div class="att-title">ATTESTATION</div>
+          <div class="att-subtitle-row"><span class="ln"></span><span class="att-subtitle">DE FORMATION</span><span class="ln"></span></div>
+        </div>
+        <div class="att-body">
+          <div class="att-lead">Nous attestons que</div>
+          <div class="att-blank">${esc(sanitize(e.nom))} ${esc(sanitize(e.prenom))}</div>
+          <div class="att-lead">a suivi avec succès la formation</div>
+          <div class="att-blank">${esc(getFormLabel(e.formId))}</div>
+          <div class="att-para">Dispensée par ${esc(centreNom)} durant la session ${esc(getSesLabel(e.sesId))}.<br>En foi de quoi, la présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
+        </div>
+        <div class="att-footer-row">
+          <div class="att-fait">Fait à ${esc(lieu)}, le <span class="dots">${now}</span></div>
+          <div class="att-sign">
+            <p>Le Directeur</p>
+            <div class="line"></div>
+            <span>${esc(centreNom)}</span>
+          </div>
+        </div>
+        <div class="att-contact">
+          <span>📍 ${esc(lieu)}, Union des Comores</span>
+          <span>✉️ ${esc(email)}</span>
         </div>
       </div>
-      <div style="text-align:center;margin-top:16px;">
-        <button class="print-btn" onclick="printAttestation()"><i class="fas fa-print"></i> Imprimer / Enregistrer PDF</button>
-      </div>
-    </div></div>
-  </div>`;
+    </div>
+    <div style="text-align:center;margin-top:14px;">
+      <button class="print-btn" onclick="printAttestation()"><i class="fas fa-print"></i> Imprimer / Enregistrer PDF</button>
+    </div>`;
   document.getElementById('att-content').innerHTML = html;
   openModal('attestation');
 }
 
 function printAttestation(){
-  const zone = document.getElementById('att-zone');
+  const zone = document.getElementById('att-content');
   if(!zone) return;
   const w = window.open('','_blank');
   if(!w){ alert('Veuillez autoriser les popups pour imprimer.'); return; }
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Attestation</title>
   <style>
-    @page{size:A4 landscape;margin:14mm;}
-    body{font-family:Georgia,'Times New Roman',serif;margin:0;padding:0;background:#fff;color:#0f2248;}
-    .att-wrap{max-width:100%;margin:0 auto;}
-    .att-border{border:3px solid #c8972a;border-radius:4px;padding:6px;}
-    .att-inner{border:1px solid #c8972a;border-radius:2px;padding:36px 46px;text-align:center;position:relative;}
-    .att-seal{position:absolute;top:22px;right:28px;width:70px;height:70px;border-radius:50%;border:2px solid #c8972a;display:flex;align-items:center;justify-content:center;color:#c8972a;font-size:10px;font-weight:800;text-align:center;letter-spacing:.5px;line-height:1.2;transform:rotate(-8deg);}
-    .att-hdr{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;}
-    .att-hdr img{height:48px;width:auto;object-fit:contain;}
-    .att-hdr h3{font-size:18px;font-weight:800;color:#0f2248;margin:0;}
-    .att-hdr p{font-size:10px;color:#6b7ea4;letter-spacing:2px;text-transform:uppercase;margin:2px 0 0;}
-    .att-title{font-size:26px;font-weight:800;color:#0f2248;letter-spacing:3px;text-transform:uppercase;margin:22px 0 4px;}
-    .att-title-sub{width:90px;height:2px;background:#c8972a;margin:0 auto 22px;}
-    .att-lead{font-size:13px;color:#6b7ea4;margin-bottom:8px;}
-    .att-name{font-size:28px;font-weight:800;color:#0f2248;margin:6px 0 18px;border-bottom:1px solid #c8972a;display:inline-block;padding:0 24px 8px;}
-    .att-body-txt{font-size:13.5px;color:#1f2937;line-height:2;max-width:600px;margin:0 auto;}
-    .att-body-txt strong{color:#0f2248;}
-    .att-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:42px;text-align:left;}
-    .att-meta{font-size:10px;color:#6b7ea4;}
-    .att-meta div{margin-bottom:3px;}
-    .att-sign{text-align:center;font-size:11px;color:#6b7ea4;}
-    .att-sign-line{width:170px;border-top:1px solid #6b7ea4;margin:38px auto 5px;}
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;800&display=swap');
+    @page{size:A4 landscape;margin:0;}
+    body{margin:0;padding:10mm;background:#e5e5e5;display:flex;justify-content:center;}
+    .att-card{container-type:inline-size;position:relative;width:100%;max-width:277mm;aspect-ratio:1536/1024;background:#fff;overflow:hidden;border-radius:8px;box-shadow:0 4px 24px rgba(15,34,72,.15);font-family:Georgia,'Times New Roman',serif;}
+    .att-decor-gold-l{position:absolute;left:-16cqw;top:-15cqw;width:30cqw;height:140cqw;border-radius:50%;background:linear-gradient(135deg,#f0b840,#c8972a);}
+    .att-decor-navy-l{position:absolute;left:-10cqw;top:-6cqw;width:24cqw;height:122cqw;border-radius:50%;background:linear-gradient(160deg,#12295a,#0f2248 60%,#1a3a72);}
+    .att-decor-gold-b{position:absolute;left:-10cqw;bottom:-78cqw;width:170cqw;height:96cqw;border-radius:50%;background:linear-gradient(135deg,#f0b840,#c8972a);}
+    .att-decor-navy-b{position:absolute;left:-6cqw;bottom:-70cqw;width:160cqw;height:88cqw;border-radius:50%;background:linear-gradient(160deg,#0f2248,#1a3a72);}
+    .att-frame{position:absolute;inset:2.2cqw;border:.15cqw solid #c8972a;border-radius:2px;}
+    .att-content{position:absolute;inset:0;padding:4.5cqw 6cqw;display:flex;flex-direction:column;}
+    .att-logo-row{display:flex;align-items:center;gap:1cqw;}
+    .att-logo-row img{height:6.5cqw;width:auto;object-fit:contain;}
+    .att-logo-txt h4{font-size:2.4cqw;font-weight:800;color:#0f2248;margin:0;font-family:'DM Sans',sans-serif;}
+    .att-logo-txt p{font-size:1cqw;color:#4b5a78;margin:.2cqw 0 0;font-family:'DM Sans',sans-serif;}
+    .att-badge{position:absolute;top:4.5cqw;right:5cqw;width:15cqw;text-align:center;z-index:3;}
+    .att-badge-circle{width:15cqw;height:15cqw;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f6cf6e,#c8972a 70%,#a67a1e);display:flex;align-items:center;justify-content:center;box-shadow:0 .5cqw 1.2cqw rgba(0,0,0,.25);margin:0 auto;}
+    .att-badge-inner{width:82%;height:82%;border-radius:50%;background:#fff;border:.3cqw solid #c8972a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5%;}
+    .att-badge-stars{font-size:1cqw;color:#c8972a;letter-spacing:.15cqw;margin-bottom:.3cqw;}
+    .att-badge-inner p{font-size:.8cqw;font-weight:800;color:#0f2248;line-height:1.35;margin:0;text-transform:uppercase;font-family:'DM Sans',sans-serif;}
+    .att-ribbons{display:flex;justify-content:center;gap:.3cqw;margin-top:-.3cqw;}
+    .att-ribbon{width:3.2cqw;height:6cqw;background:#0f2248;clip-path:polygon(0 0,100% 0,100% 78%,50% 100%,0 78%);}
+    .att-title-block{text-align:center;margin-top:5.5cqw;}
+    .att-title{font-size:6cqw;font-weight:700;color:#0f2248;letter-spacing:.35cqw;margin:0;line-height:1;}
+    .att-subtitle-row{display:flex;align-items:center;justify-content:center;gap:1.4cqw;margin-top:.8cqw;}
+    .att-subtitle-row .ln{width:9cqw;height:1px;background:#c8972a;}
+    .att-subtitle{font-size:2.3cqw;font-weight:700;color:#c8972a;letter-spacing:.5cqw;}
+    .att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1.1cqw;padding:0 4cqw;}
+    .att-lead{font-size:1.3cqw;color:#0f2248;}
+    .att-blank{display:block;width:78%;border-bottom:1px dotted #6b7ea4;padding-bottom:.4cqw;font-size:1.6cqw;font-weight:700;color:#0f2248;}
+    .att-para{font-size:1.1cqw;color:#2a3a5c;line-height:1.6;max-width:88%;}
+    .att-footer-row{display:flex;justify-content:space-between;align-items:flex-end;margin-top:2cqw;}
+    .att-fait{font-size:1.05cqw;color:#0f2248;}
+    .att-fait .dots{display:inline-block;min-width:16cqw;border-bottom:1px dotted #6b7ea4;margin-left:.3cqw;}
+    .att-sign{text-align:center;}
+    .att-sign p{font-size:1.1cqw;font-weight:800;color:#0f2248;margin:0 0 1.8cqw;}
+    .att-sign .line{width:9cqw;height:1px;background:#c8972a;margin:0 auto .6cqw;}
+    .att-sign span{font-size:1cqw;font-weight:800;color:#0f2248;}
+    .att-contact{display:flex;gap:1.6cqw;margin-top:1.5cqw;font-size:.9cqw;color:#4b5a78;font-family:'DM Sans',sans-serif;}
+    .att-contact span{display:flex;align-items:center;gap:.4cqw;}
     .print-btn{display:none;}
-  </style></head><body>${zone.outerHTML}</body></html>`);
+  </style></head><body>${zone.innerHTML}</body></html>`);
   w.document.close(); w.focus(); setTimeout(()=>w.print(),800);
 }
-
 /* ================================================================
    DÉPENSES — User CAN add, only Admin can edit/delete
    ================================================================ */
