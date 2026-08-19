@@ -275,6 +275,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .ab-pay:hover{background:#059669;color:#fff;border-color:#059669;box-shadow:0 4px 12px rgba(5,150,105,.4);}
 .ab-rec{background:rgba(99,102,241,.12);color:#6366f1;border:1px solid rgba(99,102,241,.25);}
 .ab-rec:hover{background:#6366f1;color:#fff;border-color:#6366f1;box-shadow:0 4px 12px rgba(99,102,241,.4);}
+.ab-att{background:rgba(200,151,42,.12);color:var(--gold);border:1px solid rgba(200,151,42,.3);}
+.ab-att:hover{background:var(--gold);color:#fff;border-color:var(--gold);box-shadow:0 4px 12px rgba(200,151,42,.4);}
 .ab-edit{background:rgba(245,158,11,.12);color:#d97706;border:1px solid rgba(245,158,11,.25);}
 .ab-edit:hover{background:#d97706;color:#fff;border-color:#d97706;box-shadow:0 4px 12px rgba(217,119,6,.4);}
 .ab-del{background:rgba(239,68,68,.08);color:#dc2626;border:1px solid rgba(239,68,68,.2);}
@@ -360,6 +362,28 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .pbar-fill{height:100%;border-radius:3px;transition:width .4s;}
 .print-btn{margin-top:10px;background:linear-gradient(135deg,var(--teal),#1a8f72);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:opacity .15s;}
 .print-btn:hover{opacity:.9;}
+
+/* ATTESTATION — Certificat officiel */
+.att-wrap{max-width:680px;margin:0 auto;font-family:Georgia,'Times New Roman',serif;}
+.att-border{border:3px solid var(--gold);border-radius:4px;padding:6px;background:linear-gradient(135deg,rgba(200,151,42,.04),rgba(15,34,72,.02));}
+.att-inner{border:1px solid var(--gold);border-radius:2px;padding:28px 32px;text-align:center;position:relative;}
+.att-seal{position:absolute;top:18px;right:22px;width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:9px;font-weight:800;text-align:center;letter-spacing:.5px;line-height:1.2;transform:rotate(-8deg);}
+.att-hdr{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px;}
+.att-hdr img{height:42px;width:auto;object-fit:contain;}
+.att-hdr h3{font-size:16px;font-weight:800;color:var(--navy);margin:0;}
+.att-hdr p{font-size:9px;color:var(--text-m);letter-spacing:2px;text-transform:uppercase;margin:2px 0 0;}
+.att-title{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:3px;text-transform:uppercase;margin:18px 0 4px;}
+.att-title-sub{width:80px;height:2px;background:var(--gold);margin:0 auto 18px;}
+.att-lead{font-size:12px;color:var(--text-m);margin-bottom:6px;}
+.att-name{font-size:24px;font-weight:800;color:var(--navy);margin:4px 0 14px;border-bottom:1px solid var(--gold);display:inline-block;padding:0 20px 6px;}
+.att-body-txt{font-size:12.5px;color:var(--text);line-height:1.9;max-width:520px;margin:0 auto;}
+.att-body-txt strong{color:var(--navy);}
+.att-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:34px;text-align:left;}
+.att-meta{font-size:9px;color:var(--text-m);}
+.att-meta div{margin-bottom:2px;}
+.att-sign{text-align:center;font-size:10px;color:var(--text-m);}
+.att-sign-line{width:150px;border-top:1px solid var(--text-m);margin:32px auto 4px;}
+
 .pbar-modal{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px;}
 .pbar-modal-fill{height:100%;border-radius:3px;transition:width .3s;}
 .security-tag{display:inline-flex;align-items:center;gap:4px;background:rgba(43,191,155,.1);color:var(--teal);border:1px solid rgba(43,191,155,.25);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:600;}
@@ -1785,6 +1809,16 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="modal-body"><div id="recu-content"></div></div>
  </div>
+ <!-- ATTESTATION -->
+<div class="overlay" id="ov-attestation" onclick="closeOnOverlay(event,'attestation')">
+ <div class="modal" id="modal-attestation" style="width:640px;max-width:95vw;">
+  <div class="modal-header" id="mhd-attestation">
+    <span><i class="fas fa-certificate"></i></span><h3>Attestation de Formation</h3>
+    <button class="modal-close" onclick="closeModal('attestation')"><i class="fas fa-xmark"></i></button>
+  </div>
+  <div class="modal-body"><div id="att-content"></div></div>
+ </div>
+</div>
 </div>
 
 <!-- DÉPENSE -->
@@ -3049,6 +3083,10 @@ function renderEtudiants(){
       actions+=`<button class="act-btn ab-pay" title="Enregistrer un paiement" onclick="openPaiement(${e.id})" ${closed?'disabled style="opacity:.35;cursor:not-allowed"':''}><i class="fas fa-wallet"></i></button>`;
     }
     actions+=`<button class="act-btn ab-rec" title="Voir le reçu" onclick="openRecu(${e.id})"><i class="fas fa-receipt"></i></button>`;
+        if(st.k==='solde'){
+      actions+=`<button class="act-btn ab-att" title="Attestation de formation" onclick="openAttestation(${e.id})"><i class="fas fa-certificate"></i></button>`;
+    }
+
     if(canEdit&&(!closed||(isAdmin))){
       if(!closed){
         actions+=`<button class="act-btn ab-edit" title="Modifier" onclick="editEtudiantF(${e.id})"><i class="fas fa-pencil"></i></button>`;
@@ -3469,6 +3507,98 @@ function printRecu(){
   .rbox-green{background:#dcfce7;border:1px solid #16a34a;color:#16a34a;}.rbox-red{background:#fee2e2;border:1px solid #dc2626;color:#dc2626;}
   .pbar{height:4px;background:#dde5f0;border-radius:2px;overflow:hidden;}.pbar-fill{height:100%;border-radius:2px;}
   .pf-green{background:#16a34a;}.pf-amber{background:#d97706;}.pf-red{background:#dc2626;}.print-btn{display:none;}
+  </style></head><body>${zone.outerHTML}</body></html>`);
+  w.document.close(); w.focus(); setTimeout(()=>w.print(),800);
+}
+
+function openAttestation(etuId){
+  const e=etudiants.find(x=>x.id===etuId);
+  if(!e) return;
+  const paye=getPaye(etuId);
+  if(paye < Number(e.cout)){
+    alert("Attestation disponible uniquement pour les apprenants ayant intégralement soldé leurs frais.");
+    return;
+  }
+  const storedUser = localStorage.getItem('cf_user');
+  let centreNom = "ComFormation";
+  let logoSrc = window.LOGO_RECU || 'logo.jpeg';
+  if (storedUser) {
+    try {
+      const loggedUser = JSON.parse(storedUser);
+      if (loggedUser.centre_nom) centreNom = loggedUser.centre_nom;
+      if (loggedUser.centre_logo) logoSrc = loggedUser.centre_logo;
+    } catch(err) {}
+  }
+  const numero = `ATT-${e.mat}`;
+  const now = new Date().toLocaleDateString('fr-FR');
+
+  const html = `<div class="att-wrap" id="att-zone">
+    <div class="att-border"><div class="att-inner">
+      <div class="att-seal">CENTRE<br>AGRÉÉ</div>
+      <div class="att-hdr">
+        <img src="${logoSrc}" alt="logo">
+        <div><h3>${esc(centreNom)}</h3><p>Training Center</p></div>
+      </div>
+      <div class="att-title">Attestation de Formation</div>
+      <div class="att-title-sub"></div>
+      <p class="att-lead">Le Centre ${esc(centreNom)} certifie que :</p>
+      <div class="att-name">${esc(sanitize(e.nom))} ${esc(sanitize(e.prenom))}</div>
+      <p class="att-body-txt">
+        Matricule <strong>${esc(e.mat)}</strong>, a suivi la formation
+        <strong>« ${esc(getFormLabel(e.formId))} »</strong> dispensée durant la session
+        <strong>${esc(getSesLabel(e.sesId))}</strong>, et a intégralement soldé les frais de
+        formation d'un montant de <strong>${fmtM(e.cout)} FC</strong>.<br><br>
+        En foi de quoi la présente attestation lui est délivrée pour servir et valoir ce que de droit.
+      </p>
+      <div class="att-footer">
+        <div class="att-meta">
+          <div>N° attestation : <strong>${numero}</strong></div>
+          <div>Date d'inscription : ${fmtDate(e.date)}</div>
+          <div>Délivrée le : ${now}</div>
+        </div>
+        <div class="att-sign">
+          <div class="att-sign-line"></div>
+          Le Directeur / La Directrice
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;">
+        <button class="print-btn" onclick="printAttestation()"><i class="fas fa-print"></i> Imprimer / Enregistrer PDF</button>
+      </div>
+    </div></div>
+  </div>`;
+  document.getElementById('att-content').innerHTML = html;
+  openModal('attestation');
+}
+
+function printAttestation(){
+  const zone = document.getElementById('att-zone');
+  if(!zone) return;
+  const w = window.open('','_blank');
+  if(!w){ alert('Veuillez autoriser les popups pour imprimer.'); return; }
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Attestation</title>
+  <style>
+    @page{size:A4 landscape;margin:14mm;}
+    body{font-family:Georgia,'Times New Roman',serif;margin:0;padding:0;background:#fff;color:#0f2248;}
+    .att-wrap{max-width:100%;margin:0 auto;}
+    .att-border{border:3px solid #c8972a;border-radius:4px;padding:6px;}
+    .att-inner{border:1px solid #c8972a;border-radius:2px;padding:36px 46px;text-align:center;position:relative;}
+    .att-seal{position:absolute;top:22px;right:28px;width:70px;height:70px;border-radius:50%;border:2px solid #c8972a;display:flex;align-items:center;justify-content:center;color:#c8972a;font-size:10px;font-weight:800;text-align:center;letter-spacing:.5px;line-height:1.2;transform:rotate(-8deg);}
+    .att-hdr{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:4px;}
+    .att-hdr img{height:48px;width:auto;object-fit:contain;}
+    .att-hdr h3{font-size:18px;font-weight:800;color:#0f2248;margin:0;}
+    .att-hdr p{font-size:10px;color:#6b7ea4;letter-spacing:2px;text-transform:uppercase;margin:2px 0 0;}
+    .att-title{font-size:26px;font-weight:800;color:#0f2248;letter-spacing:3px;text-transform:uppercase;margin:22px 0 4px;}
+    .att-title-sub{width:90px;height:2px;background:#c8972a;margin:0 auto 22px;}
+    .att-lead{font-size:13px;color:#6b7ea4;margin-bottom:8px;}
+    .att-name{font-size:28px;font-weight:800;color:#0f2248;margin:6px 0 18px;border-bottom:1px solid #c8972a;display:inline-block;padding:0 24px 8px;}
+    .att-body-txt{font-size:13.5px;color:#1f2937;line-height:2;max-width:600px;margin:0 auto;}
+    .att-body-txt strong{color:#0f2248;}
+    .att-footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:42px;text-align:left;}
+    .att-meta{font-size:10px;color:#6b7ea4;}
+    .att-meta div{margin-bottom:3px;}
+    .att-sign{text-align:center;font-size:11px;color:#6b7ea4;}
+    .att-sign-line{width:170px;border-top:1px solid #6b7ea4;margin:38px auto 5px;}
+    .print-btn{display:none;}
   </style></head><body>${zone.outerHTML}</body></html>`);
   w.document.close(); w.focus(); setTimeout(()=>w.print(),800);
 }
