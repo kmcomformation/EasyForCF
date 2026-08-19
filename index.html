@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 /* ═══ Font Awesome Icon Integration ═══════════════════════════════ */
@@ -364,6 +365,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .print-btn{margin-top:10px;background:linear-gradient(135deg,var(--teal),#1a8f72);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:opacity .15s;}
 .print-btn:hover{opacity:.9;}
 /* ATTESTATION — Certificat officiel (modèle ComFormation) */
+
+
 .att-card{position:relative;width:100%;aspect-ratio:3/2;background:#faf8f3;overflow:hidden;border-radius:2px;box-shadow:0 4px 28px rgba(15,34,72,.18);font-family:Georgia,'Times New Roman',serif;container-type:inline-size;}
 .att-corner{position:absolute;width:5cqw;height:5cqw;border:.12cqw solid #c8972a;}
 .att-corner.tl{top:1.6cqw;left:1.6cqw;border-right:none;border-bottom:none;}
@@ -375,20 +378,25 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .att-content{position:absolute;inset:3.55cqw;padding:3cqw 5.5cqw;display:flex;flex-direction:column;align-items:center;}
 .att-emblem{width:7cqw;height:7cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:.5cqw;flex-shrink:0;}
 .att-emblem::before{content:'';position:absolute;inset:-.5cqw;border:.06cqw solid #c8972a;border-radius:50%;}
-.att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
+.att-emblem svg{width:54%;height:54%;}
 .att-eyebrow{margin-top:1.6cqw;font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
 .att-title{font-family:'Playfair Display',Georgia,serif;font-size:5cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.4cqw;line-height:1;}
 .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.7cqw;}
 .att-subtitle-row .ln{width:6cqw;height:1px;background:#c8972a;}
 .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.15cqw;font-weight:700;letter-spacing:.5cqw;color:#0f2248;text-transform:uppercase;}
 .att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1cqw;padding:1.5cqw 3cqw 0;max-width:100%;}
-.att-lead{font-size:1.05cqw;color:#3a4a63;font-style:italic;}
+.att-lead{font-size:1.3cqw;color:#3a4a63;font-style:italic;}
 .att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#0f2248;padding-bottom:.5cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:42%;}
 .att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.2cqw;}
-.att-para{font-size:.95cqw;color:#3a4a63;line-height:1.7;max-width:76%;margin-top:.4cqw;}
+.att-para{font-size:1.15cqw;color:#3a4a63;line-height:1.75;max-width:76%;margin-top:.4cqw;}
+.att-para-final{margin-top:2.2cqw;}
 .att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:1.8cqw;}
-.att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
+.att-ref-wrap{display:flex;align-items:flex-end;gap:.9cqw;flex:1;}
+.att-ref{text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
 .att-ref b{color:#0f2248;}
+.att-qr{flex-shrink:0;width:4.4cqw;text-align:center;}
+.att-qr img{width:100%;height:auto;display:block;border:.06cqw solid #c8972a;background:#fff;padding:.15cqw;box-sizing:border-box;}
+.att-qr-label{margin-top:.3cqw;font-family:'DM Sans',sans-serif;font-size:.5cqw;color:#6b7ea4;letter-spacing:.03cqw;}
 .att-stamp-zone{flex:0 0 auto;width:8cqw;height:8cqw;border-radius:50%;border:.09cqw dashed #c8972a;display:flex;align-items:center;justify-content:center;margin:0 2cqw;}
 .att-stamp-zone span{font-family:'DM Sans',sans-serif;font-size:.55cqw;font-weight:700;color:#c8972a;text-transform:uppercase;letter-spacing:.08cqw;line-height:1.4;text-align:center;}
 .att-sign-block{flex:1;text-align:right;}
@@ -3536,8 +3544,7 @@ function printRecu(){
 function centerInitials(name){
   return String(name||'CF').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'CF';
 }
-
-function openAttestation(etuId){
+async function openAttestation(etuId){
   const e=etudiants.find(x=>x.id===etuId);
   if(!e) return;
   const paye=getPaye(etuId);
@@ -3553,9 +3560,19 @@ function openAttestation(etuId){
       if (loggedUser.centre_nom) centreNom = loggedUser.centre_nom;
     } catch(err) {}
   }
-  const numero = `ATT-${e.mat}`;
   const now = new Date().toLocaleDateString('fr-FR');
-  const initials = centerInitials(centreNom);
+
+  // QR code — dégradé silencieusement si la lib n'est pas disponible (ex: hors-ligne au premier lancement)
+  const qrText = `ComFormation\nKm.comformation@gmail.com\nSite web : https://comformav2.vercel.app/\nWhatsApp : https://wa.me/c/2694096958\nPage Facebook : https://www.facebook.com/share/1EtVmdRZru/?mibextid=wwXIfr`;
+  let qrBlock = '';
+  try {
+    if (window.QRCode) {
+      const qrDataUrl = await QRCode.toDataURL(qrText, { width: 240, margin: 1, color: { dark: '#0f2248', light: '#ffffff' } });
+      qrBlock = `<div class="att-qr"><img src="${qrDataUrl}" alt="QR"><div class="att-qr-label">Nos coordonnées</div></div>`;
+    }
+  } catch(err) { console.warn('[Attestation] QR non généré', err); }
+
+  const emblemSvg = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path fill="#f0b840" d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z"/></svg>`;
 
   const html = `
     <div class="att-card" id="att-zone">
@@ -3564,7 +3581,7 @@ function openAttestation(etuId){
       <div class="att-border-outer"></div>
       <div class="att-border-inner"></div>
       <div class="att-content">
-        <div class="att-emblem"><span>${esc(initials)}</span></div>
+        <div class="att-emblem">${emblemSvg}</div>
         <div class="att-eyebrow">Certificat Officiel</div>
         <div class="att-title">ATTESTATION</div>
         <div class="att-subtitle-row"><span class="ln"></span><span class="att-subtitle">De Formation</span><span class="ln"></span></div>
@@ -3573,13 +3590,17 @@ function openAttestation(etuId){
           <div class="att-name">${esc(sanitize(e.nom))} ${esc(sanitize(e.prenom))}</div>
           <div class="att-lead">a suivi avec assiduité et validé intégralement la formation</div>
           <div class="att-course">${esc(getFormLabel(e.formId))}</div>
-          <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}. La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
+          <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}.</div>
+          <div class="att-para att-para-final">La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
         </div>
         <div class="att-footer">
-          <div class="att-ref">
-            Fait à Moroni, le ${now}<br>
-            N° d'attestation : <b>${numero}</b><br>
-            Session : ${esc(getSesLabel(e.sesId))}
+          <div class="att-ref-wrap">
+            ${qrBlock}
+            <div class="att-ref">
+              Fait à Moroni, le ${now}<br>
+              Matricule de l'apprenant : <b>${esc(e.mat)}</b><br>
+              Session : ${esc(getSesLabel(e.sesId))}
+            </div>
           </div>
           <div class="att-stamp-zone"><span>Cachet &amp;<br>Sceau du<br>Centre</span></div>
           <div class="att-sign-block">
@@ -3618,20 +3639,25 @@ function printAttestation(){
     .att-content{position:absolute;inset:3.55cqw;padding:3cqw 5.5cqw;display:flex;flex-direction:column;align-items:center;}
     .att-emblem{width:7cqw;height:7cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:.5cqw;}
     .att-emblem::before{content:'';position:absolute;inset:-.5cqw;border:.06cqw solid #c8972a;border-radius:50%;}
-    .att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
+    .att-emblem svg{width:54%;height:54%;}
     .att-eyebrow{margin-top:1.6cqw;font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
     .att-title{font-family:'Playfair Display',Georgia,serif;font-size:5cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.4cqw;line-height:1;}
     .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.7cqw;}
     .att-subtitle-row .ln{width:6cqw;height:1px;background:#c8972a;}
     .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.15cqw;font-weight:700;letter-spacing:.5cqw;color:#0f2248;text-transform:uppercase;}
     .att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1cqw;padding:1.5cqw 3cqw 0;}
-    .att-lead{font-size:1.05cqw;color:#3a4a63;font-style:italic;}
+    .att-lead{font-size:1.3cqw;color:#3a4a63;font-style:italic;}
     .att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#0f2248;padding-bottom:.5cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:42%;}
     .att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.2cqw;}
-    .att-para{font-size:.95cqw;color:#3a4a63;line-height:1.7;max-width:76%;margin-top:.4cqw;}
+    .att-para{font-size:1.15cqw;color:#3a4a63;line-height:1.75;max-width:76%;margin-top:.4cqw;}
+    .att-para-final{margin-top:2.2cqw;}
     .att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:1.8cqw;}
-    .att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
+    .att-ref-wrap{display:flex;align-items:flex-end;gap:.9cqw;flex:1;}
+    .att-ref{text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
     .att-ref b{color:#0f2248;}
+    .att-qr{flex-shrink:0;width:4.4cqw;text-align:center;}
+    .att-qr img{width:100%;height:auto;display:block;border:.06cqw solid #c8972a;background:#fff;padding:.15cqw;box-sizing:border-box;}
+    .att-qr-label{margin-top:.3cqw;font-family:'DM Sans',sans-serif;font-size:.5cqw;color:#6b7ea4;letter-spacing:.03cqw;}
     .att-stamp-zone{flex:0 0 auto;width:8cqw;height:8cqw;border-radius:50%;border:.09cqw dashed #c8972a;display:flex;align-items:center;justify-content:center;margin:0 2cqw;}
     .att-stamp-zone span{font-family:'DM Sans',sans-serif;font-size:.55cqw;font-weight:700;color:#c8972a;text-transform:uppercase;letter-spacing:.08cqw;line-height:1.4;text-align:center;}
     .att-sign-block{flex:1;text-align:right;}
