@@ -1618,7 +1618,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           </select>
           <input type="date" class="filter-select" id="disp-date-from" onchange="renderDisponibilite()" title="Date début" style="min-width:120px;">
           <input type="date" class="filter-select" id="disp-date-to" onchange="renderDisponibilite()" title="Date fin" style="min-width:120px;">
-          <button class="btn-primary admin-only" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
+                    <button class="btn-primary" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
         </div>
       </div>
       <div style="padding:10px 15px;border-bottom:1px solid var(--border);background:var(--bg);font-size:13px;font-weight:700;">
@@ -1974,7 +1974,15 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
         <div style="font-size:10px;color:var(--text-m);margin-top:4px;">Si aucune session cochée = accès à toutes les sessions actives.</div>
       </div>
     </div>
-    <div class="form-note" style="margin-top:10px;">
+    <div class="form-note" style="margin-top:10px;">          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-system"> <i class="fas fa-gear"></i> Accès Action Système</label>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;margin-top:8px;">Disponibilité / Caisse</div>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dispo"> <i class="fas fa-plus"></i> Ajouter</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit-dispo"> <i class="fas fa-pencil"></i> Modifier</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-del-dispo"> <i class="fas fa-trash"></i> Supprimer</label>
+        </div>
+      </div>
       <strong>Admin :</strong> accès total. <strong>User :</strong> accès configuré ci-dessus par l'administrateur. Chaque opération sera tracée avec son identifiant.
     </div>
   </div>
@@ -2788,10 +2796,11 @@ function hasPermission(key){
 }
 function getPermDef(u){
   if(!u || !u.perms || Object.keys(u.perms).length === 0) {
-    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
+    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,actAddDispo:false,actEditDispo:false,actDelDispo:false,sesAccess:[]};
   }
   return u.perms;
 }
+
 function togglePermFields(){
   const role=document.getElementById('user-role').value;
   const zone=document.getElementById('user-perm-zone');
@@ -2819,9 +2828,13 @@ function readPermsFromForm(){
     actEdit: document.getElementById('perm-act-edit')?.checked||false,
     actDel: document.getElementById('perm-act-del')?.checked||false,
     actSystem: document.getElementById('perm-act-system')?.checked||false,
+    actAddDispo: document.getElementById('perm-act-add-dispo')?.checked||false,
+    actEditDispo: document.getElementById('perm-act-edit-dispo')?.checked||false,
+    actDelDispo: document.getElementById('perm-act-del-dispo')?.checked||false,
     sesAccess: [...document.querySelectorAll('.perm-ses-chk:checked')].map(c=>Number(c.value))
   };
 }
+
 function applyPermsToForm(perms){
   if(!perms) return;
   const set=(id,v)=>{ const el=document.getElementById(id); if(el) el.checked=!!v; };
@@ -2829,8 +2842,12 @@ function applyPermsToForm(perms){
   set('perm-sec-depenses',perms.secDepenses); set('perm-sec-disponibilite',perms.secDisponibilite);
   set('perm-sec-dashboard',perms.secDashboard);
   set('perm-act-add-etu',perms.actAddEtu); set('perm-act-pay',perms.actPay);
-  set('perm-act-add-dep',perms.actAddDep); set('perm-act-edit',perms.actEdit); set('perm-act-del',perms.actDel);
+
+    set('perm-act-add-dep',perms.actAddDep); set('perm-act-edit',perms.actEdit); set('perm-act-del',perms.actDel);
   set('perm-act-system',perms.actSystem);
+
+  set('perm-act-add-dispo',perms.actAddDispo); set('perm-act-edit-dispo',perms.actEditDispo); set('perm-act-del-dispo',perms.actDelDispo);
+
   // Sessions
   const sesIds=perms.sesAccess||[];
   document.querySelectorAll('.perm-ses-chk').forEach(c=>{ c.checked=sesIds.includes(Number(c.value)); });
@@ -4303,9 +4320,13 @@ function renderDisponibilite(){
   const totalSolde=filtered.reduce((sum,d)=>sum+getSoldeDispo(d),0);
   tot.innerHTML=`<span><i class="fas fa-wallet"></i> Solde (filtré) : <strong style="color:${totalSolde>=0?'var(--success)':'var(--danger)'}">${fmtM(totalSolde)} FC</strong></span>`;
   tbody.innerHTML=filtered.map((d,idx)=>{
-    let actions='';
-    if(isAdmin){ actions=`<div class="actions"><button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})"><i class="fas fa-pencil"></i></button><button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})"><i class="fas fa-trash"></i></button></div>`; }
-    else { actions=`<div class="actions"><span class="badge b-gray" style="font-size:10px"><i class="fas fa-lock"></i></span></div>`; }
+      const canEditDispo = hasPermission('actEditDispo');
+    const canDelDispo = hasPermission('actDelDispo');
+    let actions='<div class="actions">';
+    if(canEditDispo){ actions+=`<button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})"><i class="fas fa-pencil"></i></button>`; }
+    if(canDelDispo){ actions+=`<button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})"><i class="fas fa-trash"></i></button>`; }
+    if(!canEditDispo && !canDelDispo){ actions+=`<span class="badge b-gray" style="font-size:10px"><i class="fas fa-lock"></i></span>`; }
+    actions+='</div>';
     const solde=getSoldeDispo(d);
     const typeBadge = d.type==='Sortie'
       ? `<span class="badge b-danger"><i class="fas fa-arrow-down"></i> Sortie</span>`
@@ -4319,16 +4340,19 @@ function renderDisponibilite(){
       <td>${actions}</td></tr>`;
   }).join('');
 }
+
 function openModalDispo(){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actAddDispo')){ alert('Accès refusé — vous n\'avez pas la permission d\'ajouter une entrée.'); return; }
   editDispoId=null;
   document.getElementById('dispo-mtitle').textContent='Ajouter une entrée de disponibilité';
   document.getElementById('dispo-type').value='Entrée'; document.getElementById('dispo-mont').value='';
   document.getElementById('dispo-det').value=''; document.getElementById('dispo-date').value=today();
   openModal('dispo');
 }
+
 function editDisponibilite(id){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actEditDispo')){ alert('Accès refusé — vous n\'avez pas la permission de modifier.'); return; }
+
   const d=disponibilites.find(x=>x.id===id); if(!d) return;
   editDispoId=id;
   document.getElementById('dispo-mtitle').textContent='Modifier une entrée';
@@ -4336,9 +4360,15 @@ function editDisponibilite(id){
   document.getElementById('dispo-det').value=d.detail||''; document.getElementById('dispo-date').value=d.date||today();
   openModal('dispo');
 }
+
 function saveDisponibilite(){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(editDispoId!==null){
+    if(!hasPermission('actEditDispo')){ alert('Modification non autorisée.'); return; }
+  } else {
+    if(!hasPermission('actAddDispo')){ alert('Ajout non autorisé.'); return; }
+  }
   const type=document.getElementById('dispo-type').value;
+
   const montant=parseFloat(document.getElementById('dispo-mont').value)||0;
   const detail=sanitize(document.getElementById('dispo-det').value,300);
   const date=document.getElementById('dispo-date').value;
@@ -4362,7 +4392,7 @@ function saveDisponibilite(){
   renderDisponibilite(); closeModal('dispo');
 }
 function delDisponibilite(id){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actDelDispo')){ alert('Accès refusé — vous n\'avez pas la permission de supprimer.'); return; }
   const item=disponibilites.find(x=>x.id===id);
   showConfirm(`Supprimer l'entrée de ${item?.responsable||'?'} (${fmtM(item?.montant)} FC) ?`, async ()=>{
     disponibilites=disponibilites.filter(x=>x.id!==id);
