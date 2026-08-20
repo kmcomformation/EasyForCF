@@ -1948,44 +1948,41 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     </div>
     <!-- Permissions dynamiques pour les Users -->
     <div id="user-perm-zone" style="display:none;margin-top:12px;border:1px solid var(--border);border-radius:10px;overflow:hidden;">
-      <div style="background:var(--navy);color:#fff;padding:8px 13px;font-size:11px;font-weight:700;letter-spacing:.4px;"><i class="fas fa-gear"></i> CONFIGURATION DES ACCÈS — Rôle User</div>
-      <div style="padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div>
-          <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Sections visibles</div>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-etudiants" checked> <i class="fas fa-graduation-cap"></i> Étudiants</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-paiements"> <i class="fas fa-credit-card"></i> Paiements</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-depenses"> <i class="fas fa-arrow-trend-down"></i> Dépenses</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-disponibilite"> <i class="fas fa-wallet"></i> Disponibilité</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-sec-dashboard" checked> <i class="fas fa-chart-bar"></i> Mon tableau de bord</label>
-        </div>
-        <div>
-          <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Actions autorisées</div>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-etu" checked> <i class="fas fa-plus"></i> Ajouter étudiant</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-pay"> <i class="fas fa-wallet"></i> Enregistrer paiement</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> <i class="fas fa-plus"></i> Ajouter dépense</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit"> <i class="fas fa-pencil"></i> Modifier ses entrées</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-del"> <i class="fas fa-trash"></i> Supprimer ses entrées</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-system"> <i class="fas fa-gear"></i> Accès Action Système</label>
-        </div>
-      </div>
-      <div style="padding:0 12px 10px;">
-        <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:5px;">Sessions accessibles</div>
-        <div id="perm-sessions-list" style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;"></div>
-        <div style="font-size:10px;color:var(--text-m);margin-top:4px;">Si aucune session cochée = accès à toutes les sessions actives.</div>
-      </div>
+  <div style="background:var(--navy);color:#fff;padding:8px 13px;font-size:11px;font-weight:700;letter-spacing:.4px;"><i class="fas fa-gear"></i> CONFIGURATION DES ACCÈS — Rôle User</div>
+  <div style="padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div>
+      <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Sections visibles</div>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-etudiants" checked> <i class="fas fa-graduation-cap"></i> Étudiants</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-paiements"> <i class="fas fa-credit-card"></i> Paiements</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-depenses"> <i class="fas fa-arrow-trend-down"></i> Dépenses</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-sec-disponibilite"> <i class="fas fa-wallet"></i> Disponibilité</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-sec-dashboard" checked> <i class="fas fa-chart-bar"></i> Mon tableau de bord</label>
     </div>
-    <div class="form-note" style="margin-top:10px;">          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-system"> <i class="fas fa-gear"></i> Accès Action Système</label>
-        </div>
-        <div>
-          <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;margin-top:8px;">Disponibilité / Caisse</div>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dispo"> <i class="fas fa-plus"></i> Ajouter</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit-dispo"> <i class="fas fa-pencil"></i> Modifier</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-del-dispo"> <i class="fas fa-trash"></i> Supprimer</label>
-        </div>
-      </div>
-      <strong>Admin :</strong> accès total. <strong>User :</strong> accès configuré ci-dessus par l'administrateur. Chaque opération sera tracée avec son identifiant.
+    <div>
+      <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Actions autorisées</div>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-etu" checked> <i class="fas fa-plus"></i> Ajouter étudiant</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-pay"> <i class="fas fa-wallet"></i> Enregistrer paiement</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> <i class="fas fa-plus"></i> Ajouter dépense</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit"> <i class="fas fa-pencil"></i> Modifier ses entrées</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-del"> <i class="fas fa-trash"></i> Supprimer ses entrées</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-system"> <i class="fas fa-gear"></i> Accès Action Système</label>
+    </div>
+    <div style="grid-column:1/-1;">
+      <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;margin-top:4px;">Disponibilité / Caisse</div>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dispo"> <i class="fas fa-plus"></i> Ajouter</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit-dispo"> <i class="fas fa-pencil"></i> Modifier</label>
+      <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-del-dispo"> <i class="fas fa-trash"></i> Supprimer</label>
     </div>
   </div>
+  <div style="padding:0 12px 10px;">
+    <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:5px;">Sessions accessibles</div>
+    <div id="perm-sessions-list" style="display:flex;flex-wrap:wrap;gap:6px;font-size:12px;"></div>
+    <div style="font-size:10px;color:var(--text-m);margin-top:4px;">Si aucune session cochée = accès à toutes les sessions actives.</div>
+  </div>
+</div>
+<div class="form-note" style="margin-top:10px;">
+  <strong>Admin :</strong> accès total. <strong>User :</strong> accès configuré ci-dessus par l'administrateur. Chaque opération sera tracée avec son identifiant.
+</div>
   <div class="modal-footer">
     <button class="btn-cancel" onclick="closeModal('user')">Annuler</button>
     <button class="btn-save" onclick="saveUser()"><i class="fas fa-hard-drive"></i> Enregistrer</button>
