@@ -2450,11 +2450,10 @@ async function pullLatestDataFromServer() {
       users = data.users || [];
       disponibilites = data.disponibilites || [];
       backups = data.backups || [];
-      
-      saveAll();
+            saveAll();
       
       if (typeof initApp === 'function') {
-        initApp();
+        initApp(false);
       }
       console.log('[Sync] Récupération et synchronisation en temps réel réussies !');
     }
@@ -5019,7 +5018,7 @@ function renderDashboard(){
 /* ================================================================
    INIT APP
    ================================================================ */
-function initApp(){
+function initApp(navigate = true){
     setDateBadge();
     
     // Apply centre branding if available
@@ -5055,6 +5054,10 @@ function initApp(){
     renderSessions(); renderFormations(); renderUsers(); renderDisponibilite(); updateStats();
     
     verifierRappelsQuotidiens();
+    
+        verifierRappelsQuotidiens();
+    
+    if(!navigate) return; // Rafraîchissement silencieux (sync auto) — ne pas changer de section
     
     if (currentRole === 'Admin') {
     showSection('tdb');
