@@ -1355,9 +1355,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
             <button class="btn-secondary" onclick="exportTDBPDF()" style="font-size:11px; padding:6px 12px;">
                 <i class="fas fa-file-pdf"></i> PDF
             </button>
-            <button class="btn-secondary" onclick="exportTDBExcel()" style="font-size:11px; padding:6px 12px;">
-                <i class="fas fa-file-excel"></i> Excel
-            </button>
+            
         </div>
     </div>
 
@@ -2939,7 +2937,13 @@ function toggleFullscreen(){
    MODALS
    ================================================================ */
 function openModal(name){ const ov=document.getElementById('ov-'+name); if(ov) ov.classList.add('open'); const modal=document.getElementById('modal-'+name); const header=document.getElementById('mhd-'+name); if(modal&&header) makeDraggable(modal,header); }
-function closeModal(name){ const ov=document.getElementById('ov-'+name); if(ov) ov.classList.remove('open'); }
+function closeModal(name){
+  const ov=document.getElementById('ov-'+name);
+  if(ov) ov.classList.remove('open');
+  const modal=document.getElementById('modal-'+name);
+  if(modal){ modal.style.position=''; modal.style.top=''; modal.style.left=''; }
+}
+
 function closeOnOverlay(e,name){ if(e.target===document.getElementById('ov-'+name)) closeModal(name); }
 function makeDraggable(modal,handle){
   if(!handle||handle._draggable) return; handle._draggable=true;
@@ -3115,7 +3119,10 @@ function renderEtudiants(){
     const pct=Number(e.cout)>0?Math.min(100,Math.round(paye/Number(e.cout)*100)):0;
     const closed=isSesClosed(e.sesId);
     totalCout+=Number(e.cout)||0; totalPaye+=paye;
-    const tel=e.contact?`<a class="phone-link" href="tel:${String(e.contact).replace(/\s/g,'')}"><span class="phone-ico"><i class="fas fa-phone"></i></span>${esc(e.contact)}</a>`:'—';
+   const telRaw=String(e.contact||'').replace(/[^\d+]/g,'');
+const tel=e.contact?`<a class="phone-link" href="tel:${esc(telRaw)}" onclick="event.stopPropagation();window.location.href='tel:${telRaw}';return false;">
+  <span class="phone-ico"><i class="fas fa-phone"></i></span>${esc(e.contact)}</a>`:'—';
+
     const closedBadge=closed?`<span class="badge b-closed" style="margin-left:4px;font-size:9px"><i class="fas fa-lock"></i></span>`:'';
     // Qui est l'opérateur : créateur ou modificateur
     const opId=e.updatedBy||e.createdBy||null;
@@ -6072,15 +6079,7 @@ function exportTDBPDF() {
     window.print();
 }
 
-// Export Excel du TDB (simulé)
-function exportTDBExcel() {
-    // Pour l'instant, on utilise l'export existant
-    if (currentRole === 'Admin') {
-        exportExcel();
-    } else {
-        alert('Export Excel réservé aux administrateurs.');
-    }
-}
+
 
 // Initialiser le TDB (à appeler après le chargement)
 function initTDB() {
