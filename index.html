@@ -2936,12 +2936,36 @@ function toggleFullscreen(){
 /* ================================================================
    MODALS
    ================================================================ */
-function openModal(name){ const ov=document.getElementById('ov-'+name); if(ov) ov.classList.add('open'); const modal=document.getElementById('modal-'+name); const header=document.getElementById('mhd-'+name); if(modal&&header) makeDraggable(modal,header); }
+function openModal(name){
+    const ov = document.getElementById('ov-' + name);
+    if(!ov) {
+        console.warn(`Modal ${name} non trouvée`);
+        return;
+    }
+    
+    ov.classList.add('open');
+    
+    const modal = document.getElementById('modal-' + name);
+    const header = document.getElementById('mhd-' + name);
+    
+    if(modal && header) {
+        makeDraggable(modal, header);
+    }
+}
+
+
 function closeModal(name){
-  const ov=document.getElementById('ov-'+name);
-  if(ov) ov.classList.remove('open');
-  const modal=document.getElementById('modal-'+name);
-  if(modal){ modal.style.position=''; modal.style.top=''; modal.style.left=''; }
+    const ov = document.getElementById('ov-' + name);
+    if(ov) {
+        ov.classList.remove('open');
+    }
+    
+    const modal = document.getElementById('modal-' + name);
+    if(modal) {
+        modal.style.position = '';
+        modal.style.top = '';
+        modal.style.left = '';
+    }
 }
 
 function closeOnOverlay(e,name){ if(e.target===document.getElementById('ov-'+name)) closeModal(name); }
@@ -2956,54 +2980,22 @@ function makeDraggable(modal,handle){
     document.onmouseup = () => { document.onmousemove=null; document.onmouseup=null; };
   };
 }
-function showConfirm(msg, cb) {
-  // Vérifier que les éléments existent
-  const confirmMsg = document.getElementById('confirm-msg');
-  const confirmYes = document.getElementById('confirm-yes');
-  const confirmModal = document.getElementById('modal-confirm');
-  
-  // Si les éléments n'existent pas, utiliser le confirm natif comme fallback
-  if (!confirmMsg || !confirmYes || !confirmModal) {
-    console.warn('[showConfirm] Éléments de confirmation manquants, utilisation du fallback');
-    if (confirm(msg.replace(/<[^>]*>/g, ''))) {
-      try {
-        cb();
-      } catch (err) {
-        console.error('[showConfirm] Erreur dans le callback:', err);
-        alert('Une erreur est survenue.');
-      }
-    }
-    return;
-  }
-  
-  // Mettre à jour le message
-  confirmMsg.innerHTML = msg;
-  
-  // Supprimer les anciens écouteurs en clonant le bouton
-  const newYes = confirmYes.cloneNode(true);
-  confirmYes.parentNode.replaceChild(newYes, confirmYes);
-  
-  // Ajouter le nouvel écouteur
-  newYes.onclick = function(e) {
-    e.preventDefault();
-    e.stopPropagation();
+function showConfirm(msg, cb){
+    const msgEl = document.getElementById('confirm-msg');
+    if(msgEl) msgEl.innerHTML = msg;
     
-    // Fermer le modal
-    closeModal('confirm');
-    
-    // Exécuter le callback avec gestion d'erreur
-    try {
-      cb();
-    } catch (err) {
-      console.error('[showConfirm] Erreur dans le callback:', err);
-      alert('Une erreur est survenue lors de l\'exécution. Veuillez réessayer.');
+    const yesBtn = document.getElementById('confirm-yes');
+    if(yesBtn) {
+        const newYesBtn = yesBtn.cloneNode(true);
+        yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+        newYesBtn.onclick = function() {
+            closeModal('confirm');
+            if(typeof cb === 'function') cb();
+        };
     }
-  };
-  
-  // Ouvrir le modal
-  openModal('confirm');
+    
+    openModal('confirm');
 }
-
 /* ================================================================
    UTILS
    ================================================================ */
@@ -3869,71 +3861,13 @@ function renderDepenses(){
 }
 
 function delDepense(id){
-  console.log('[delDepense] Suppression demandée pour l\'ID:', id);
-  
-  // Vérifier les permissions
-  if(!hasPermission('actDel')){ 
-    alert('Accès refusé - vous n\'avez pas la permission de supprimer.'); 
-    return; 
-  }
-  
-  // Trouver la dépense
-  const d = depenses.find(x => x.id === id);
-  if(!d) {
-    alert('Dépense introuvable.');
-    return;
-  }
-  
-  console.log('[delDepense] Dépense trouvée:', d.lib);
-  
-  // Vérifier si la session est clôturée
-  if(d && isSesClosed(d.sesId)){ 
-    alert('❌ Session clôturée. Suppression impossible.'); 
-    return; 
-  }
-  
-  // Construire le message de confirmation
-  const msg = `
-    <div style="text-align:left;">
-      <p style="font-weight:700; font-size:15px; color:var(--danger); margin-bottom:10px;">
-        <i class="fas fa-triangle-exclamation"></i> Confirmation de suppression
-      </p>
-      <p>Voulez-vous vraiment supprimer la dépense :</p>
-      <div style="font-size:16px; margin:12px 0; padding:10px; background:var(--bg); border-radius:8px; border-left:3px solid var(--danger);">
-        <strong>${esc(d.lib)}</strong>
-        <div style="font-size:12px; color:var(--text-m); margin-top:4px;">
-          <i class="fas fa-wallet"></i> Montant: <span style="color:var(--danger); font-weight:700;">${fmtM(d.montant)} FC</span>
-        </div>
-        ${d.date ? `<div style="font-size:12px; color:var(--text-m);"><i class="fas fa-calendar"></i> Date: ${fmtDate(d.date)}</div>` : ''}
-        ${d.det ? `<div style="font-size:12px; color:var(--text-m);"><i class="fas fa-info-circle"></i> Détail: ${esc(d.det)}</div>` : ''}
-      </div>
-      <p style="font-size:12px; color:var(--text-m); margin-top:8px;">Cette action est irréversible.</p>
-    </div>
-  `;
-  
-  showConfirm(msg, async function() {
-    console.log('[delDepense] Confirmation reçue, suppression en cours...');
-    
-    try {
-      depenses = depenses.filter(x => x.id !== id);
-      
-      // Sauvegarder
-      saveAll();
-      
-      // Rafraîchir les vues
-      renderDepenses();
-      updateStats();
-      populateUserFilters();
-      
-      // Synchronisation
-      await queueSyncOperation('DELETE', 'depenses', id, null);
-      
-      console.log('[delDepense] Suppression réussie !');
-      
-    } catch (err) {
-      console.error('[delDepense] Erreur lors de la suppression:', err);
-      alert('❌ Erreur lors de la suppression. Veuillez réessayer.');
-    }
+  if(!hasPermission('actDel')){ alert('Accès refusé.'); return; }
+  const d=depenses.find(x=>x.id===id);
+  if(d&&isSesClosed(d.sesId)){ alert('Session clôturée. Suppression impossible.'); return; }
+  showConfirm('Supprimer cette dépense ?', async ()=>{
+    depenses=depenses.filter(x=>x.id!==id);
+    saveAll(); renderDepenses(); updateStats();
+    await queueSyncOperation('DELETE', 'depenses', id, null);
   });
 }
 
@@ -4470,37 +4404,66 @@ function editDisponibilite(id){
   document.getElementById('dispo-det').value=d.detail||''; document.getElementById('dispo-date').value=d.date||today();
   openModal('dispo');
 }
-
-function saveDisponibilite(){
-  if(editDispoId!==null){
-    if(!hasPermission('actEditDispo')){ alert('Modification non autorisée.'); return; }
-  } else {
-    if(!hasPermission('actAddDispo')){ alert('Ajout non autorisé.'); return; }
-  }
-  const type=document.getElementById('dispo-type').value;
-
-  const montant=parseFloat(document.getElementById('dispo-mont').value)||0;
-  const detail=sanitize(document.getElementById('dispo-det').value,300);
-  const date=document.getElementById('dispo-date').value;
-  if(!type){ alert('Le type est requis.'); return; }
-  if(montant<=0){ alert('Le montant doit être supérieur à 0.'); return; }
-  if(!date){ alert('La date est requise.'); return; }
-  if(editDispoId!==null){
-    const idx=disponibilites.findIndex(x=>x.id===editDispoId);
-    if(idx>=0) {
-      disponibilites[idx]={...disponibilites[idx],type,montant,detail,date,updatedBy:currentUserId};
-      saveAll();
-      queueSyncOperation('UPDATE', 'disponibilites', editDispoId, disponibilites[idx]);
+async function saveDisponibilite(){
+    // Vérification des permissions en premier
+    if(editDispoId !== null) {
+        if(!hasPermission('actEditDispo')) {
+            alert('❌ Modification non autorisée.');
+            return;
+        }
+    } else {
+        if(!hasPermission('actAddDispo')) {
+            alert('❌ Ajout non autorisé.');
+            return;
+        }
     }
-  } else {
-    const id = generateId();
-    const newDispo = {id,type,montant,detail,date,createdBy:currentUserId,createdAt:today()};
-    disponibilites.push(newDispo);
-    saveAll();
-    queueSyncOperation('CREATE', 'disponibilites', id, newDispo);
-  }
-  renderDisponibilite(); closeModal('dispo');
+    
+    // Récupération des données
+    const type = document.getElementById('dispo-type').value;
+    const montant = parseFloat(document.getElementById('dispo-mont').value) || 0;
+    const detail = sanitize(document.getElementById('dispo-det').value, 300);
+    const date = document.getElementById('dispo-date').value;
+    
+    // Validations
+    if(!type) { alert('Le type est requis.'); return; }
+    if(montant <= 0) { alert('Le montant doit être supérieur à 0.'); return; }
+    if(!date) { alert('La date est requise.'); return; }
+    
+    // Sauvegarde
+    if(editDispoId !== null) {
+        const idx = disponibilites.findIndex(x => x.id === editDispoId);
+        if(idx >= 0) {
+            disponibilites[idx] = {
+                ...disponibilites[idx],
+                type,
+                montant,
+                detail,
+                date,
+                updatedBy: currentUserId
+            };
+            saveAll();
+            await queueSyncOperation('UPDATE', 'disponibilites', editDispoId, disponibilites[idx]);
+        }
+    } else {
+        const id = generateId();
+        const newDispo = {
+            id,
+            type,
+            montant,
+            detail,
+            date,
+            createdBy: currentUserId,
+            createdAt: today()
+        };
+        disponibilites.push(newDispo);
+        saveAll();
+        await queueSyncOperation('CREATE', 'disponibilites', id, newDispo);
+    }
+    
+    renderDisponibilite();
+    closeModal('dispo');
 }
+
 function delDisponibilite(id){
   if(!hasPermission('actDelDispo')){ alert('Accès refusé — vous n\'avez pas la permission de supprimer.'); return; }
   const item=disponibilites.find(x=>x.id===id);
@@ -5271,32 +5234,29 @@ function genererMessageWhatsApp(etu) {
     return encodeURIComponent(message);
 }
 
-// Fonction pour envoyer le rappel (version simplifiée)
+// Fonction pour envoyer le rappel (Envoyer groupe)
 function envoyerRappelWhatsApp(etuId) {
     const etu = etudiants.find(e => e.id === etuId);
-    if (!etu) return;
-    
-    if (!etu.contact) {
-        alert(`<i class="fas fa-circle-xmark"></i> Impossible d'envoyer : ${etu.nom} ${etu.prenom} n'a pas de numéro de téléphone.`);
+    if (!etu) {
+        console.warn('Étudiant non trouvé:', etuId);
         return;
     }
     
-    // Nettoyer le numéro (garder uniquement chiffres)
+    if (!etu.contact) {
+        alert(`❌ ${etu.nom} ${etu.prenom} n'a pas de numéro de téléphone.`);
+        return;
+    }
+    
+    // Nettoyer le numéro
     let phone = etu.contact.replace(/\D/g, '');
-    // Ajouter indicatif Comores (269) si nécessaire
-    if (!phone.startsWith('269') && phone.length === 7) {
-        phone = '269' + phone;
-    } else if (!phone.startsWith('269') && phone.length === 8) {
+    if (!phone.startsWith('269') && phone.length <= 8) {
         phone = '269' + phone;
     }
     
     // Générer le message
     const message = genererMessageWhatsApp(etu);
-    
-    // Créer le lien WhatsApp
     const whatsappUrl = `https://wa.me/${phone}?text=${message}`;
     
-    // Ouvrir dans un nouvel onglet
     window.open(whatsappUrl, '_blank');
 }
 
@@ -5359,22 +5319,18 @@ async function envoyerRappelsGroupes() {
     const etudiantsRetard = getEtudiantsEnRetard();
     const avecContact = etudiantsRetard.filter(e => e.contact);
     
-    if (avecContact.length === 0) {
+    if(avecContact.length === 0) {
         alert('Aucun étudiant avec numéro de téléphone !');
         return;
     }
     
-    const confirmer = confirm(`<i class="fas fa-mobile-screen"></i> Envoyer des rappels WhatsApp à ${avecContact.length} étudiant(s) ?\n\nLes liens vont s'ouvrir dans des onglets séparés.`);
+    if(!confirm(`⚠️ Envoyer ${avecContact.length} rappels WhatsApp ?`)) return;
     
-    if (!confirmer) return;
+    closeModal('rappel');
     
-    for (let i = 0; i < avecContact.length; i++) {
-        setTimeout(() => {
-            envoyerRappelWhatsApp(avecContact[i].id);
-        }, i * 500);
+    for(let i = 0; i < avecContact.length; i++) {
+        setTimeout(() => envoyerRappelWhatsApp(avecContact[i].id), i * 800);
     }
-    
-    alert(`<i class="fas fa-circle-check"></i> Ouverture de ${avecContact.length} conversation(s) WhatsApp.\n\nSi les popups sont bloqués, autorisez-les pour ce site.`);
 }
 
 // Vérification quotidienne automatique des rappels
@@ -6237,7 +6193,7 @@ showSection = function(id) {
   loadingDiv.remove();
   if(loginScreen) loginScreen.style.display = '';
 
-  try { initUsers(); } catch(e){ console.error('initUsers erreur:', e); }
+  initUsers();
 
   // Initialise l'état de la case à cocher "Se souvenir de moi"
   const rememberCheckbox = document.getElementById('login-remember');
