@@ -1515,11 +1515,24 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <select class="filter-select admin-only" id="etu-f-user" onchange="renderEtudiants()" title="Filtrer par opérateur">
             <option value="">Tous opérateurs</option>
           </select>
-          <button class="btn-primary" onclick="openModalEtu()"><i class="fas fa-plus"></i> Ajouter</button>
-          <!-- Après le bouton "Ajouter", ajoutez : -->
-<button class="btn-teal" onclick="showRappelsAutomatiques()" title="Voir les échéances dépassées">
+                   <button class="btn-primary" onclick="openModalEtu()"><i class="fas fa-plus"></i> Ajouter</button>
+          <button class="btn-teal" onclick="showRappelsAutomatiques()" title="Voir les échéances dépassées">
     <i class="fas fa-bell"></i> Rappels
 </button>
+          <div style="position:relative;">
+            <button class="btn-secondary" onclick="toggleEtuVisibilityMenu()" id="etu-vis-btn" title="Masquer/afficher certaines lignes">
+              <i class="fas fa-eye"></i>
+            </button>
+            <div id="etu-vis-menu" style="display:none;position:absolute;top:40px;right:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:var(--shadow-lg);padding:10px 12px;z-index:50;min-width:230px;">
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:8px;cursor:pointer;">
+                <input type="checkbox" id="etu-hide-solde" onchange="onEtuVisibilityChange()"> Masquer les étudiants soldés
+              </label>
+              <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;">
+                <input type="checkbox" id="etu-hide-closed" onchange="onEtuVisibilityChange()"> Masquer les sessions clôturées
+              </label>
+            </div>
+          </div>
+
         </div>
       </div>
       <div class="table-wrap">
@@ -3064,6 +3077,9 @@ function getFilteredEtudiants(){
   const fst=document.getElementById('etu-f-stat').value;
   // Récupère le filtre par utilisateur (vide = tous, sinon ID numérique)
   const fusr=document.getElementById('etu-f-user')?.value||'';
+  // Masquage optionnel : soldés / sessions clôturées
+  const hideSolde=LS('etu_hide_solde')===true;
+  const hideClosed=LS('etu_hide_closed')===true;
   return etudiants.filter(e=>{
     const paye=getPaye(e.id); const st=getStatut(paye,e.cout);
     // Filtre textuel : matricule, nom+prénom, contact
@@ -3079,11 +3095,51 @@ function getFilteredEtudiants(){
       const opId = e.updatedBy || e.createdBy;
       if(String(opId) !== String(fusr)) return false;
     }
+    // Masquage : étudiants déjà soldés
+    if(hideSolde && st.k==='solde') return false;
+    // Masquage : sessions déjà clôturées
+    if(hideClosed && isSesClosed(e.sesId)) return false;
     return true;
   });
 }
 
+function toggleEtuVisibilityMenu(){
+  const menu=document.getElementById('etu-vis-menu');
+  if(!menu) return;
+  menu.style.display = menu.style.display==='none' ? 'block' : 'none';
+}
+document.addEventListener('click', e=>{
+  const btn=document.getElementById('etu-vis-btn');
+  const menu=document.getElementById('etu-vis-menu');
+  if(!btn||!menu) return;
+  if(menu.style.display==='block' && !menu.contains(e.target) && !btn.contains(e.target)){
+    menu.style.display='none';
+  }
+});
+function onEtuVisibilityChange(){
+  const hideSolde=document.getElementById('etu-hide-solde').checked;
+  const hideClosed=document.getElementById('etu-hide-closed').checked;
+  SS('etu_hide_solde', hideSolde);
+  SS('etu_hide_closed', hideClosed);
+  updateEtuVisIcon();
+  renderEtudiants();
+}
+function updateEtuVisIcon(){
+  const hideSolde=LS('etu_hide_solde')===true;
+  const hideClosed=LS('etu_hide_closed')===true;
+  const chkSolde=document.getElementById('etu-hide-solde');
+  const chkClosed=document.getElementById('etu-hide-closed');
+  if(chkSolde) chkSolde.checked=hideSolde;
+  if(chkClosed) chkClosed.checked=hideClosed;
+  const btn=document.getElementById('etu-vis-btn');
+  if(!btn) return;
+  const active=hideSolde||hideClosed;
+  btn.innerHTML = active ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+  btn.style.color = active ? 'var(--teal)' : '';
+  btn.style.borderColor = active ? 'var(--teal)' : '';
+}
 function renderEtudiants(){
+  updateEtuVisIcon();
   const data=getFilteredEtudiants();
   const hasFilter=!!(document.getElementById('etu-search').value||document.getElementById('etu-f-ses').value||document.getElementById('etu-f-form').value||document.getElementById('etu-f-stat').value);
   hasFilter?updateStats(data):updateStats();
