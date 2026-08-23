@@ -3554,7 +3554,22 @@ function openAttestation(etuId){
       <div class="att-border-outer"></div>
       <div class="att-border-inner"></div>
       <div class="att-content">
-        <div class="att-emblem"><span>${esc(initials)}</span></div>
+        
+                <div class="att-emblem">
+          <svg viewBox="0 0 100 100" width="66%" height="66%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f0b840">
+            <path d="M18,72 C14,58 16,44 26,30" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M20,66 L13,64 M22,58 L14,57 M24,50 L16,48 M26,42 L18,39 M28,35 L21,31" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M82,72 C86,58 84,44 74,30" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M80,66 L87,64 M78,58 L86,57 M76,50 L84,48 M74,42 L82,39 M72,35 L79,31" stroke-width="1.6" stroke-linecap="round"/>
+            <g fill="#f0b840" stroke="none">
+              <path d="M50,26 L78,38 L50,50 L22,38 Z"/>
+              <rect x="41" y="41" width="18" height="11" rx="1.5"/>
+              <path d="M78,38 L78,50" stroke="#f0b840" stroke-width="2" stroke-linecap="round" fill="none"/>
+              <circle cx="78" cy="53" r="2.6"/>
+            </g>
+          </svg>
+        </div>
+        
         <div class="att-eyebrow">Certificat Officiel</div>
         <div class="att-title">ATTESTATION</div>
         <div class="att-subtitle-row"><span class="ln"></span><span class="att-subtitle">De Formation</span><span class="ln"></span></div>
@@ -3563,16 +3578,18 @@ function openAttestation(etuId){
           <div class="att-name">${esc(sanitize(e.nom))} ${esc(sanitize(e.prenom))}</div>
           <div class="att-lead">a suivi avec assiduité et validé intégralement la formation</div>
           <div class="att-course">${esc(getFormLabel(e.formId))}</div>
-          <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}. La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
+                   <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}.</div>
+          <div class="att-para" style="margin-top:1.8cqw;">La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
         </div>
         <div class="att-footer">
           <div class="att-ref">
             Fait à Moroni, le ${now}<br>
+            Matricule de l'apprenant : <b>${esc(e.mat)}</b><br>
             N° d'attestation : <b>${numero}</b><br>
             Session : ${esc(getSesLabel(e.sesId))}
           </div>
-          <div class="att-stamp-zone"><span>Cachet &amp;<br>Sceau du<br>Centre</span></div>
           <div class="att-sign-block">
+
             <div class="att-sign-title">Le Directeur Général</div>
             <div class="att-sign-line"></div>
             <div class="att-sign-name">${esc(centreNom)}</div>
@@ -3615,10 +3632,10 @@ function printAttestation(){
     .att-subtitle-row .ln{width:6cqw;height:1px;background:#c8972a;}
     .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.15cqw;font-weight:700;letter-spacing:.5cqw;color:#0f2248;text-transform:uppercase;}
     .att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1cqw;padding:1.5cqw 3cqw 0;}
-    .att-lead{font-size:1.05cqw;color:#3a4a63;font-style:italic;}
+    .att-lead{font-size:1.3cqw;color:#3a4a63;font-style:italic;}
     .att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#0f2248;padding-bottom:.5cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:42%;}
     .att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.2cqw;}
-    .att-para{font-size:.95cqw;color:#3a4a63;line-height:1.7;max-width:76%;margin-top:.4cqw;}
+    .att-para{font-size:1.15cqw;color:#3a4a63;line-height:1.75;max-width:78%;margin-top:.4cqw;}
     .att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:1.8cqw;}
     .att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
     .att-ref b{color:#0f2248;}
