@@ -586,7 +586,11 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   }
 }
 @media(max-width:480px){.stats-grid{grid-template-columns:1fr;}}
-@media print{.header,.nav-drawer,.overlay{display:none!important;}main{padding:0!important;}}
+#cf-print-area{display:none;}
+@media print{
+  body > *:not(#cf-print-area){display:none!important;}
+  #cf-print-area{display:block!important;}
+}
 
 /* ============================================================
    BANNIÈRE D'INSTALLATION PWA
@@ -2457,6 +2461,7 @@ let currentUserId = null;
 let currentPayEtuId = null;
 let editEtuId = null, editSesId = null, editFormId = null, editDepId = null, editUsrId = null, editDispoId = null;
 let kpiVisible = true;
+let appBooted = false; // true dès que la 1ère navigation a eu lieu après connexion
 
 function saveAll(){
   SS('sessions',sessions); SS('formations',formations);
@@ -3494,35 +3499,15 @@ function openRecu(etuId){
 function printRecu(){
   const zone=document.getElementById('recu-zone');
   if(!zone) return;
-
-  const storedUser = localStorage.getItem('cf_user');
-  let logoSrc = window.LOGO_RECU || 'logo.jpeg';
-  if (storedUser) {
-    try {
-      const loggedUser = JSON.parse(storedUser);
-      if (loggedUser.centre_logo) logoSrc = loggedUser.centre_logo;
-    } catch(err) {}
-  }
-  const isDefaultLogo = logoSrc === 'logo.jpeg';
-  const logoFilterStyle = isDefaultLogo ? 'filter:brightness(0) invert(1);' : '';
-
-  const w=window.open('','_blank');
-  if(!w){ alert('Veuillez autoriser les popups pour imprimer.'); return; }
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Reçu</title>
-  <style>body{font-family:Georgia,serif;margin:0;padding:20px;background:#fff;color:#0f2248;}
-  .recu-wrap{max-width:430px;margin:0 auto;font-size:11px;}.recu-hdr{background:linear-gradient(135deg,#0f2248,#1a3a72);color:#fff;border-radius:10px 10px 0 0;padding:14px;text-align:center;}
-  .recu-logo-area{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px;}.recu-hdr-logo{height:36px;width:auto;${logoFilterStyle}}
-  .recu-logo-text h3{font-size:15px;font-weight:700;margin:0;}.recu-logo-text p{font-size:9px;color:rgba(255,255,255,.6);margin:2px 0 0;letter-spacing:1.5px;text-transform:uppercase;}
-  .recu-stripe{height:3px;background:linear-gradient(90deg,#2bbf9b,#1a4eb8,#2bbf9b);}.recu-body{border:1px solid #dde5f0;border-top:none;border-radius:0 0 10px 10px;padding:14px;}
-  .recu-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed #dde5f0;font-size:11px;}.recu-row span:first-child{color:#6b7ea4;}.recu-row span:last-child{font-weight:600;}
-  .recu-total{background:linear-gradient(135deg,#0f2248,#1a3a72);color:#fff;border-radius:7px;padding:9px 12px;margin:9px 0;display:flex;justify-content:space-between;align-items:center;}
-  .recu-box{border-radius:7px;padding:7px 10px;margin-bottom:5px;display:flex;justify-content:space-between;font-size:11px;}
-  .rbox-green{background:#dcfce7;border:1px solid #16a34a;color:#16a34a;}.rbox-red{background:#fee2e2;border:1px solid #dc2626;color:#dc2626;}
-  .pbar{height:4px;background:#dde5f0;border-radius:2px;overflow:hidden;}.pbar-fill{height:100%;border-radius:2px;}
-  .pf-green{background:#16a34a;}.pf-amber{background:#d97706;}.pf-red{background:#dc2626;}.print-btn{display:none;}
-  </style></head><body>${zone.outerHTML}</body></html>`);
-  w.document.close(); w.focus(); setTimeout(()=>w.print(),800);
+  const printArea = document.getElementById('cf-print-area');
+  if(!printArea){ alert("Zone d'impression introuvable."); return; }
+  printArea.innerHTML = `<style>
+    #cf-print-area{--text:#0f2248;--text-m:#6b7ea4;--border:#dde5f0;background:#fff;padding:20px;}
+    #cf-print-area .print-btn{display:none;}
+  </style>${zone.outerHTML}`;
+  window.print();
 }
+
 function centerInitials(name){
   return String(name||'CF').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'CF';
 }
@@ -3569,7 +3554,7 @@ function openAttestation(etuId){
             </g>
           </svg>
         </div>
-        
+
         <div class="att-eyebrow">Certificat Officiel</div>
         <div class="att-title">ATTESTATION</div>
         <div class="att-subtitle-row"><span class="ln"></span><span class="att-subtitle">De Formation</span><span class="ln"></span></div>
@@ -5015,21 +5000,32 @@ function initApp(){
     renderEtudiants(); renderPaiements(); renderDepenses();
     renderSessions(); renderFormations(); renderUsers(); renderDisponibilite(); updateStats();
     
-    verifierRappelsQuotidiens();
-    
-    if (currentRole === 'Admin') {
-    showSection('tdb');
-} else if (currentRole !== 'Admin') {
-    const u = users.find(x => x.id === currentUserId);
-    const perms = u && u.perms ? u.perms : {};
-    if (perms.secDashboard !== false) {
-        showSection('dashboard');
-    } else if (perms.secEtudiants !== false) {
-        showSection('etudiants');
+       verifierRappelsQuotidiens();
+
+    if (!appBooted) {
+        // Premier chargement (juste après connexion) : on choisit l'écran par défaut
+        appBooted = true;
+        if (currentRole === 'Admin') {
+            showSection('tdb');
+        } else {
+            const u = users.find(x => x.id === currentUserId);
+            const perms = u && u.perms ? u.perms : {};
+            if (perms.secDashboard !== false) {
+                showSection('dashboard');
+            } else if (perms.secEtudiants !== false) {
+                showSection('etudiants');
+            } else {
+                showSection('dashboard');
+            }
+        }
     } else {
-        showSection('dashboard');
+        // Rafraîchissement automatique (sync) : on reste sur la fenêtre en cours
+        const activeSectionEl = document.querySelector('.section.active');
+        const activeSectionId = activeSectionEl ? activeSectionEl.id.replace('sec-', '') : null;
+        if (activeSectionId) {
+            showSection(activeSectionId);
+        }
     }
-}
 }
 /* ================================================================
    FONCTIONS DE RAPPELS AUTOMATIQUES
@@ -6614,11 +6610,14 @@ function parseInlineMarkdown(text) {
   <!-- Zone de saisie -->
   <div id="cf-ai-chat-input-bar">
     <input type="text" id="cf-ai-chat-input" placeholder="Posez une question..." onkeydown="handleAIChatKey(event)">
-    <button id="cf-ai-send-btn" onclick="sendAIChatMessage()" title="Envoyer">
+
+       <button id="cf-ai-send-btn" onclick="sendAIChatMessage()" title="Envoyer">
       <i class="fas fa-paper-plane"></i>
     </button>
   </div>
 </div>
+
+<div id="cf-print-area"></div>
 
 </body>
 </html>
