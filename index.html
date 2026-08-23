@@ -1601,16 +1601,22 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     </div>
   </div>
 
-  <!-- DISPONIBILITÉ -->
+    <!-- DISPONIBILITÉ -->
   <div class="section" id="sec-disponibilite">
     <div class="card">
+      <div id="disp-solde-total-bar" style="padding:14px 15px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg);">
+        <span style="font-size:12px;font-weight:700;color:var(--text-m);text-transform:uppercase;letter-spacing:.5px;"><i class="fas fa-scale-balanced"></i> Solde total</span>
+        <span id="disp-solde-total-val" style="font-size:18px;font-weight:800;">0 FC</span>
+      </div>
       <div class="card-header">
         <span class="card-title"><i class="fas fa-wallet"></i> Disponibilité / Caisse</span>
         <div class="toolbar">
-          <div class="search-box">
-            <span class="s-ico"><i class="fas fa-user"></i></span>
-            <input type="text" id="disp-search" placeholder="Filtrer par responsable..." oninput="renderDisponibilite()">
-          </div>
+          <select class="filter-select" id="disp-f-type" onchange="renderDisponibilite()">
+            <option value="">Tous types</option>
+            <option value="Entree">Entrée</option>
+            <option value="Sortie">Sortie</option>
+          </select>
+
           <input type="date" class="filter-select" id="disp-date-from" onchange="renderDisponibilite()" title="Date début" style="min-width:120px;">
           <input type="date" class="filter-select" id="disp-date-to" onchange="renderDisponibilite()" title="Date fin" style="min-width:120px;">
           <button class="btn-primary admin-only" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
@@ -1618,7 +1624,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>#</th><th>Responsable</th><th>Montant (FC)</th><th>Détail</th><th>Date</th><th>Par</th><th>Actions</th></tr></thead>
+              <thead><tr><th>#</th><th>Type</th><th>Montant (FC)</th><th>Solde</th><th>Détail</th><th>Date</th><th>Par</th><th>Actions</th></tr></thead>
           <tbody id="tbody-disponibilite"></tbody>
         </table>
         <div class="empty" id="disp-empty" style="display:none;"><div class="e-ico"><i class="fas fa-wallet"></i></div><p>Aucune entrée de disponibilité.</p></div>
@@ -1985,7 +1991,13 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     </div>
     <div class="modal-body">
       <div class="form-grid">
-        <div class="fg"><label>Responsable *</label><input type="text" id="dispo-resp" placeholder="Nom du responsable" maxlength="100"></div>
+                <div class="fg"><label>Type *</label>
+          <select id="dispo-type">
+            <option value="Entree">Entrée</option>
+            <option value="Sortie">Sortie</option>
+          </select>
+        </div>
+
         <div class="fg"><label>Montant (FC) *</label><input type="number" id="dispo-mont" placeholder="Ex: 50000" min="0" step="100"></div>
         <div class="fg form-full"><label>Détail / Justificatif</label>
           <textarea id="dispo-det" rows="2" style="resize:vertical;" placeholder="Motif, description..." maxlength="300"></textarea>
@@ -4238,28 +4250,48 @@ function delUser(id){
 /* ================================================================
    DISPONIBILITÉ
    ================================================================ */
+function calcDispoSolde(d){
+  const m = Number(d.montant)||0;
+  return d.type === 'Sortie' ? -m : m;
+}
+
+function updateDispoSoldeTotalBar(){
+  const el = document.getElementById('disp-solde-total-val');
+  if(!el) return;
+  const total = disponibilites.reduce((sum,d)=>sum+calcDispoSolde(d),0);
+  el.textContent = fmtM(total) + ' FC';
+  el.style.color = total >= 0 ? 'var(--success)' : 'var(--danger)';
+}
+
 function renderDisponibilite(){
   const isAdmin=currentRole==='Admin';
-  const searchTerm=(document.getElementById('disp-search')?.value||'').toLowerCase();
+  const filterType=document.getElementById('disp-f-type')?.value||'';
   const dateFrom=document.getElementById('disp-date-from')?.value||'';
   const dateTo=document.getElementById('disp-date-to')?.value||'';
   let filtered=disponibilites;
-  if(searchTerm) filtered=filtered.filter(d=>(d.responsable||'').toLowerCase().includes(searchTerm));
+  if(filterType) filtered=filtered.filter(d=>d.type===filterType);
   if(dateFrom) filtered=filtered.filter(d=>d.date&&d.date>=dateFrom);
   if(dateTo) filtered=filtered.filter(d=>d.date&&d.date<=dateTo);
+
+  updateDispoSoldeTotalBar();
+
   const tbody=document.getElementById('tbody-disponibilite');
   const empty=document.getElementById('disp-empty');
   const tot=document.getElementById('disp-tot');
   if(!filtered.length){ tbody.innerHTML=''; empty.style.display='block'; tot.style.display='none'; return; }
   empty.style.display='none'; tot.style.display='flex';
-  const totalMontant=filtered.reduce((sum,d)=>sum+(Number(d.montant)||0),0);
-  tot.innerHTML=`<span><i class="fas fa-wallet"></i> Total disponible : <strong style="color:var(--success)">${fmtM(totalMontant)} FC</strong></span>`;
+  const totalSolde=filtered.reduce((sum,d)=>sum+calcDispoSolde(d),0);
+  tot.innerHTML=`<span><i class="fas fa-wallet"></i> Solde de la vue filtrée : <strong style="color:${totalSolde>=0?'var(--success)':'var(--danger)'}">${fmtM(totalSolde)} FC</strong></span>`;
   tbody.innerHTML=filtered.map((d,idx)=>{
     let actions='';
     if(isAdmin){ actions=`<div class="actions"><button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})"><i class="fas fa-pencil"></i></button><button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})"><i class="fas fa-trash"></i></button></div>`; }
     else { actions=`<div class="actions"><span class="badge b-gray" style="font-size:10px"><i class="fas fa-lock"></i></span></div>`; }
-    return `<tr><td>${idx+1}</td><td><strong>${esc(d.responsable)}</strong></td>
-      <td style="color:var(--success);font-weight:700">${fmtM(d.montant)} FC</td>
+    const solde=calcDispoSolde(d);
+    const typeLabel = d.type==='Sortie' ? 'Sortie' : 'Entrée';
+    const typeBadge = d.type==='Sortie' ? 'b-danger' : 'b-success';
+    return `<tr><td>${idx+1}</td><td><span class="badge ${typeBadge}"><i class="fas fa-${d.type==='Sortie'?'arrow-down':'arrow-up'}"></i> ${typeLabel}</span></td>
+      <td style="font-weight:700">${fmtM(d.montant)} FC</td>
+      <td style="font-weight:700;color:${solde>=0?'var(--success)':'var(--danger)'}">${solde>=0?'+ ':''}${fmtM(solde)} FC</td>
       <td style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.detail)||'—'}</td>
       <td style="white-space:nowrap">${fmtDate(d.date)}</td>
       <td>${getOpLabel(d.createdBy||null)}</td>
@@ -4270,48 +4302,51 @@ function openModalDispo(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   editDispoId=null;
   document.getElementById('dispo-mtitle').textContent='Ajouter une entrée de disponibilité';
-  document.getElementById('dispo-resp').value=''; document.getElementById('dispo-mont').value='';
+  document.getElementById('dispo-type').value='Entree'; document.getElementById('dispo-mont').value='';
   document.getElementById('dispo-det').value=''; document.getElementById('dispo-date').value=today();
   openModal('dispo');
 }
+
 function editDisponibilite(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const d=disponibilites.find(x=>x.id===id); if(!d) return;
   editDispoId=id;
   document.getElementById('dispo-mtitle').textContent='Modifier une entrée';
-  document.getElementById('dispo-resp').value=d.responsable||''; document.getElementById('dispo-mont').value=d.montant||'';
+  document.getElementById('dispo-type').value=d.type||'Entree'; document.getElementById('dispo-mont').value=d.montant||'';
   document.getElementById('dispo-det').value=d.detail||''; document.getElementById('dispo-date').value=d.date||today();
   openModal('dispo');
 }
+
 function saveDisponibilite(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
-  const responsable=sanitize(document.getElementById('dispo-resp').value,100);
+  const type=document.getElementById('dispo-type').value==='Sortie' ? 'Sortie' : 'Entree';
   const montant=parseFloat(document.getElementById('dispo-mont').value)||0;
   const detail=sanitize(document.getElementById('dispo-det').value,300);
   const date=document.getElementById('dispo-date').value;
-  if(!responsable){ alert('Le responsable est requis.'); return; }
   if(montant<=0){ alert('Le montant doit être supérieur à 0.'); return; }
   if(!date){ alert('La date est requise.'); return; }
   if(editDispoId!==null){
     const idx=disponibilites.findIndex(x=>x.id===editDispoId);
     if(idx>=0) {
-      disponibilites[idx]={...disponibilites[idx],responsable,montant,detail,date,updatedBy:currentUserId};
+      disponibilites[idx]={...disponibilites[idx],type,montant,detail,date,updatedBy:currentUserId};
       saveAll();
       queueSyncOperation('UPDATE', 'disponibilites', editDispoId, disponibilites[idx]);
     }
   } else {
     const id = generateId();
-    const newDispo = {id,responsable,montant,detail,date,createdBy:currentUserId,createdAt:today()};
+    const newDispo = {id,type,montant,detail,date,createdBy:currentUserId,createdAt:today()};
     disponibilites.push(newDispo);
     saveAll();
     queueSyncOperation('CREATE', 'disponibilites', id, newDispo);
   }
   renderDisponibilite(); closeModal('dispo');
 }
+
 function delDisponibilite(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const item=disponibilites.find(x=>x.id===id);
-  showConfirm(`Supprimer l'entrée de ${item?.responsable||'?'} (${fmtM(item?.montant)} FC) ?`, async ()=>{
+  const typeLabel = item && item.type==='Sortie' ? 'Sortie' : 'Entrée';
+  showConfirm(`Supprimer cette entrée (${typeLabel} — ${fmtM(item?.montant)} FC) ?`, async ()=>{
     disponibilites=disponibilites.filter(x=>x.id!==id);
     saveAll(); renderDisponibilite();
     await queueSyncOperation('DELETE', 'disponibilites', id, null);
@@ -4351,7 +4386,7 @@ function exportExcel(){
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(depenses.map(d=>({ID:d.id,Libelle:d.lib||'',Montant:Number(d.montant)||0,Detail:d.det||'',Date:d.date||'',Session:getSesLabel(d.sesId)}))),'Depenses');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sessions.map(s=>({Code:s.code||'',Detail:s.det||'',Cloturee:s.closed?'Oui':'Non'}))),'Sessions');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(formations.map(f=>({Formation:f.label||f.intitule||''}))),'Formations');
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(disponibilites.map(d=>({ID:d.id,Responsable:d.responsable||'',Montant:Number(d.montant)||0,Detail:d.detail||'',Date:d.date||'',OperateurID:d.createdBy||''}))),'Disponibilite');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(disponibilites.map(d=>({ID:d.id,Type:d.type==='Sortie'?'Sortie':'Entree',Montant:Number(d.montant)||0,Solde:calcDispoSolde(d),Detail:d.detail||'',Date:d.date||'',OperateurID:d.createdBy||''}))),'Disponibilite');
     // Feuille Bilans — métadonnées uniquement (les fichiers binaires ne passent pas en Excel)
     
     const d=new Date();
@@ -4482,7 +4517,7 @@ function parseExcelToStandardJSON(wb) {
     rows.forEach((r, idx) => {
       parsedData.disponibilites.push({
         id: r.ID || (idx + 1),
-        responsable: r.Responsable || '',
+        type: r.Type === 'Sortie' ? 'Sortie' : 'Entree',
         montant: parseFloat(r.Montant) || 0,
         detail: r.Detail || '',
         date: r.Date || ''
@@ -4678,7 +4713,7 @@ async function importAndRestoreData(parsedData) {
       const newId = generateId();
       const newDispo = {
         id: newId,
-        responsable: d.responsable || '',
+        type: d.type === 'Sortie' ? 'Sortie' : 'Entree',
         montant: parseFloat(d.montant) || 0,
         detail: d.detail || '',
         date: d.date || today(),
@@ -5347,7 +5382,7 @@ function exportExcelBackup(){
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(depenses.map(d=>({ID:d.id,Libelle:d.lib||'',Montant:Number(d.montant)||0,Detail:d.det||'',Date:d.date||'',Session:getSesLabel(d.sesId)}))),'Depenses');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sessions.map(s=>({Code:s.code||'',Detail:s.det||'',Cloturee:s.closed?'Oui':'Non'}))),'Sessions');
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(formations.map(f=>({Formation:f.label||f.intitule||''}))),'Formations');
-    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(disponibilites.map(d=>({ID:d.id,Responsable:d.responsable||'',Montant:Number(d.montant)||0,Detail:d.detail||'',Date:d.date||''}))),'Disponibilite');
+   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(disponibilites.map(d=>({ID:d.id,Type:d.type==='Sortie'?'Sortie':'Entree',Montant:Number(d.montant)||0,Solde:calcDispoSolde(d),Detail:d.detail||'',Date:d.date||''}))),'Disponibilite');
     const d=new Date();
     const fn=`ComFormation_${String(d.getDate()).padStart(2,'0')}${String(d.getMonth()+1).padStart(2,'0')}${d.getFullYear()}.xlsx`;
     // Générer le binaire et le stocker en base64 pour permettre le sync ultérieur
