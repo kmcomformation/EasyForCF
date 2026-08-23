@@ -1619,7 +1619,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 
           <input type="date" class="filter-select" id="disp-date-from" onchange="renderDisponibilite()" title="Date début" style="min-width:120px;">
           <input type="date" class="filter-select" id="disp-date-to" onchange="renderDisponibilite()" title="Date fin" style="min-width:120px;">
-          <button class="btn-primary admin-only" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
+                    <button class="btn-primary" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -1959,7 +1959,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <div style="font-size:10px;font-weight:700;color:var(--text-m);text-transform:uppercase;margin-bottom:6px;">Actions autorisées</div>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-etu" checked> <i class="fas fa-plus"></i> Ajouter étudiant</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-pay"> <i class="fas fa-wallet"></i> Enregistrer paiement</label>
-          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> <i class="fas fa-plus"></i> Ajouter dépense</label>
+                     <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dep"> <i class="fas fa-plus"></i> Ajouter dépense</label>
+          <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-add-dispo"> <i class="fas fa-wallet"></i> Ajouter disponibilité</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-edit"> <i class="fas fa-pencil"></i> Modifier ses entrées</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;margin-bottom:5px;"><input type="checkbox" id="perm-act-del"> <i class="fas fa-trash"></i> Supprimer ses entrées</label>
           <label style="display:flex;align-items:center;gap:7px;font-size:12px;"><input type="checkbox" id="perm-act-system"> <i class="fas fa-gear"></i> Accès Action Système</label>
@@ -2788,7 +2789,7 @@ function hasPermission(key){
 }
 function getPermDef(u){
   if(!u || !u.perms || Object.keys(u.perms).length === 0) {
-    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
+    return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actAddDispo:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
   }
   return u.perms;
 }
@@ -2816,6 +2817,7 @@ function readPermsFromForm(){
     actAddEtu: document.getElementById('perm-act-add-etu')?.checked||false,
     actPay: document.getElementById('perm-act-pay')?.checked||false,
     actAddDep: document.getElementById('perm-act-add-dep')?.checked||false,
+    actAddDispo: document.getElementById('perm-act-add-dispo')?.checked||false,
     actEdit: document.getElementById('perm-act-edit')?.checked||false,
     actDel: document.getElementById('perm-act-del')?.checked||false,
     actSystem: document.getElementById('perm-act-system')?.checked||false,
@@ -2829,7 +2831,7 @@ function applyPermsToForm(perms){
   set('perm-sec-depenses',perms.secDepenses); set('perm-sec-disponibilite',perms.secDisponibilite);
   set('perm-sec-dashboard',perms.secDashboard);
   set('perm-act-add-etu',perms.actAddEtu); set('perm-act-pay',perms.actPay);
-  set('perm-act-add-dep',perms.actAddDep); set('perm-act-edit',perms.actEdit); set('perm-act-del',perms.actDel);
+   set('perm-act-add-dep',perms.actAddDep); set('perm-act-add-dispo',perms.actAddDispo); set('perm-act-edit',perms.actEdit); set('perm-act-del',perms.actDel);
   set('perm-act-system',perms.actSystem);
   // Sessions
   const sesIds=perms.sesAccess||[];
@@ -4265,7 +4267,10 @@ function updateDispoSoldeTotalBar(){
 
 function renderDisponibilite(){
   const isAdmin=currentRole==='Admin';
+  const canEditDispo=hasPermission('actEdit');
+  const canDelDispo=hasPermission('actDel');
   const filterType=document.getElementById('disp-f-type')?.value||'';
+
   const dateFrom=document.getElementById('disp-date-from')?.value||'';
   const dateTo=document.getElementById('disp-date-to')?.value||'';
   let filtered=disponibilites;
@@ -4283,9 +4288,15 @@ function renderDisponibilite(){
   const totalSolde=filtered.reduce((sum,d)=>sum+calcDispoSolde(d),0);
   tot.innerHTML=`<span><i class="fas fa-wallet"></i> Solde de la vue filtrée : <strong style="color:${totalSolde>=0?'var(--success)':'var(--danger)'}">${fmtM(totalSolde)} FC</strong></span>`;
   tbody.innerHTML=filtered.map((d,idx)=>{
-    let actions='';
-    if(isAdmin){ actions=`<div class="actions"><button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})"><i class="fas fa-pencil"></i></button><button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})"><i class="fas fa-trash"></i></button></div>`; }
-    else { actions=`<div class="actions"><span class="badge b-gray" style="font-size:10px"><i class="fas fa-lock"></i></span></div>`; }
+        let actions='';
+    if(canEditDispo||canDelDispo){
+      actions='<div class="actions">';
+      if(canEditDispo) actions+=`<button class="act-btn ab-edit" title="Modifier" onclick="editDisponibilite(${d.id})"><i class="fas fa-pencil"></i></button>`;
+      if(canDelDispo) actions+=`<button class="act-btn ab-del" title="Supprimer" onclick="delDisponibilite(${d.id})"><i class="fas fa-trash"></i></button>`;
+      actions+='</div>';
+    } else {
+      actions=`<div class="actions"><span class="badge b-gray" style="font-size:10px"><i class="fas fa-lock"></i></span></div>`;
+    }
     const solde=calcDispoSolde(d);
     const typeLabel = d.type==='Sortie' ? 'Sortie' : 'Entrée';
     const typeBadge = d.type==='Sortie' ? 'b-danger' : 'b-success';
@@ -4299,7 +4310,7 @@ function renderDisponibilite(){
   }).join('');
 }
 function openModalDispo(){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actAddDispo')){ alert('Accès refusé — vous n\'avez pas la permission d\'ajouter une entrée de disponibilité.'); return; }
   editDispoId=null;
   document.getElementById('dispo-mtitle').textContent='Ajouter une entrée de disponibilité';
   document.getElementById('dispo-type').value='Entree'; document.getElementById('dispo-mont').value='';
@@ -4308,7 +4319,7 @@ function openModalDispo(){
 }
 
 function editDisponibilite(id){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actEdit')){ alert('Accès refusé.'); return; }
   const d=disponibilites.find(x=>x.id===id); if(!d) return;
   editDispoId=id;
   document.getElementById('dispo-mtitle').textContent='Modifier une entrée';
@@ -4318,8 +4329,13 @@ function editDisponibilite(id){
 }
 
 function saveDisponibilite(){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(editDispoId!==null){
+    if(!hasPermission('actEdit')){ alert('Modification non autorisée.'); return; }
+  } else {
+    if(!hasPermission('actAddDispo')){ alert('Ajout non autorisé.'); return; }
+  }
   const type=document.getElementById('dispo-type').value==='Sortie' ? 'Sortie' : 'Entree';
+
   const montant=parseFloat(document.getElementById('dispo-mont').value)||0;
   const detail=sanitize(document.getElementById('dispo-det').value,300);
   const date=document.getElementById('dispo-date').value;
@@ -4343,7 +4359,7 @@ function saveDisponibilite(){
 }
 
 function delDisponibilite(id){
-  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  if(!hasPermission('actDel')){ alert('Accès refusé.'); return; }
   const item=disponibilites.find(x=>x.id===id);
   const typeLabel = item && item.type==='Sortie' ? 'Sortie' : 'Entrée';
   showConfirm(`Supprimer cette entrée (${typeLabel} — ${fmtM(item?.montant)} FC) ?`, async ()=>{
