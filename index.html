@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="fr" data-theme="light">
 <head>
@@ -6134,7 +6133,7 @@ showSection = function(id) {
   loadingDiv.remove();
   if(loginScreen) loginScreen.style.display = '';
 
-  initUsers();
+  try { initUsers(); } catch(e){ console.error('initUsers erreur:', e); }
 
   // Initialise l'état de la case à cocher "Se souvenir de moi"
   const rememberCheckbox = document.getElementById('login-remember');
