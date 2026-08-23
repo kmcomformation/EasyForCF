@@ -26,6 +26,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 /* ═══ Font Awesome Icon Integration ═══════════════════════════════ */
@@ -410,7 +411,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 
 .user-dashboard-only{display:none;}
 /* ---- Paramètres PWA status block colors ---- */
-
+.pwa-installed  { background: var(--success-bg) !important; border-color: var(--success) !important; }
+.pwa-available  { background: var(--info-bg)    !important; border-color: var(--info)    !important; }
+.pwa-ios        { background: var(--warning-bg) !important; border-color: var(--warning) !important; }
+.pwa-none       { background: var(--bg)         !important; border-color: var(--border)  !important; }
 @media(min-width:961px) and (max-width:1380px){
   .logo-text, .logo-sep {
     display: none !important;
@@ -1343,7 +1347,9 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
             <button class="btn-secondary" onclick="exportTDBPDF()" style="font-size:11px; padding:6px 12px;">
                 <i class="fas fa-file-pdf"></i> PDF
             </button>
-            
+            <button class="btn-secondary" onclick="exportTDBExcel()" style="font-size:11px; padding:6px 12px;">
+                <i class="fas fa-file-excel"></i> Excel
+            </button>
         </div>
     </div>
 
@@ -2116,7 +2122,23 @@ const IDB = (() => {
     });
   }
 
-   return { get, set, del, loadAll };
+  /* Charge toutes les clés du namespace 'cf6_' en une seule transaction */
+  async function loadAll() {
+    const db = await open();
+    return new Promise((resolve, reject) => {
+      const tx    = db.transaction(STORE, 'readonly');
+      const store = tx.objectStore(STORE);
+      const req   = store.getAll();
+      req.onsuccess = () => {
+        const map = {};
+        (req.result || []).forEach(row => { map[row.k] = row.v; });
+        resolve(map);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  return { get, set, del, loadAll };
 })();
 
 /* ---- Cache mémoire (accès synchrone pour le reste du code) ---- */
@@ -2184,7 +2206,41 @@ async function loadFromIDB() {
   }
 }
 
-
+/* Migration one-shot depuis l'ancien localStorage (cf5_) */
+async function migrateFromLocalStorage() {
+  const keys = ['sessions','formations','etudiants','paiements','depenses','users','disponibilites','backups','nSes','nForm','nEtu','nPay','nDep','nUsr','nDispo'];
+  let migrated = false;
+  for (const k of keys) {
+    try {
+      const raw = localStorage.getItem(k === 'backups' ? 'cf_backups' : 'cf5_' + k);
+      if (raw !== null) {
+        const v = JSON.parse(raw);
+        _mem[PREFIX + k] = v;
+        await IDB.set(PREFIX + k, v);
+        migrated = true;
+      }
+    } catch(e) { /* ignore */ }
+  }
+  if (migrated) {
+    /* Recharge depuis la mémoire */
+    sessions       = _mem[PREFIX+'sessions']       || [];
+    formations     = _mem[PREFIX+'formations']     || [];
+    etudiants      = (_mem[PREFIX+'etudiants']     || []).map(e => ({ ...e, echeance: e.echeance || null }));
+    paiements      = _mem[PREFIX+'paiements']      || [];
+    depenses       = _mem[PREFIX+'depenses']       || [];
+    users          = _mem[PREFIX+'users']          || [];
+    disponibilites = _mem[PREFIX+'disponibilites'] || [];
+    backups        = _mem[PREFIX+'backups']        || [];
+    nSes   = _mem[PREFIX+'nSes']   || 1;
+    nForm  = _mem[PREFIX+'nForm']  || 1;
+    nEtu   = _mem[PREFIX+'nEtu']   || 1;
+    nPay   = _mem[PREFIX+'nPay']   || 1;
+    nDep   = _mem[PREFIX+'nDep']   || 1;
+    nUsr   = _mem[PREFIX+'nUsr']   || 2;
+    nDispo = _mem[PREFIX+'nDispo'] || 1;
+    console.log('[Migration] Données cf5_ migrées vers IndexedDB');
+  }
+}
 
 // -------------------------------------------------------------
 // LOGIQUE DE SYNCHRONISATION HYBRIDE HORS-LIGNE & EN-LIGNE
@@ -3467,7 +3523,9 @@ function printRecu(){
   </style></head><body>${zone.outerHTML}</body></html>`);
   w.document.close(); w.focus(); setTimeout(()=>w.print(),800);
 }
-
+function centerInitials(name){
+  return String(name||'CF').trim().split(/\s+/).filter(Boolean).map(w=>w[0]).join('').slice(0,2).toUpperCase() || 'CF';
+}
 
 function openAttestation(etuId){
   const e=etudiants.find(x=>x.id===etuId);
@@ -3803,7 +3861,19 @@ function renderSessions(){
       ${lockBtn}</div>`;
   }).join('');
 }
-
+function delSession(id){
+  if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
+  const s=sessions.find(x=>x.id===id); if(!s) return;
+  if(s.closed){ alert('Session clôturée — suppression impossible.'); return; }
+  const cnt=etudiants.filter(e=>e.sesId==id).length;
+  if(cnt>0){ alert(`Impossible — ${cnt} étudiant(s) sont affectés à cette session.`); return; }
+  showConfirm(`Supprimer la session "${s.code} — ${s.det}" ?`, async ()=>{
+    sessions=sessions.filter(x=>x.id!==id);
+    depenses=depenses.filter(d=>d.sesId!=id);
+    saveAll(); renderSessions(); populateSelects(); updateStats();
+    await queueSyncOperation('DELETE', 'sessions', id, null);
+  });
+}
 
 /* ================================================================
    FORMATIONS
@@ -4772,6 +4842,71 @@ function dismissPWA(){
   SS('pwa_dismissed', '1');
 }
 
+/* ================================================================
+   PARAMÈTRES — Mise à jour du bloc statut PWA
+   ================================================================ */
+function updatePwaSettingsBlock() {
+  const block  = document.getElementById('pwa-status-block');
+  const icon   = document.getElementById('pwa-status-icon');
+  const title  = document.getElementById('pwa-status-title');
+  const desc   = document.getElementById('pwa-status-desc');
+  const zone   = document.getElementById('pwa-install-zone');
+  const swLbl  = document.getElementById('sw-status-lbl');
+  if (!block) return;
+
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+                    || window.navigator.standalone === true;
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+  if (swLbl) {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistration().then(reg => {
+        swLbl.innerHTML = reg ? '<i class="fas fa-circle-check"></i> Actif' : '<i class="fas fa-spinner fa-spin"></i> En cours…';
+      }).catch(() => { swLbl.innerHTML = '<i class="fas fa-circle-xmark"></i> Inactif'; });
+    } else {
+      swLbl.innerHTML = '<i class="fas fa-circle-xmark"></i> Non supporté';
+    }
+  }
+
+  // Mettre à jour le bouton thème
+  const themeBtn = document.getElementById('theme-toggle-btn');
+  if (themeBtn) {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    themeBtn.innerHTML = isDark ? '<i class="fas fa-sun"></i> Clair' : '<i class="fas fa-moon"></i> Sombre';
+  }
+
+  block.className = block.className.replace(/pwa-\w+/g, '').trim();
+
+  if (isStandalone) {
+    // Déjà installée
+    block.classList.add('pwa-installed');
+    if (icon)  icon.innerHTML    = '<i class="fas fa-circle-check"></i>';
+    if (title) title.textContent = 'Application installée et active';
+    if (desc)  desc.textContent  = 'ComFormation fonctionne comme une application native sur cet appareil.';
+    if (zone)  zone.innerHTML    = '<span class="badge b-success" style="font-size:12px;padding:5px 12px;"><i class="fas fa-circle-check"></i> Installée</span>';
+  } else if (pwaInstallEvent) {
+    // Chrome/Edge : prompt disponible
+    block.classList.add('pwa-available');
+    if (icon)  icon.innerHTML    = '<i class="fas fa-mobile-screen-button"></i>';
+    if (title) title.textContent = 'Prêt à installer sur cet appareil';
+    if (desc)  desc.textContent  = 'Cliquez sur le bouton pour installer ComFormation comme application.';
+    if (zone)  zone.innerHTML    = '<button class="btn-teal" onclick="installPWA()" style="font-size:13px;padding:8px 16px;"><i class="fas fa-download"></i> Installer maintenant</button>';
+  } else if (isIOS) {
+    // iOS Safari : instruction manuelle
+    block.classList.add('pwa-ios');
+    if (icon)  icon.innerHTML    = '<i class="fab fa-apple"></i>';
+    if (title) title.textContent = 'Installation manuelle (iOS Safari)';
+    if (desc)  desc.textContent  = 'Appuyez sur ⎙ Partager → "Sur l\'écran d\'accueil" dans Safari.';
+    if (zone)  zone.innerHTML    = '<button class="btn-secondary" onclick="showInstallBar(\'ios\')" style="font-size:12px;"><i class="fas fa-clipboard"></i> Voir le guide</button>';
+  } else {
+    // Navigateur sans support ou déjà refusé
+    block.classList.add('pwa-none');
+    if (icon)  icon.innerHTML    = '<i class="fas fa-globe"></i>';
+    if (title) title.textContent = 'Installation non disponible sur ce navigateur';
+    if (desc)  desc.textContent  = 'Utilisez Chrome, Edge (Android/PC) ou Safari (iOS) pour installer l\'application.';
+    if (zone)  zone.innerHTML    = '';
+  }
+}
 
 /* ================================================================
    DASHBOARD UTILISATEUR
@@ -5847,6 +5982,16 @@ function populateTDBFilters() {
 function exportTDBPDF() {
     // Pour l'instant, ouvre la fenêtre d'impression
     window.print();
+}
+
+// Export Excel du TDB (simulé)
+function exportTDBExcel() {
+    // Pour l'instant, on utilise l'export existant
+    if (currentRole === 'Admin') {
+        exportExcel();
+    } else {
+        alert('Export Excel réservé aux administrateurs.');
+    }
 }
 
 // Initialiser le TDB (à appeler après le chargement)
