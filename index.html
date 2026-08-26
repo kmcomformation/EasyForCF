@@ -2581,8 +2581,8 @@ async function doLogin(){
           return;
         }
 
-        // Pull complet des données suite à la connexion en ligne réussie
-        await pullLatestDataFromServer();
+        // Pull complet des données suite à la connexion en ligne réussie (en arrière-plan pour connexion instantanée)
+        pullLatestDataFromServer().catch(err => console.warn('[Login background pull error]', err));
       } else {
         const errData = await res.json().catch(() => ({}));
         const errMsg = errData.error || 'Erreur d\'authentification.';
