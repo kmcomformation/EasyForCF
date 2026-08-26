@@ -2553,6 +2553,65 @@ async function doLogin(){
   // Indiquer le chargement
   const loginBtn = document.querySelector('#login-screen button');
   const originalText = loginBtn ? loginBtn.textContent : 'Se connecter';
+
+  // --- ACCÉLÉRATEUR : CONNEXION LOCALE INSTANTANÉE (LOCAL-FIRST) ---
+  const localUserFound = users.find(x => x.login === email && verifyPassword(pwd, x.pwd));
+  if (localUserFound) {
+    if (localUserFound.active === false) {
+      showLoginError('<i class="fas fa-user-slash"></i> Ce compte est désactivé.');
+      return;
+    }
+    loginAttempts = 0;
+    const loggedUserLocal = {
+      id: isNaN(Number(localUserFound.id)) ? localUserFound.id : Number(localUserFound.id),
+      login: localUserFound.login,
+      role: localUserFound.role,
+      perms: localUserFound.perms || {}
+    };
+    
+    localStorage.setItem('cf_user', JSON.stringify(loggedUserLocal));
+    
+    if (loggedUserLocal.role === 'SuperAdmin') {
+      window.location.href = '/superadmin.html';
+      return;
+    }
+    
+    currentRole = loggedUserLocal.role;
+    currentUserId = loggedUserLocal.id;
+    
+    // Accès instantané à l'application
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-pwd').value = '';
+    document.getElementById('login-err').style.display = 'none';
+    
+    // Gérer "Se souvenir de moi"
+    const rememberCheckbox = document.getElementById('login-remember');
+    if (rememberCheckbox && rememberCheckbox.checked) {
+      localStorage.setItem('cf_remember_me', 'true');
+    } else {
+      localStorage.removeItem('cf_remember_me');
+    }
+    
+    // Rafraîchir le token et les données en arrière-plan sans bloquer
+    if (navigator.onLine) {
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, pwd })
+      }).then(async res => {
+        if (res.ok) {
+          const data = await res.json();
+          localStorage.setItem('cf_token', data.token);
+          localStorage.setItem('cf_user', JSON.stringify(data.user));
+          pullLatestDataFromServer().catch(e => console.warn(e));
+        }
+      }).catch(err => console.warn('[Background login sync failed]', err));
+    }
+    return;
+  }
+
   if(loginBtn) { loginBtn.disabled = true; loginBtn.textContent = 'Connexion...'; }
 
   let loginSuccess = false;
