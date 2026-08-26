@@ -194,17 +194,6 @@ app.post('/api/login', async (req, res) => {
   }
 
   try {
-    // Tenter de seeder automatiquement si la base est vide (mécanisme d'auto-guérison)
-    try {
-      const [countRows] = await pool.query('SELECT COUNT(*) AS count FROM users');
-      if (countRows[0].count === 0) {
-        console.log('[API Login] Base vide détectée, lancement du seeding à la demande...');
-        await seedDefaultUsers();
-      }
-    } catch (dbErr) {
-      console.warn('[DB Warning] Échec vérification ou seeding :', dbErr.message);
-    }
-
     // Récupérer l'utilisateur correspondant à l'email (login) avec les infos de son centre
     const [users] = await pool.query(`
       SELECT u.*, c.statut as centre_statut, c.nom_centre as centre_nom, c.logo as centre_logo
