@@ -100,6 +100,23 @@ async function initializeDatabase() {
       }
     }
 
+    // Vérifier/Ajouter la colonne "type" à disponibilites et rendre "responsable" nullable
+    try {
+      await connection.query("ALTER TABLE `disponibilites` ADD COLUMN type VARCHAR(20) NOT NULL DEFAULT 'Entree'");
+      console.log('[DB Migration] Colonne type ajoutée/vérifiée dans la table disponibilites.');
+    } catch (err) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+        console.warn(`[DB Migration Warning] Impossible d'ajouter type à disponibilites:`, err.message);
+      }
+    }
+
+    try {
+      await connection.query('ALTER TABLE `disponibilites` MODIFY COLUMN responsable VARCHAR(100) NULL');
+      console.log('[DB Migration] Colonne responsable rendue nullable dans la table disponibilites.');
+    } catch (err) {
+      console.warn(`[DB Migration Warning] Impossible de modifier la colonne responsable dans disponibilites:`, err.message);
+    }
+
     // Seeder le Super Administrateur (SaaS)
     const SUPER_ADMIN_ID = 1716000000000;
     const [superAdminRows] = await connection.query('SELECT * FROM users WHERE login = ?', ['nassufsoule@gmail.com']);

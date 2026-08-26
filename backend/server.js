@@ -98,7 +98,7 @@ const VALID_COLUMNS = {
   etudiants: ['id', 'centre_id', 'mat', 'nom', 'prenom', 'contact', 'cout', 'date', 'echeance', 'sesId', 'formId', 'photo', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
   paiements: ['id', 'centre_id', 'etuId', 'nom', 'mat', 'montant', 'date', 'sesId', 'formId', 'createdBy', 'createdAt'],
   depenses: ['id', 'centre_id', 'lib', 'montant', 'date', 'sesId', 'det', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
-  disponibilites: ['id', 'centre_id', 'responsable', 'montant', 'detail', 'date', 'createdBy', 'createdAt', 'updatedBy'],
+  disponibilites: ['id', 'centre_id', 'type', 'responsable', 'montant', 'detail', 'date', 'createdBy', 'createdAt', 'updatedBy'],
   backups: ['id', 'centre_id', 'name', 'date', 'type', 'data']
 };
 
@@ -440,6 +440,7 @@ app.get('/api/sync/pull', authenticateToken, async (req, res) => {
 
     const parsedDisponibilites = disponibilites.map(d => ({
       id: Number(d.id),
+      type: d.type || 'Entree',
       responsable: d.responsable,
       montant: parseFloat(d.montant),
       detail: d.detail,

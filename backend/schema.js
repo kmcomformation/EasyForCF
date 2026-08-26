@@ -113,7 +113,8 @@ CREATE TABLE IF NOT EXISTS depenses (
 CREATE TABLE IF NOT EXISTS disponibilites (
   id BIGINT PRIMARY KEY,
   centre_id BIGINT NULL,
-  responsable VARCHAR(100) NOT NULL,
+  type VARCHAR(20) NOT NULL DEFAULT 'Entree',
+  responsable VARCHAR(100) NULL,
   montant DECIMAL(15, 2) NOT NULL DEFAULT 0,
   detail TEXT NULL,
   date DATE NOT NULL,
