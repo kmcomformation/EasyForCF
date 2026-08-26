@@ -15,9 +15,18 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Cache de promesse d'initialisation pour éviter les race-conditions
 let dbInitPromise = null;
+let dbInitialized = false;
 function getDbInitPromise() {
+  if (dbInitialized) return Promise.resolve();
   if (!dbInitPromise) {
-    dbInitPromise = initializeDatabase();
+    dbInitPromise = initializeDatabase()
+      .then(() => {
+        dbInitialized = true;
+      })
+      .catch(err => {
+        dbInitPromise = null; // Réinitialiser pour pouvoir réessayer au prochain appel
+        throw err;
+      });
   }
   return dbInitPromise;
 }

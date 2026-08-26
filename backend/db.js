@@ -245,6 +245,7 @@ async function initializeDatabase() {
   } catch (err) {
     console.error('[DB Error] Impossible d\'initialiser la base de données :', err.message);
     initLogs.push(`Global database initialization error: ${err.message}`);
+    throw err;
   } finally {
     if (connection) connection.release();
   }
