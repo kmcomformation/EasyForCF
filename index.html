@@ -1230,7 +1230,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   </div>
   <div class="logo-sep"></div>
   <nav class="nav" id="main-nav">
-    <button class="nav-btn" onclick="showSection('tdb')" id="nav-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
+    <button class="nav-btn admin-only" onclick="showSection('tdb')" id="nav-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
     <button class="nav-btn active" onclick="showSection('etudiants')" id="nav-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
     <button class="nav-btn" onclick="showSection('paiements')" id="nav-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
     <button class="nav-btn" onclick="showSection('depenses')" id="nav-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
@@ -1280,7 +1280,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 
 <div class="nav-drawer" id="nav-drawer" onclick="closeDrawerOutside(event)">
   <div class="nav-drawer-inner">
-    <button class="nav-btn" onclick="showSection('tdb');closeDrawerAll()" id="nav-m-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
+    <button class="nav-btn admin-only" onclick="showSection('tdb');closeDrawerAll()" id="nav-m-tdb"><i class="fas fa-chart-pie"></i> TDB</button>
     <button class="nav-btn" onclick="showSection('etudiants');closeDrawerAll()" id="nav-m-etudiants"><i class="fas fa-graduation-cap"></i> Étudiants</button>
     <button class="nav-btn" onclick="showSection('paiements');closeDrawerAll()" id="nav-m-paiements"><i class="fas fa-credit-card"></i> Paiements</button>
     <button class="nav-btn" onclick="showSection('depenses');closeDrawerAll()" id="nav-m-depenses"><i class="fas fa-arrow-trend-down"></i> Dépenses</button>
@@ -1521,7 +1521,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <select class="filter-select admin-only" id="etu-f-user" onchange="renderEtudiants()" title="Filtrer par opérateur">
             <option value="">Tous opérateurs</option>
           </select>
-                   <button class="btn-primary" onclick="openModalEtu()"><i class="fas fa-plus"></i> Ajouter</button>
+          <button class="btn-primary" id="btn-add-etu" onclick="openModalEtu()"><i class="fas fa-plus"></i> Ajouter</button>
           <button class="btn-teal" onclick="showRappelsAutomatiques()" title="Voir les échéances dépassées">
     <i class="fas fa-bell"></i> Rappels
 </button>
@@ -1606,7 +1606,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
           <select class="filter-select admin-only" id="dep-f-user" onchange="renderDepenses()" title="Filtrer par opérateur">
             <option value="">Tous opérateurs</option>
           </select>
-          <button class="btn-primary" onclick="openModalDep()"><i class="fas fa-plus"></i> Ajouter</button>
+          <button class="btn-primary" id="btn-add-dep" onclick="openModalDep()"><i class="fas fa-plus"></i> Ajouter</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -1638,7 +1638,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 
           <input type="date" class="filter-select" id="disp-date-from" onchange="renderDisponibilite()" title="Date début" style="min-width:120px;">
           <input type="date" class="filter-select" id="disp-date-to" onchange="renderDisponibilite()" title="Date fin" style="min-width:120px;">
-                    <button class="btn-primary" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
+          <button class="btn-primary" id="btn-add-dispo" onclick="openModalDispo()"><i class="fas fa-plus"></i> Ajouter</button>
         </div>
       </div>
       <div class="table-wrap">
@@ -2804,6 +2804,10 @@ function applyRoleUI(){
   document.getElementById('user-ico').textContent = initials;
 
   if(!isAdmin){
+    // Masquer les indicateurs KPI globaux pour l'utilisateur non admin
+    const statsGrid = document.getElementById('stats-grid');
+    if(statsGrid) statsGrid.style.display = 'none';
+
     // — Dashboard user
     const hasDash = perms.secDashboard === true;
     document.querySelectorAll('.user-dashboard-only').forEach(el => el.style.display = hasDash ? '' : 'none');
@@ -2816,7 +2820,7 @@ function applyRoleUI(){
     const mobileDashBtn = document.getElementById('nav-m-dashboard');
     if(mobileDashBtn) mobileDashBtn.style.display = hasDash ? '' : 'none';
 
-    // — Sections accessibles
+    // — Sections accessibles : masquer strictement les onglets auxquels l'utilisateur n'a PAS accès
     const sections = ['etudiants','paiements','depenses','disponibilite'];
     const permMap = {etudiants:'secEtudiants',paiements:'secPaiements',depenses:'secDepenses',disponibilite:'secDisponibilite'};
     sections.forEach(s=>{
@@ -2828,21 +2832,24 @@ function applyRoleUI(){
       if(mobileNavBtn) mobileNavBtn.style.display = hasAccess ? '' : 'none';
     });
 
-    // Si la section active n'est plus accessible, rediriger vers la première section accessible
+    // Si la section active n'est plus accessible ou est le TDB admin, rediriger vers la première section autorisée
     const activeSection = document.querySelector('.section.active');
     if (activeSection) {
       const activeId = activeSection.id.replace('sec-', '');
       const activePermKey = permMap[activeId];
-      if (activeSection.classList.contains('admin-only') || (activePermKey && perms[activePermKey] !== true) || (activeId === 'dashboard' && !hasDash)) {
-        // Rediriger vers la première section autorisée
+      if (activeSection.classList.contains('admin-only') || (activePermKey && perms[activePermKey] !== true) || (activeId === 'dashboard' && !hasDash) || activeId === 'tdb') {
         if (perms.secEtudiants) showSection('etudiants');
         else if (perms.secPaiements) showSection('paiements');
         else if (perms.secDepenses) showSection('depenses');
+        else if (perms.secDisponibilite) showSection('disponibilite');
         else if (hasDash) showSection('dashboard');
       }
     }
   } else {
-    // Admin: cacher le bouton dashboard user car il a ses propres rapports
+    // Admin: afficher les indicateurs KPI globaux
+    const statsGrid = document.getElementById('stats-grid');
+    if(statsGrid && kpiVisible) statsGrid.style.display = '';
+
     document.querySelectorAll('.user-dashboard-only').forEach(el => el.style.display = 'none');
     const dashBtn = document.getElementById('nav-dashboard');
     if(dashBtn) dashBtn.style.display = 'none';
@@ -2875,7 +2882,22 @@ function getPermDef(u){
   if(!u || !u.perms || Object.keys(u.perms).length === 0) {
     return {secEtudiants:true,secPaiements:false,secDepenses:false,secDisponibilite:false,secDashboard:true,actAddEtu:true,actPay:false,actAddDep:false,actAddDispo:false,actEdit:false,actDel:false,actSystem:false,sesAccess:[]};
   }
-  return u.perms;
+  const p = u.perms;
+  return {
+    secEtudiants: p.secEtudiants ?? true,
+    secPaiements: p.secPaiements ?? false,
+    secDepenses: p.secDepenses ?? false,
+    secDisponibilite: p.secDisponibilite ?? false,
+    secDashboard: p.secDashboard ?? true,
+    actAddEtu: p.actAddEtu ?? true,
+    actPay: p.actPay ?? false,
+    actAddDep: p.actAddDep ?? false,
+    actAddDispo: p.actAddDispo ?? false,
+    actEdit: p.actEdit ?? false,
+    actDel: p.actDel ?? false,
+    actSystem: p.actSystem ?? false,
+    sesAccess: p.sesAccess || []
+  };
 }
 function togglePermFields(){
   const role=document.getElementById('user-role').value;
@@ -2965,6 +2987,17 @@ function toggleKPI(){
    NAVIGATION
    ================================================================ */
 function showSection(id){
+  if(currentRole!=='Admin'){
+    const u=users.find(x=>x.id===currentUserId);
+    const perms=getPermDef(u);
+    const permMap={etudiants:'secEtudiants',paiements:'secPaiements',depenses:'secDepenses',disponibilite:'secDisponibilite',dashboard:'secDashboard'};
+    if(['tdb','sessions','formations','rapport','users'].includes(id)){
+      return;
+    }
+    if(permMap[id] && perms[permMap[id]] !== true){
+      return;
+    }
+  }
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const sec = document.getElementById('sec-'+id);
@@ -3049,12 +3082,13 @@ function currentOp(){ const u=users.find(x=>x.id===currentUserId)||{}; const ful
    ================================================================ */
 function updateStats(filteredEtu){
   const isF = filteredEtu !== undefined;
-  const eL = isF ? filteredEtu : etudiants;
+  const rawEtu = etudiants.filter(e => canUserAccessSes(e.sesId));
+  const eL = isF ? filteredEtu.filter(e => canUserAccessSes(e.sesId)) : rawEtu;
   const eIds = new Set(eL.map(e=>e.id));
-  const enc = paiements.filter(p=>isF?eIds.has(p.etuId):true).reduce((a,p)=>a+Number(p.montant||0),0);
+  const enc = paiements.filter(p=> (isF ? eIds.has(p.etuId) : true) && canUserAccessSes(p.sesId)).reduce((a,p)=>a+Number(p.montant||0),0);
   const cout = eL.reduce((a,e)=>a+Number(e.cout||0),0);
-  const dep = depenses.reduce((a,d)=>a+Number(d.montant||0),0);
-  const actives = sessions.filter(s=>!s.closed).length;
+  const dep = depenses.filter(d=> canUserAccessSes(d.sesId)).reduce((a,d)=>a+Number(d.montant||0),0);
+  const actives = sessions.filter(s=> !s.closed && canUserAccessSes(s.id)).length;
   document.getElementById('s-etudiants').textContent = fmtM(eL.length);
   document.getElementById('s-encaisse').textContent = fmtM(enc);
   document.getElementById('s-reste').textContent = fmtM(Math.max(0,cout-enc));
@@ -3068,7 +3102,8 @@ function updateStats(filteredEtu){
    ================================================================ */
 function populateSelects(){
   formations.forEach(f=>{ if(!f.label) f.label=f.intitule||f.int||''; });
-  const sOpts = sessions.map(s=>`<option value="${s.id}">${esc(s.code)}${s.closed?' <i class="fas fa-lock"></i>':''} — ${esc(s.det)}</option>`).join('');
+  const allowedSessions = sessions.filter(s => canUserAccessSes(s.id));
+  const sOpts = allowedSessions.map(s=>`<option value="${s.id}">${esc(s.code)}${s.closed?' <i class="fas fa-lock"></i>':''} — ${esc(s.det)}</option>`).join('');
   const fOpts = formations.map(f=>`<option value="${f.id}">${esc(f.label||f.intitule||'—')}</option>`).join('');
   const base='<option value="">—</option>';
   const allS='<option value="">Toutes sessions</option>';
@@ -3152,6 +3187,7 @@ function getFilteredEtudiants(){
   const hideSolde=LS('etu_hide_solde')===true;
   const hideClosed=LS('etu_hide_closed')===true;
   return etudiants.filter(e=>{
+    if(!canUserAccessSes(e.sesId)) return false;
     const paye=getPaye(e.id); const st=getStatut(paye,e.cout);
     // Filtre textuel : matricule, nom+prénom, contact
     if(q&&!(e.mat||'').toLowerCase().includes(q)&&((e.nom||'')+' '+(e.prenom||'')).toLowerCase().indexOf(q)<0&&!(e.contact||'').toLowerCase().includes(q)) return false;
@@ -3217,6 +3253,8 @@ function renderEtudiants(){
   const tbody=document.getElementById('tbody-etudiants');
   const empty=document.getElementById('etu-empty');
   const tot=document.getElementById('etu-tot');
+  const btnAddEtu = document.getElementById('btn-add-etu');
+  if(btnAddEtu) btnAddEtu.style.display = hasPermission('actAddEtu') ? '' : 'none';
   if(!data.length){ tbody.innerHTML=''; empty.style.display='block'; tot.style.display='none'; return; }
   empty.style.display='none';
   const isAdmin=currentRole==='Admin';
@@ -3563,6 +3601,7 @@ function renderPaiements(){
   // Récupère le filtre par utilisateur (vide = tous, sinon ID numérique)
   const fusr=document.getElementById('pay-f-user')?.value||'';
   const data=paiements.filter(p=>{
+    if(!canUserAccessSes(p.sesId)) return false;
     // Filtre textuel : nom ou matricule de l'étudiant
     if(q&&!(p.nom||'').toLowerCase().includes(q)&&!(p.mat||'').toLowerCase().includes(q)) return false;
     // Filtre par session
@@ -3919,6 +3958,7 @@ function renderDepenses(){
   // Récupère le filtre par utilisateur (vide = tous, sinon ID numérique)
   const fusr=document.getElementById('dep-f-user')?.value||'';
   const data=depenses.filter(d=>{
+    if(!canUserAccessSes(d.sesId)) return false;
     // Filtre textuel : libellé de la dépense
     if(q&&!(d.lib||'').toLowerCase().includes(q)) return false;
     // Filtre par session
@@ -3936,6 +3976,8 @@ function renderDepenses(){
   const tbody=document.getElementById('tbody-depenses');
   const empty=document.getElementById('dep-empty');
   const tot=document.getElementById('dep-tot');
+  const btnAddDep = document.getElementById('btn-add-dep');
+  if(btnAddDep) btnAddDep.style.display = hasPermission('actAddDep') ? '' : 'none';
   if(!data.length){ tbody.innerHTML=''; empty.style.display='block'; tot.style.display='none'; return; }
   empty.style.display='none'; tot.style.display='flex';
   tot.textContent='Total : '+fmtM(data.reduce((a,d)=>a+Number(d.montant||0),0))+' FC';
@@ -4368,8 +4410,9 @@ function renderUsers(){
     let permSummary='—';
     if(u.role==='Admin'){ permSummary='<span class="badge b-info" style="font-size:9px">Accès total</span>'; }
     else if(perms){
-      const secs=[perms.secEtudiants&&'<i class="fas fa-graduation-cap"></i>',perms.secPaiements&&'<i class="fas fa-credit-card"></i>',perms.secDepenses&&'<i class="fas fa-arrow-trend-down"></i>',perms.secDisponibilite&&'<i class="fas fa-wallet"></i>',perms.secDashboard&&'<i class="fas fa-chart-bar"></i>'].filter(Boolean);
-      const acts=[perms.actAddEtu&&'Aj.Etu',perms.actPay&&'Pmt',perms.actAddDep&&'Aj.Dep',perms.actEdit&&'Mod',perms.actDel&&'Sup'].filter(Boolean);
+      const p = getPermDef(u);
+      const secs=[p.secEtudiants&&'<i class="fas fa-graduation-cap"></i>',p.secPaiements&&'<i class="fas fa-credit-card"></i>',p.secDepenses&&'<i class="fas fa-arrow-trend-down"></i>',p.secDisponibilite&&'<i class="fas fa-wallet"></i>',p.secDashboard&&'<i class="fas fa-chart-bar"></i>'].filter(Boolean);
+      const acts=[p.actAddEtu&&'Aj.Etu',p.actPay&&'Pmt',p.actAddDep&&'Aj.Dep',p.actAddDispo&&'Aj.Dispo',p.actEdit&&'Mod',p.actDel&&'Sup'].filter(Boolean);
       permSummary=`<div style="font-size:9px;line-height:1.8">${secs.join(' ')}<br><span style="color:var(--text-m)">${acts.join(' · ')||'Aucune action'}</span></div>`;
     } else { permSummary='<span class="badge b-warning" style="font-size:9px">Non configuré</span>'; }
     
@@ -4459,6 +4502,9 @@ function renderDisponibilite(){
   const isAdmin=currentRole==='Admin';
   const canEditDispo=hasPermission('actEdit');
   const canDelDispo=hasPermission('actDel');
+  const canAddDispo=hasPermission('actAddDispo');
+  const btnAddDispo=document.getElementById('btn-add-dispo');
+  if(btnAddDispo) btnAddDispo.style.display = canAddDispo ? '' : 'none';
   const filterType=document.getElementById('disp-f-type')?.value||'';
 
   const dateFrom=document.getElementById('disp-date-from')?.value||'';
@@ -5209,6 +5255,7 @@ function renderDashboard(){
    INIT APP
    ================================================================ */
 function initApp(){
+    applyRoleUI();
     setDateBadge();
     
     // Apply centre branding if available
@@ -5243,7 +5290,7 @@ function initApp(){
     renderEtudiants(); renderPaiements(); renderDepenses();
     renderSessions(); renderFormations(); renderUsers(); renderDisponibilite(); updateStats();
     
-       verifierRappelsQuotidiens();
+    verifierRappelsQuotidiens();
 
     if (!appBooted) {
         // Premier chargement (juste après connexion) : on choisit l'écran par défaut
@@ -5252,14 +5299,13 @@ function initApp(){
             showSection('tdb');
         } else {
             const u = users.find(x => x.id === currentUserId);
-            const perms = u && u.perms ? u.perms : {};
-            if (perms.secDashboard !== false) {
-                showSection('dashboard');
-            } else if (perms.secEtudiants !== false) {
-                showSection('etudiants');
-            } else {
-                showSection('dashboard');
-            }
+            const perms = getPermDef(u);
+            if (perms.secEtudiants) showSection('etudiants');
+            else if (perms.secPaiements) showSection('paiements');
+            else if (perms.secDepenses) showSection('depenses');
+            else if (perms.secDisponibilite) showSection('disponibilite');
+            else if (perms.secDashboard) showSection('dashboard');
+            else showSection('dashboard');
         }
     } else {
         // Rafraîchissement automatique (sync) : on reste sur la fenêtre en cours
