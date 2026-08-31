@@ -117,6 +117,34 @@ async function initializeDatabase() {
       console.warn(`[DB Migration Warning] Impossible de modifier la colonne responsable dans disponibilites:`, err.message);
     }
 
+    // Migration pour date_naissance et lieu_naissance dans etudiants
+    try {
+      await connection.query('ALTER TABLE `etudiants` ADD COLUMN date_naissance DATE NULL');
+      console.log('[DB Migration] Colonne date_naissance ajoutée/vérifiée dans la table etudiants.');
+    } catch (err) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+        console.warn(`[DB Migration Warning] Impossible d'ajouter date_naissance à etudiants:`, err.message);
+      }
+    }
+    try {
+      await connection.query('ALTER TABLE `etudiants` ADD COLUMN lieu_naissance VARCHAR(150) NULL');
+      console.log('[DB Migration] Colonne lieu_naissance ajoutée/vérifiée dans la table etudiants.');
+    } catch (err) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+        console.warn(`[DB Migration Warning] Impossible d'ajouter lieu_naissance à etudiants:`, err.message);
+      }
+    }
+
+    // Migration pour modules dans formations
+    try {
+      await connection.query('ALTER TABLE `formations` ADD COLUMN modules TEXT NULL');
+      console.log('[DB Migration] Colonne modules ajoutée/vérifiée dans la table formations.');
+    } catch (err) {
+      if (err.code !== 'ER_DUP_FIELDNAME' && err.errno !== 1060) {
+        console.warn(`[DB Migration Warning] Impossible d'ajouter modules à formations:`, err.message);
+      }
+    }
+
     // Seeder le Super Administrateur (SaaS)
     const SUPER_ADMIN_ID = 1716000000000;
     const [superAdminRows] = await connection.query('SELECT * FROM users WHERE login = ?', ['nassufsoule@gmail.com']);

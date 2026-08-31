@@ -365,35 +365,41 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .print-btn:hover{opacity:.9;}
 /* ATTESTATION — Certificat officiel (modèle ComFormation) */
 .att-card{position:relative;width:100%;aspect-ratio:3/2;background:#faf8f3;overflow:hidden;border-radius:2px;box-shadow:0 4px 28px rgba(15,34,72,.18);font-family:Georgia,'Times New Roman',serif;container-type:inline-size;}
-.att-corner{position:absolute;width:5cqw;height:5cqw;border:.12cqw solid #c8972a;}
-.att-corner.tl{top:1.6cqw;left:1.6cqw;border-right:none;border-bottom:none;}
-.att-corner.tr{top:1.6cqw;right:1.6cqw;border-left:none;border-bottom:none;}
-.att-corner.bl{bottom:1.6cqw;left:1.6cqw;border-right:none;border-top:none;}
-.att-corner.br{bottom:1.6cqw;right:1.6cqw;border-left:none;border-top:none;}
-.att-border-outer{position:absolute;inset:3.2cqw;border:.09cqw solid #0f2248;}
-.att-border-inner{position:absolute;inset:3.55cqw;border:.045cqw solid #c8972a;}
-.att-content{position:absolute;inset:3.55cqw;padding:3cqw 5.5cqw;display:flex;flex-direction:column;align-items:center;}
-.att-emblem{width:7cqw;height:7cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:.5cqw;flex-shrink:0;}
-.att-emblem::before{content:'';position:absolute;inset:-.5cqw;border:.06cqw solid #c8972a;border-radius:50%;}
-.att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
-.att-eyebrow{margin-top:1.6cqw;font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
-.att-title{font-family:'Playfair Display',Georgia,serif;font-size:5cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.4cqw;line-height:1;}
-.att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.7cqw;}
-.att-subtitle-row .ln{width:6cqw;height:1px;background:#c8972a;}
-.att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.15cqw;font-weight:700;letter-spacing:.5cqw;color:#0f2248;text-transform:uppercase;}
-.att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1cqw;padding:1.5cqw 3cqw 0;max-width:100%;}
+.att-corner{position:absolute;width:4.5cqw;height:4.5cqw;border:.12cqw solid #c8972a;}
+.att-corner.tl{top:1.1cqw;left:1.1cqw;border-right:none;border-bottom:none;}
+.att-corner.tr{top:1.1cqw;right:1.1cqw;border-left:none;border-bottom:none;}
+.att-corner.bl{bottom:1.1cqw;left:1.1cqw;border-right:none;border-top:none;}
+.att-corner.br{bottom:1.1cqw;right:1.1cqw;border-left:none;border-top:none;}
+.att-border-outer{position:absolute;inset:1.8cqw;border:.1cqw solid #0f2248;}
+.att-border-inner{position:absolute;inset:2.15cqw;border:.05cqw solid #c8972a;}
+.att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;}
+.att-emblem{width:5.2cqw;height:5.2cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;flex-shrink:0;}
+.att-emblem::before{content:'';position:absolute;inset:-.4cqw;border:.06cqw solid #c8972a;border-radius:50%;}
+.att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.2cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
+.att-eyebrow{margin-top:.4cqw;font-family:'DM Sans',sans-serif;font-size:.82cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
+.att-title{font-family:'Playfair Display',Georgia,serif;font-size:4.2cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.1cqw;line-height:1;}
+.att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.3cqw;}
+.att-subtitle-row .ln{width:5.5cqw;height:1px;background:#c8972a;}
+.att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.05cqw;font-weight:700;letter-spacing:.45cqw;color:#0f2248;text-transform:uppercase;}
+.att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.35cqw;padding:.3cqw 0 0;max-width:100%;}
 .att-lead{font-size:1.05cqw;color:#3a4a63;font-style:italic;}
-.att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#0f2248;padding-bottom:.5cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:42%;}
-.att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.2cqw;}
-.att-para{font-size:.95cqw;color:#3a4a63;line-height:1.7;max-width:76%;margin-top:.4cqw;}
-.att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:1.8cqw;}
-.att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
+.att-birth{font-size:1.05cqw;color:#0f2248;font-style:italic;margin-top:.05cqw;}
+.att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.5cqw;font-weight:700;color:#0f2248;padding-bottom:.25cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:45%;display:inline-block;}
+.att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.1cqw;}
+.att-units-lead{font-family:Georgia,'Times New Roman',serif;font-size:1.05cqw;color:#b42318;font-style:italic;margin-top:.25cqw;margin-bottom:.15cqw;text-align:center;}
+.att-units-grid{display:grid;grid-template-columns:repeat(2,1fr);column-gap:5cqw;row-gap:.2cqw;max-width:75%;margin:0 auto;text-align:left;padding:0;}
+.att-units-grid.single{grid-template-columns:1fr;text-align:center;}
+.att-unit-item{display:flex;align-items:center;gap:.5cqw;font-family:Georgia,'Times New Roman',serif;font-size:1.05cqw;color:#0f2248;font-weight:600;}
+.att-unit-dot{color:#0f2248;font-size:1.2cqw;line-height:1;font-weight:bold;}
+.att-para{font-size:.95cqw;color:#3a4a63;line-height:1.45;max-width:82%;margin-top:.25cqw;}
+.att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;padding-top:.4cqw;}
+.att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.5;}
 .att-ref b{color:#0f2248;}
-.att-stamp-zone{flex:0 0 auto;width:8cqw;height:8cqw;border-radius:50%;border:.09cqw dashed #c8972a;display:flex;align-items:center;justify-content:center;margin:0 2cqw;}
-.att-stamp-zone span{font-family:'DM Sans',sans-serif;font-size:.55cqw;font-weight:700;color:#c8972a;text-transform:uppercase;letter-spacing:.08cqw;line-height:1.4;text-align:center;}
+.att-stamp-zone{flex:0 0 auto;width:6.8cqw;height:6.8cqw;border-radius:50%;border:.09cqw dashed #c8972a;display:flex;align-items:center;justify-content:center;margin:0 1.5cqw;}
+.att-stamp-zone span{font-family:'DM Sans',sans-serif;font-size:.52cqw;font-weight:700;color:#c8972a;text-transform:uppercase;letter-spacing:.08cqw;line-height:1.3;text-align:center;}
 .att-sign-block{flex:1;text-align:right;}
-.att-sign-title{font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;color:#0f2248;text-transform:uppercase;letter-spacing:.15cqw;margin-bottom:2.4cqw;}
-.att-sign-line{width:9cqw;height:.06cqw;background:#0f2248;margin:0 0 .5cqw auto;}
+.att-sign-title{font-family:'DM Sans',sans-serif;font-size:.82cqw;font-weight:700;color:#0f2248;text-transform:uppercase;letter-spacing:.12cqw;margin-bottom:1.8cqw;}
+.att-sign-line{width:8.5cqw;height:.06cqw;background:#0f2248;margin:0 0 .3cqw auto;}
 .att-sign-name{font-family:'DM Sans',sans-serif;font-size:.8cqw;color:#6b7ea4;}
 
 .pbar-modal{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px;}
@@ -1539,7 +1545,7 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
         <table>
           <thead>
     <tr>
-        <th>Matricule</th><th>Nom &amp; Prénom</th><th>Contact</th>
+        <th>Matricule</th><th>Nom &amp; Prénom</th><th>Date Naiss.</th><th>Lieu Naiss.</th><th>Contact</th>
         <th>Session</th><th>Formation</th><th>Coût total</th>
         <th>Payé / Prog.</th><th>Statut</th>
         <th>Échéance</th>  
@@ -1780,6 +1786,8 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
       <div class="fg"><label>Date d'inscription</label><input type="date" id="etu-date"></div>
       <div class="fg"><label>Nom *</label><input type="text" id="etu-nom" placeholder="Nom de famille" maxlength="80"></div>
       <div class="fg"><label>Prénom *</label><input type="text" id="etu-prenom" placeholder="Prénom" maxlength="80"></div>
+      <div class="fg"><label>Date de naissance</label><input type="date" id="etu-date-naissance"></div>
+      <div class="fg"><label>Lieu de naissance</label><input type="text" id="etu-lieu-naissance" placeholder="Ex: Moroni, Grande Comore" maxlength="150"></div>
       <div class="fg"><label>Contact (téléphone)</label><input type="tel" id="etu-contact" placeholder="+269 XXX XXX XXX" maxlength="30"></div>
       <!-- À l'intérieur de <div class="form-grid">, après le champ Contact, ajoutez : -->
 <div class="fg form-full">
@@ -1913,6 +1921,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
   <div class="modal-body">
     <div class="form-grid c1">
       <div class="fg"><label>Intitulé *</label><input type="text" id="form-int" placeholder="Ex: Bureautique, Comptabilité…" maxlength="100"></div>
+      <div class="fg"><label>Modules de la formation</label>
+        <textarea id="form-modules" rows="3" style="resize:vertical;" placeholder="Ex: Module 1: Word, Module 2: Excel, Module 3: PowerPoint..." maxlength="1000"></textarea>
+        <div class="form-note">Saisissez les modules dispensés pour cette formation (ils s'afficheront sur l'attestation).</div>
+      </div>
     </div>
   </div>
   <div class="modal-footer">
@@ -3252,6 +3264,8 @@ function renderEtudiants(){
 return `<tr class="${closed?'row-closed':''}">
     <td><span class="matricule">${esc(e.mat)}</span></td>
     <td><strong>${esc(sanitize(e.nom))}</strong> ${esc(sanitize(e.prenom))}</td>
+    <td style="white-space:nowrap">${e.date_naissance ? fmtDate(e.date_naissance) : '—'}</td>
+    <td>${e.lieu_naissance ? esc(sanitize(e.lieu_naissance)) : '—'}</td>
     <td>${tel}</td>
     <td>${esc(getSesLabel(e.sesId))}${closedBadge}</td>
     <td>${esc(getFormLabel(e.formId))}</td>
@@ -3261,7 +3275,7 @@ return `<tr class="${closed?'row-closed':''}">
     <td style="white-space:nowrap; ${e.echeance && e.echeance < today() && paye < e.cout ? 'color:var(--danger); font-weight:700;' : ''}">
         ${e.echeance ? fmtDate(e.echeance) : '—'}
         ${e.echeance && e.echeance < today() && paye < e.cout ? ' <i class="fas fa-triangle-exclamation"></i>' : ''}
-    </td>  <!-- <i class="fas fa-triangle-exclamation"></i> AJOUTER CETTE LIGNE -->
+    </td>
     <td style="white-space:nowrap">${fmtDate(e.date)}</td>
     <td>${opLabel}</td>
     <td><div class="actions">${actions}</div></td>
@@ -3328,9 +3342,9 @@ function openModalEtu(){
     editEtuId=null;
     document.getElementById('etu-mtitle').textContent='Ajouter un Étudiant';
     document.getElementById('etu-mat').value='';
-    ['etu-nom','etu-prenom','etu-contact','etu-cout'].forEach(i=>{ const el=document.getElementById(i); if(el) el.value=''; });
+    ['etu-nom','etu-prenom','etu-contact','etu-cout','etu-date-naissance','etu-lieu-naissance'].forEach(i=>{ const el=document.getElementById(i); if(el) el.value=''; });
     document.getElementById('etu-date').value=today();
-    document.getElementById('etu-echeance').value = ''; // <i class="fas fa-triangle-exclamation"></i> AJOUTER CETTE LIGNE
+    document.getElementById('etu-echeance').value = '';
     document.getElementById('etu-closed-notice').style.display='none';
     populateSelects();
 
@@ -3367,6 +3381,8 @@ function editEtudiantF(id){
     document.getElementById('etu-cout').value=e.cout||0;
     document.getElementById('etu-date').value=e.date||'';
     document.getElementById('etu-echeance').value=e.echeance || '';
+    document.getElementById('etu-date-naissance').value=e.date_naissance || '';
+    document.getElementById('etu-lieu-naissance').value=e.lieu_naissance || '';
     document.getElementById('etu-ses').value=e.sesId||'';
     document.getElementById('etu-form').value=e.formId||'';
     document.getElementById('etu-closed-notice').style.display='none';
@@ -3379,6 +3395,8 @@ function saveEtudiant(){
     const cout = Math.max(0, parseFloat(document.getElementById('etu-cout').value) || 0);
     const date = document.getElementById('etu-date').value;
     const echeance = document.getElementById('etu-echeance').value || null;
+    const date_naissance = document.getElementById('etu-date-naissance').value || null;
+    const lieu_naissance = sanitize(document.getElementById('etu-lieu-naissance').value, 150) || null;
     const sesId = document.getElementById('etu-ses').value;
     const formId = document.getElementById('etu-form').value;
     const mat = sanitize(document.getElementById('etu-mat').value, 50) || ('MAT-' + generateId().toString().slice(-6));
@@ -3408,7 +3426,7 @@ function saveEtudiant(){
         return;
     }
     
-    // Sauvegarde sans photo
+    // Sauvegarde
     if(editEtuId !== null){
         // Mode modification
         const i = etudiants.findIndex(x => x.id === editEtuId);
@@ -3424,6 +3442,8 @@ function saveEtudiant(){
                 sesId: sesId ? Number(sesId) : null,
                 formId: formId ? Number(formId) : null,
                 echeance,
+                date_naissance,
+                lieu_naissance,
                 updatedBy: currentUserId,
                 updatedAt: today()
             };
@@ -3444,6 +3464,8 @@ function saveEtudiant(){
             sesId: sesId ? Number(sesId) : null,
             formId: formId ? Number(formId) : null,
             echeance,
+            date_naissance,
+            lieu_naissance,
             createdBy: currentUserId,
             createdAt: today()
         };
@@ -3661,6 +3683,21 @@ function openAttestation(etuId){
   const now = new Date().toLocaleDateString('fr-FR');
   const initials = centerInitials(centreNom);
 
+  // Récupération de la formation et de ses modules
+  const form = formations.find(f => String(f.id) === String(e.formId));
+  const formLabel = form ? (form.label || form.intitule || '') : getFormLabel(e.formId);
+  const modulesList = (form && form.modules)
+    ? form.modules.split(/[\n,;•-]+/).map(m => m.trim()).filter(Boolean)
+    : [];
+
+  // Informations de naissance (date et lieu)
+  let birthInfo = '';
+  if (e.date_naissance || e.lieu_naissance) {
+    const dStr = e.date_naissance ? `le ${fmtDate(e.date_naissance)}` : '';
+    const lStr = e.lieu_naissance ? `à ${esc(sanitize(e.lieu_naissance))}` : '';
+    birthInfo = `<div class="att-birth">Né(e) ${dStr} ${lStr}</div>`;
+  }
+
   const html = `
     <div class="att-card" id="att-zone">
       <div class="att-corner tl"></div><div class="att-corner tr"></div>
@@ -3668,8 +3705,7 @@ function openAttestation(etuId){
       <div class="att-border-outer"></div>
       <div class="att-border-inner"></div>
       <div class="att-content">
-        
-                <div class="att-emblem">
+        <div class="att-emblem">
           <svg viewBox="0 0 100 100" width="66%" height="66%" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#f0b840">
             <path d="M18,72 C14,58 16,44 26,30" stroke-width="2.2" stroke-linecap="round"/>
             <path d="M20,66 L13,64 M22,58 L14,57 M24,50 L16,48 M26,42 L18,39 M28,35 L21,31" stroke-width="1.6" stroke-linecap="round"/>
@@ -3690,10 +3726,22 @@ function openAttestation(etuId){
         <div class="att-body">
           <div class="att-lead">Il est certifié par la présente que</div>
           <div class="att-name">${esc(sanitize(e.nom))} ${esc(sanitize(e.prenom))}</div>
-          <div class="att-lead">a suivi avec assiduité et validé intégralement la formation</div>
-          <div class="att-course">${esc(getFormLabel(e.formId))}</div>
-                   <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}.</div>
-          <div class="att-para" style="margin-top:1.8cqw;">La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
+          ${birthInfo}
+          <div class="att-lead" style="margin-top:.3cqw;">a suivi avec assiduité et validé intégralement la formation</div>
+          <div class="att-course">${esc(formLabel)}</div>
+          ${modulesList.length ? `
+            <div class="att-units-lead">et a couvert les modules suivants :</div>
+            <div class="att-units-grid ${modulesList.length === 1 ? 'single' : ''}">
+              ${modulesList.map(m => `
+                <div class="att-unit-item">
+                  <span class="att-unit-dot">•</span>
+                  <span>${esc(m)}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+          <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}.</div>
+          <div class="att-para" style="margin-top:.2cqw;">La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
         </div>
         <div class="att-footer">
           <div class="att-ref">
@@ -3703,7 +3751,6 @@ function openAttestation(etuId){
             Session : ${esc(getSesLabel(e.sesId))}
           </div>
           <div class="att-sign-block">
-
             <div class="att-sign-title">Le Directeur Général</div>
             <div class="att-sign-line"></div>
             <div class="att-sign-name">${esc(centreNom)}</div>
@@ -3736,28 +3783,42 @@ function printAttestation(){
     .att-corner.br{bottom:1.6cqw;right:1.6cqw;border-left:none;border-top:none;}
     .att-border-outer{position:absolute;inset:3.2cqw;border:.09cqw solid #0f2248;}
     .att-border-inner{position:absolute;inset:3.55cqw;border:.045cqw solid #c8972a;}
-    .att-content{position:absolute;inset:3.55cqw;padding:3cqw 5.5cqw;display:flex;flex-direction:column;align-items:center;}
-    .att-emblem{width:7cqw;height:7cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:.5cqw;}
-    .att-emblem::before{content:'';position:absolute;inset:-.5cqw;border:.06cqw solid #c8972a;border-radius:50%;}
-    .att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
-    .att-eyebrow{margin-top:1.6cqw;font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
-    .att-title{font-family:'Playfair Display',Georgia,serif;font-size:5cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.4cqw;line-height:1;}
-    .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.7cqw;}
-    .att-subtitle-row .ln{width:6cqw;height:1px;background:#c8972a;}
-    .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.15cqw;font-weight:700;letter-spacing:.5cqw;color:#0f2248;text-transform:uppercase;}
-    .att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:1cqw;padding:1.5cqw 3cqw 0;}
-    .att-lead{font-size:1.3cqw;color:#3a4a63;font-style:italic;}
-    .att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.6cqw;font-weight:700;color:#0f2248;padding-bottom:.5cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:42%;}
-    .att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.2cqw;}
-    .att-para{font-size:1.15cqw;color:#3a4a63;line-height:1.75;max-width:78%;margin-top:.4cqw;}
-    .att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:1.8cqw;}
-    .att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.7;}
+    .att-card{position:relative;width:100%;max-width:277mm;aspect-ratio:3/2;background:#faf8f3;overflow:hidden;border-radius:2px;box-shadow:0 4px 28px rgba(15,34,72,.18);font-family:Georgia,'Times New Roman',serif;container-type:inline-size;}
+    .att-corner{position:absolute;width:4.5cqw;height:4.5cqw;border:.12cqw solid #c8972a;}
+    .att-corner.tl{top:1.1cqw;left:1.1cqw;border-right:none;border-bottom:none;}
+    .att-corner.tr{top:1.1cqw;right:1.1cqw;border-left:none;border-bottom:none;}
+    .att-corner.bl{bottom:1.1cqw;left:1.1cqw;border-right:none;border-top:none;}
+    .att-corner.br{bottom:1.1cqw;right:1.1cqw;border-left:none;border-top:none;}
+    .att-border-outer{position:absolute;inset:1.8cqw;border:.1cqw solid #0f2248;}
+    .att-border-inner{position:absolute;inset:2.15cqw;border:.05cqw solid #c8972a;}
+    .att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;}
+    .att-emblem{width:5.2cqw;height:5.2cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;}
+    .att-emblem::before{content:'';position:absolute;inset:-.4cqw;border:.06cqw solid #c8972a;border-radius:50%;}
+    .att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.2cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
+    .att-eyebrow{margin-top:.4cqw;font-family:'DM Sans',sans-serif;font-size:.82cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
+    .att-title{font-family:'Playfair Display',Georgia,serif;font-size:4.2cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.1cqw;line-height:1;}
+    .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.3cqw;}
+    .att-subtitle-row .ln{width:5.5cqw;height:1px;background:#c8972a;}
+    .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.05cqw;font-weight:700;letter-spacing:.45cqw;color:#0f2248;text-transform:uppercase;}
+    .att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.35cqw;padding:.3cqw 0 0;}
+    .att-lead{font-size:1.05cqw;color:#3a4a63;font-style:italic;}
+    .att-birth{font-size:1.05cqw;color:#0f2248;font-style:italic;margin-top:.05cqw;}
+    .att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.5cqw;font-weight:700;color:#0f2248;padding-bottom:.25cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:45%;display:inline-block;}
+    .att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.1cqw;}
+    .att-units-lead{font-family:Georgia,'Times New Roman',serif;font-size:1.05cqw;color:#b42318;font-style:italic;margin-top:.25cqw;margin-bottom:.15cqw;text-align:center;}
+    .att-units-grid{display:grid;grid-template-columns:repeat(2,1fr);column-gap:5cqw;row-gap:.2cqw;max-width:75%;margin:0 auto;text-align:left;padding:0;}
+    .att-units-grid.single{grid-template-columns:1fr;text-align:center;}
+    .att-unit-item{display:flex;align-items:center;gap:.5cqw;font-family:Georgia,'Times New Roman',serif;font-size:1.05cqw;color:#0f2248;font-weight:600;}
+    .att-unit-dot{color:#0f2248;font-size:1.2cqw;line-height:1;font-weight:bold;}
+    .att-para{font-size:.95cqw;color:#3a4a63;line-height:1.45;max-width:82%;margin-top:.25cqw;}
+    .att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;padding-top:.4cqw;}
+    .att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.5;}
     .att-ref b{color:#0f2248;}
-    .att-stamp-zone{flex:0 0 auto;width:8cqw;height:8cqw;border-radius:50%;border:.09cqw dashed #c8972a;display:flex;align-items:center;justify-content:center;margin:0 2cqw;}
-    .att-stamp-zone span{font-family:'DM Sans',sans-serif;font-size:.55cqw;font-weight:700;color:#c8972a;text-transform:uppercase;letter-spacing:.08cqw;line-height:1.4;text-align:center;}
+    .att-stamp-zone{flex:0 0 auto;width:6.8cqw;height:6.8cqw;border-radius:50%;border:.09cqw dashed #c8972a;display:flex;align-items:center;justify-content:center;margin:0 1.5cqw;}
+    .att-stamp-zone span{font-family:'DM Sans',sans-serif;font-size:.52cqw;font-weight:700;color:#c8972a;text-transform:uppercase;letter-spacing:.08cqw;line-height:1.3;text-align:center;}
     .att-sign-block{flex:1;text-align:right;}
-    .att-sign-title{font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;color:#0f2248;text-transform:uppercase;letter-spacing:.15cqw;margin-bottom:2.4cqw;}
-    .att-sign-line{width:9cqw;height:.06cqw;background:#0f2248;margin:0 0 .5cqw auto;}
+    .att-sign-title{font-family:'DM Sans',sans-serif;font-size:.82cqw;font-weight:700;color:#0f2248;text-transform:uppercase;letter-spacing:.12cqw;margin-bottom:1.8cqw;}
+    .att-sign-line{width:8.5cqw;height:.06cqw;background:#0f2248;margin:0 0 .3cqw auto;}
     .att-sign-name{font-family:'DM Sans',sans-serif;font-size:.8cqw;color:#6b7ea4;}
     .print-btn{display:none;}
   </style></head><body>${zone.innerHTML}</body></html>`);
@@ -4013,25 +4074,36 @@ const fcols=['#1a4eb8','#16a34a','#2bbf9b','#d97706','#dc2626','#7c3aed','#0891b
 function openModalFormation(id){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   editFormId=id||null;
-  if(id){ const f=formations.find(x=>x.id===id); if(!f) return; document.getElementById('form-mtitle').textContent='Modifier Formation'; document.getElementById('form-int').value=f.label||f.intitule||''; }
-  else { document.getElementById('form-mtitle').textContent='Nouvelle Formation'; document.getElementById('form-int').value=''; }
+  if(id){
+    const f=formations.find(x=>x.id===id);
+    if(!f) return;
+    document.getElementById('form-mtitle').textContent='Modifier Formation';
+    document.getElementById('form-int').value=f.label||f.intitule||'';
+    document.getElementById('form-modules').value=f.modules||'';
+  } else {
+    document.getElementById('form-mtitle').textContent='Nouvelle Formation';
+    document.getElementById('form-int').value='';
+    document.getElementById('form-modules').value='';
+  }
   openModal('formation');
 }
 function saveFormation(){
   if(currentRole!=='Admin'){ alert('Accès refusé.'); return; }
   const label=sanitize(document.getElementById('form-int').value,100);
+  const modules=sanitize(document.getElementById('form-modules').value,1000)||'';
   if(!label){ alert('Intitulé requis.'); return; }
   if(editFormId!==null){
     const i=formations.findIndex(x=>x.id===editFormId);
     if(i>=0){
       formations[i].label=label;
       formations[i].intitule=label;
+      formations[i].modules=modules;
       saveAll();
       queueSyncOperation('UPDATE', 'formations', editFormId, formations[i]);
     }
   } else {
     const id=generateId();
-    const newForm = {id,label,intitule:label};
+    const newForm = {id,label,intitule:label,modules};
     formations.push(newForm);
     saveAll();
     queueSyncOperation('CREATE', 'formations', id, newForm);
@@ -4045,10 +4117,13 @@ function renderFormations(){
     const lbl=f.label||f.intitule||'—';
     const cnt=etudiants.filter(e=>e.formId==f.id).length;
     const enc=paiements.filter(p=>etudiants.find(e=>e.id===p.etuId&&e.formId==f.id)).reduce((a,p)=>a+Number(p.montant||0),0);
+    const modTxt = f.modules ? `<div style="font-size:11px;color:var(--text-m);margin-top:3px;font-style:italic;"><i class="fas fa-layer-group" style="margin-right:3px;"></i> Modules : ${esc(f.modules.length > 50 ? f.modules.substring(0,50)+'...' : f.modules)}</div>` : '';
     return `<div class="mini-card">
       <div class="mc-ico" style="background:${fcols[i%fcols.length]};font-size:16px"><i class="fas fa-book-open"></i></div>
       <div class="mini-card-body"><div class="mini-card-title">${esc(lbl)}</div>
-        <div class="mini-card-sub">${cnt} étudiant(s) · Encaissé: ${fmtM(enc)} FC</div></div>
+        <div class="mini-card-sub">${cnt} étudiant(s) · Encaissé: ${fmtM(enc)} FC</div>
+        ${modTxt}
+      </div>
       <button class="act-btn ab-edit" onclick="openModalFormation(${f.id})" title="Modifier"><i class="fas fa-pencil"></i></button>
       <button class="act-btn ab-del" onclick="delFormation(${f.id})" title="Supprimer"><i class="fas fa-trash"></i></button></div>`;
   }).join('');
@@ -4607,6 +4682,8 @@ function parseExcelToStandardJSON(wb) {
         mat: r.Matricule || 'MAT-' + String(idx + 1).padStart(5, '0'),
         nom: r.Nom || '',
         prenom: r.Prenom || '',
+        date_naissance: parseDate(r.Date_Naissance || r.Date_Naiss),
+        lieu_naissance: r.Lieu_Naissance || r.Lieu_Naiss || null,
         contact: r.Contact || '',
         cout: parseFloat(r.Cout_Total) || 0,
         date: parseDate(r.Date),
@@ -5504,7 +5581,8 @@ function exportExcelBackup(){
   try{
     const wb=XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(etudiants.map(e=>({
-      Matricule:e.mat||'',Nom:e.nom||'',Prenom:e.prenom||'',Contact:e.contact||'',
+      Matricule:e.mat||'',Nom:e.nom||'',Prenom:e.prenom||'',
+      Date_Naissance:e.date_naissance||'',Lieu_Naissance:e.lieu_naissance||'',Contact:e.contact||'',
       Session:getSesLabel(e.sesId),Formation:getFormLabel(e.formId),
       Cout_Total:Number(e.cout)||0,Paye:getPaye(e.id),Reste:Math.max(0,Number(e.cout||0)-getPaye(e.id)),
       Statut:getStatut(getPaye(e.id),e.cout).l,Date:e.date||''

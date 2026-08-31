@@ -103,8 +103,8 @@ app.get('/api/diag', async (req, res) => {
 const VALID_COLUMNS = {
   users: ['id', 'centre_id', 'login', 'pwd', 'role', 'perms', 'legacy', 'nom', 'prenom', 'num'],
   sessions: ['id', 'centre_id', 'code', 'det', 'closed'],
-  formations: ['id', 'centre_id', 'label'],
-  etudiants: ['id', 'centre_id', 'mat', 'nom', 'prenom', 'contact', 'cout', 'date', 'echeance', 'sesId', 'formId', 'photo', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
+  formations: ['id', 'centre_id', 'label', 'modules'],
+  etudiants: ['id', 'centre_id', 'mat', 'nom', 'prenom', 'contact', 'cout', 'date', 'echeance', 'sesId', 'formId', 'photo', 'date_naissance', 'lieu_naissance', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
   paiements: ['id', 'centre_id', 'etuId', 'nom', 'mat', 'montant', 'date', 'sesId', 'formId', 'createdBy', 'createdAt'],
   depenses: ['id', 'centre_id', 'lib', 'montant', 'date', 'sesId', 'det', 'createdBy', 'createdAt', 'updatedBy', 'updatedAt'],
   disponibilites: ['id', 'centre_id', 'type', 'responsable', 'montant', 'detail', 'date', 'createdBy', 'createdAt', 'updatedBy'],
@@ -389,7 +389,8 @@ app.get('/api/sync/pull', authenticateToken, async (req, res) => {
 
     const parsedFormations = formations.map(f => ({
       id: Number(f.id),
-      label: f.label
+      label: f.label,
+      modules: f.modules || ''
     }));
 
     const parsedEtudiants = etudiants.map(e => ({
@@ -399,15 +400,17 @@ app.get('/api/sync/pull', authenticateToken, async (req, res) => {
       prenom: e.prenom,
       contact: e.contact,
       cout: parseFloat(e.cout),
-      date: e.date ? e.date.toISOString().split('T')[0] : null,
-      echeance: e.echeance ? e.echeance.toISOString().split('T')[0] : null,
+      date: e.date ? (e.date instanceof Date ? e.date.toISOString().split('T')[0] : e.date) : null,
+      echeance: e.echeance ? (e.echeance instanceof Date ? e.echeance.toISOString().split('T')[0] : e.echeance) : null,
       sesId: e.sesId ? Number(e.sesId) : null,
       formId: e.formId ? Number(e.formId) : null,
       photo: e.photo,
+      date_naissance: e.date_naissance ? (e.date_naissance instanceof Date ? e.date_naissance.toISOString().split('T')[0] : e.date_naissance) : null,
+      lieu_naissance: e.lieu_naissance || null,
       createdBy: e.createdBy ? Number(e.createdBy) : null,
-      createdAt: e.createdAt ? e.createdAt.toISOString().split('T')[0] : null,
+      createdAt: e.createdAt ? (e.createdAt instanceof Date ? e.createdAt.toISOString().split('T')[0] : e.createdAt) : null,
       updatedBy: e.updatedBy ? Number(e.updatedBy) : null,
-      updatedAt: e.updatedAt ? e.updatedAt.toISOString().split('T')[0] : null
+      updatedAt: e.updatedAt ? (e.updatedAt instanceof Date ? e.updatedAt.toISOString().split('T')[0] : e.updatedAt) : null
     }));
 
     const parsedPaiements = paiements.map(p => ({

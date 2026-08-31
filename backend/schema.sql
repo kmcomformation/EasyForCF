@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS formations (
   id BIGINT PRIMARY KEY,
   centre_id BIGINT NULL,
   label VARCHAR(100) NOT NULL,
+  modules TEXT NULL,
   FOREIGN KEY (centre_id) REFERENCES centres(id) ON DELETE CASCADE
 );
 
@@ -61,6 +62,8 @@ CREATE TABLE IF NOT EXISTS etudiants (
   sesId BIGINT NULL,
   formId BIGINT NULL,
   photo LONGTEXT NULL,
+  date_naissance DATE NULL,
+  lieu_naissance VARCHAR(150) NULL,
   createdBy BIGINT NULL,
   createdAt DATE NULL,
   updatedBy BIGINT NULL,
