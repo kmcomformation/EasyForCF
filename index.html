@@ -372,7 +372,10 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .att-corner.br{bottom:1.1cqw;right:1.1cqw;border-left:none;border-top:none;}
 .att-border-outer{position:absolute;inset:1.8cqw;border:.1cqw solid #0f2248;}
 .att-border-inner{position:absolute;inset:2.15cqw;border:.05cqw solid #c8972a;}
-.att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;}
+.att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;z-index:1;}
+.att-watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:.09;}
+.att-watermark svg{width:82cqw;height:82cqw;}
+
 .att-emblem{width:5.2cqw;height:5.2cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;flex-shrink:0;}
 .att-emblem::before{content:'';position:absolute;inset:-.4cqw;border:.06cqw solid #c8972a;border-radius:50%;}
 .att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.2cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
@@ -3739,6 +3742,28 @@ function openAttestation(etuId){
 
   const html = `
     <div class="att-card" id="att-zone">
+      <div class="att-watermark">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <g id="lw-leaf"><path d="M0,-6 Q5,0 0,6 Q-2,0 0,-6 Z" fill="#c8972a"/></g>
+            <g id="lw-branch">
+              <path d="M100,178 C132,172 158,150 168,118 C175,90 172,58 155,32" fill="none" stroke="#c8972a" stroke-width="1.6"/>
+              <use href="#lw-leaf" transform="translate(104,174) rotate(-65)"/>
+              <use href="#lw-leaf" transform="translate(117,165) rotate(-50)"/>
+              <use href="#lw-leaf" transform="translate(131,152) rotate(-38)"/>
+              <use href="#lw-leaf" transform="translate(144,136) rotate(-24)"/>
+              <use href="#lw-leaf" transform="translate(154,117) rotate(-10)"/>
+              <use href="#lw-leaf" transform="translate(160,96) rotate(6)"/>
+              <use href="#lw-leaf" transform="translate(162,74) rotate(22)"/>
+              <use href="#lw-leaf" transform="translate(159,52) rotate(38)"/>
+              <use href="#lw-leaf" transform="translate(152,36) rotate(52)"/>
+            </g>
+          </defs>
+          <use href="#lw-branch"/>
+          <use href="#lw-branch" transform="translate(200,0) scale(-1,1)"/>
+          <path d="M92,178 L100,188 L108,178 L100,183 Z" fill="#c8972a"/>
+        </svg>
+      </div>
       <div class="att-corner tl"></div><div class="att-corner tr"></div>
       <div class="att-corner bl"></div><div class="att-corner br"></div>
       <div class="att-border-outer"></div>
@@ -3830,7 +3855,10 @@ function printAttestation(){
     .att-corner.br{bottom:1.1cqw;right:1.1cqw;border-left:none;border-top:none;}
     .att-border-outer{position:absolute;inset:1.8cqw;border:.1cqw solid #0f2248;}
     .att-border-inner{position:absolute;inset:2.15cqw;border:.05cqw solid #c8972a;}
-    .att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;}
+    .att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;z-index:1;}
+.att-watermark{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:.09;}
+.att-watermark svg{width:82cqw;height:82cqw;}
+
     .att-emblem{width:5.2cqw;height:5.2cqw;border-radius:50%;background:#0f2248;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;}
     .att-emblem::before{content:'';position:absolute;inset:-.4cqw;border:.06cqw solid #c8972a;border-radius:50%;}
     .att-emblem span{font-family:'Playfair Display',Georgia,serif;font-size:2.2cqw;font-weight:700;color:#f0b840;letter-spacing:.05cqw;}
