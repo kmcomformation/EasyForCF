@@ -3764,36 +3764,33 @@ function openAttestation(etuId){
               </linearGradient>
               <path id="leaf" d="M50,8 C46,15 46,23 50,29 C54,23 54,15 50,8 Z"/>
             </defs>
-            <g fill="url(#wreathGold)">
-              <use href="#leaf" transform="rotate(0 50 50)"/>
-              <use href="#leaf" transform="rotate(18 50 50)"/>
-              <use href="#leaf" transform="rotate(36 50 50)"/>
-              <use href="#leaf" transform="rotate(54 50 50)"/>
-              <use href="#leaf" transform="rotate(72 50 50)"/>
-              <use href="#leaf" transform="rotate(90 50 50)"/>
-              <use href="#leaf" transform="rotate(108 50 50)"/>
-              <use href="#leaf" transform="rotate(126 50 50)"/>
-              <use href="#leaf" transform="rotate(144 50 50)"/>
-              <use href="#leaf" transform="rotate(162 50 50)"/>
-              <use href="#leaf" transform="rotate(180 50 50)"/>
-              <use href="#leaf" transform="rotate(198 50 50)"/>
-              <use href="#leaf" transform="rotate(216 50 50)"/>
-              <use href="#leaf" transform="rotate(234 50 50)"/>
-              <use href="#leaf" transform="rotate(252 50 50)"/>
-              <use href="#leaf" transform="rotate(270 50 50)"/>
-              <use href="#leaf" transform="rotate(288 50 50)"/>
-              <use href="#leaf" transform="rotate(306 50 50)"/>
-              <use href="#leaf" transform="rotate(324 50 50)"/>
-              <use href="#leaf" transform="rotate(342 50 50)"/>
-            </g>
-            <g>
-              <path d="M50,40 L64,47 L50,54 L36,47 Z" fill="#0f2248"/>
-              <path d="M41,48 C41,55 41,60 50,61 C59,60 59,55 59,48 Z" fill="#0f2248"/>
-              <circle cx="50" cy="47" r="1.6" fill="url(#wreathGold)"/>
-              <path d="M50,47 L60,44" stroke="url(#wreathGold)" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-              <path d="M60,44 L58,50 M60,44 L60,50.5 M60,44 L62,50" stroke="url(#wreathGold)" stroke-width="1" stroke-linecap="round"/>
-              <circle cx="60" cy="44" r="1.3" fill="url(#wreathGold)"/>
-            </g>
+           <!-- COURONNE DE GRADUATION -->
+<g>
+  <!-- Mortier (toque) de graduation -->
+  <g transform="translate(50, 35)">
+    <!-- Base carrée de la toque -->
+    <rect x="-22" y="-6" width="44" height="6" rx="1.5" fill="#0f2248" stroke="#c8972a" stroke-width="0.8"/>
+    <!-- Panneau supérieur carré -->
+    <rect x="-28" y="-14" width="56" height="8" rx="1.5" fill="#1a3a72" stroke="#c8972a" stroke-width="0.8"/>
+    <!-- Pompon (gland) -->
+    <line x1="0" y1="-14" x2="0" y2="-26" stroke="#c8972a" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="0" cy="-27" r="3.5" fill="#c8972a"/>
+    <!-- Petites lignes de pompon -->
+    <line x1="2" y1="-20" x2="6" y2="-17" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-2" y1="-20" x2="-6" y2="-17" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="0" y1="-22" x2="0" y2="-17" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="3" y1="-23" x2="6" y2="-20" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="-3" y1="-23" x2="-6" y2="-20" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
+  </g>
+</g>
+
+<!-- Diplôme roulé (optionnel, ajoute un plus) -->
+<g transform="translate(50, 63)">
+  <rect x="-18" y="-6" width="36" height="12" rx="2" fill="#faf8f3" stroke="#c8972a" stroke-width="0.8"/>
+  <rect x="-14" y="-2" width="8" height="4" rx="1" fill="#c8972a"/>
+  <rect x="6" y="-2" width="8" height="4" rx="1" fill="#c8972a"/>
+  <text x="0" y="2" font-family="Georgia,serif" font-size="6" fill="#0f2248" text-anchor="middle" font-weight="700">DIPLÔME</text>
+</g>
           </svg>
         </div>
 
@@ -3832,7 +3829,8 @@ function openAttestation(etuId){
   
   <div class="att-sign-block">
             <div class="att-sign-title">Le Directeur Général</div>
-            
+            <div class="att-sign-line"></div>
+            <div class="att-sign-name">${esc(centreNom)}</div>
           </div>
         </div>
       </div>
