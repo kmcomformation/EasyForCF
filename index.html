@@ -373,12 +373,11 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .att-border-outer{position:absolute;inset:1.8cqw;border:.1cqw solid #0f2248;}
 .att-border-inner{position:absolute;inset:2.15cqw;border:.05cqw solid #c8972a;}
 .att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;}
-.att-emblem{width:7.2cqw;height:7.2cqw;border-radius:50%;background:#faf8f3;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;flex-shrink:0;box-shadow:0 .2cqw .6cqw rgba(15,34,72,.18);}
+.att-emblem{width:8.4cqw;height:8.4cqw;border-radius:50%;background:#faf8f3;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;flex-shrink:0;box-shadow:0 .2cqw .6cqw rgba(15,34,72,.18);}
 .att-emblem::before{content:'';position:absolute;inset:-.35cqw;border:.09cqw solid #c8972a;border-radius:50%;}
 .att-emblem::after{content:'';position:absolute;inset:-.55cqw;border:.03cqw solid rgba(200,151,42,.4);border-radius:50%;}
-.att-emblem img{width:88%;height:88%;object-fit:contain;border-radius:50%;}
-.att-eyebrow{margin-top:.7cqw;font-family:'DM Sans',sans-serif;font-size:.85cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
-.att-title{font-family:'Playfair Display',Georgia,serif;font-size:4.2cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.1cqw;line-height:1;}
+.att-eyebrow{margin-top:.8cqw;font-family:'DM Sans',sans-serif;font-size:.8cqw;font-weight:700;letter-spacing:.22cqw;color:#c8972a;text-transform:uppercase;}
+.att-title{font-family:'Playfair Display',Georgia,serif;font-size:4.2cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:1.1cqw;line-height:1;}
 .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.3cqw;}
 .att-subtitle-row .ln{width:5.5cqw;height:1px;background:#c8972a;}
 .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.05cqw;font-weight:700;letter-spacing:.45cqw;color:#0f2248;text-transform:uppercase;}
@@ -3743,12 +3742,35 @@ function openAttestation(etuId){
       <div class="att-corner bl"></div><div class="att-corner br"></div>
       <div class="att-border-outer"></div>
       <div class="att-border-inner"></div>
-      <div class="att-content">
-       <div class="att-emblem">
-  <img src="couronne.png" alt="ComFormation">
-</div>
 
-        <div class="att-eyebrow">Certificat Officiel</div>
+      <div class="att-content">
+          <div class="att-emblem">
+          <svg viewBox="0 0 100 100" width="74%" height="74%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="wreathGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#f0c860"/>
+                <stop offset="50%" stop-color="#c8972a"/>
+                <stop offset="100%" stop-color="#a87820"/>
+              </linearGradient>
+            </defs>
+            <g fill="none" stroke="url(#wreathGold)" stroke-linecap="round">
+              <path d="M20,74 C14,60 15,44 24,28" stroke-width="2.4"/>
+              <path d="M22,68 L14,66 M25,60 L16,59 M27,52 L18,50 M30,44 L21,41 M33,37 L25,33 M37,31 L29,26" stroke-width="1.7"/>
+              <path d="M80,74 C86,60 85,44 76,28" stroke-width="2.4"/>
+              <path d="M78,68 L86,66 M75,60 L84,59 M73,52 L82,50 M70,44 L79,41 M67,37 L75,33 M63,31 L71,26" stroke-width="1.7"/>
+              <path d="M20,74 C30,82 70,82 80,74" stroke-width="2.2"/>
+            </g>
+            <g fill="url(#wreathGold)">
+              <path d="M50,24 L80,37 L50,50 L20,37 Z"/>
+              <rect x="40" y="40" width="20" height="12" rx="1.6"/>
+              <path d="M80,37 L80,50" stroke="url(#wreathGold)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+              <circle cx="80" cy="53" r="2.8"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="att-eyebrow">ComFormation Training Center</div>
+
         <div class="att-title">ATTESTATION</div>
         <div class="att-subtitle-row"><span class="ln"></span><span class="att-subtitle">De Formation</span><span class="ln"></span></div>
         <div class="att-body">
@@ -3820,12 +3842,11 @@ function printAttestation(){
     .att-border-outer{position:absolute;inset:1.8cqw;border:.1cqw solid #0f2248;}
     .att-border-inner{position:absolute;inset:2.15cqw;border:.05cqw solid #c8972a;}
     .att-content{position:absolute;inset:2.15cqw;padding:1.2cqw 3.5cqw;display:flex;flex-direction:column;align-items:center;box-sizing:border-box;}
-    .att-emblem{width:7.2cqw;height:7.2cqw;border-radius:50%;background:#faf8f3;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;box-shadow:0 .2cqw .6cqw rgba(15,34,72,.18);}
+.att-emblem{width:8.4cqw;height:8.4cqw;border-radius:50%;background:#faf8f3;display:flex;align-items:center;justify-content:center;position:relative;margin-top:0;box-shadow:0 .2cqw .6cqw rgba(15,34,72,.18);}
 .att-emblem::before{content:'';position:absolute;inset:-.35cqw;border:.09cqw solid #c8972a;border-radius:50%;}
 .att-emblem::after{content:'';position:absolute;inset:-.55cqw;border:.03cqw solid rgba(200,151,42,.4);border-radius:50%;}
-.att-emblem img{width:88%;height:88%;object-fit:contain;border-radius:50%;}
-    .att-eyebrow{margin-top:.4cqw;font-family:'DM Sans',sans-serif;font-size:.82cqw;font-weight:700;letter-spacing:.35cqw;color:#c8972a;text-transform:uppercase;}
-    .att-title{font-family:'Playfair Display',Georgia,serif;font-size:4.2cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:.1cqw;line-height:1;}
+   .att-eyebrow{margin-top:.5cqw;font-family:'DM Sans',sans-serif;font-size:.8cqw;font-weight:700;letter-spacing:.22cqw;color:#c8972a;text-transform:uppercase;}
+.att-title{font-family:'Playfair Display',Georgia,serif;font-size:4.2cqw;font-weight:700;color:#0f2248;letter-spacing:.25cqw;margin-top:1.1cqw;line-height:1;}
     .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.3cqw;}
     .att-subtitle-row .ln{width:5.5cqw;height:1px;background:#c8972a;}
     .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.05cqw;font-weight:700;letter-spacing:.45cqw;color:#0f2248;text-transform:uppercase;}
