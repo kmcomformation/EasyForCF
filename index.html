@@ -1183,6 +1183,62 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
     right: 16px;
   }
 }
+
+.couronne-comores {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Couronne dorée */
+.couronne-comores::before {
+  content: "✺";
+  position: absolute;
+  font-size: 7cqw;
+  color: #c8972a;
+  line-height: 1;
+}
+
+/* Lune */
+.couronne-comores .lune {
+  position: absolute;
+  font-size: 3cqw;
+  color: #0f2248;
+  z-index: 2;
+  transform: rotate(-20deg);
+}
+
+/* Étoiles */
+.couronne-comores .etoile {
+  position: absolute;
+  color: #c8972a;
+  font-size: 1.1cqw;
+  z-index: 3;
+}
+
+.couronne-comores .e1 {
+  top: 31%;
+  right: 27%;
+}
+
+.couronne-comores .e2 {
+  top: 43%;
+  right: 22%;
+}
+
+.couronne-comores .e3 {
+  top: 55%;
+  right: 25%;
+}
+
+.couronne-comores .e4 {
+  top: 65%;
+  right: 32%;
+}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
@@ -3754,45 +3810,15 @@ function openAttestation(etuId){
           <svg class="star-sm" viewBox="0 0 24 24"><path d="M12 2 L14.9 8.7 L22 9.3 L16.6 14.1 L18.2 21 L12 17.3 L5.8 21 L7.4 14.1 L2 9.3 L9.1 8.7 Z"/></svg>
         </div>
 
-        <div class="att-emblem">
-          <svg viewBox="0 0 100 100" width="80%" height="80%" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="wreathGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#f0c860"/>
-                <stop offset="50%" stop-color="#c8972a"/>
-                <stop offset="100%" stop-color="#a87820"/>
-              </linearGradient>
-              <path id="leaf" d="M50,8 C46,15 46,23 50,29 C54,23 54,15 50,8 Z"/>
-            </defs>
-           <!-- COURONNE DE GRADUATION -->
-<g>
-  <!-- Mortier (toque) de graduation -->
-  <g transform="translate(50, 35)">
-    <!-- Base carrée de la toque -->
-    <rect x="-22" y="-6" width="44" height="6" rx="1.5" fill="#0f2248" stroke="#c8972a" stroke-width="0.8"/>
-    <!-- Panneau supérieur carré -->
-    <rect x="-28" y="-14" width="56" height="8" rx="1.5" fill="#1a3a72" stroke="#c8972a" stroke-width="0.8"/>
-    <!-- Pompon (gland) -->
-    <line x1="0" y1="-14" x2="0" y2="-26" stroke="#c8972a" stroke-width="2.5" stroke-linecap="round"/>
-    <circle cx="0" cy="-27" r="3.5" fill="#c8972a"/>
-    <!-- Petites lignes de pompon -->
-    <line x1="2" y1="-20" x2="6" y2="-17" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="-2" y1="-20" x2="-6" y2="-17" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="0" y1="-22" x2="0" y2="-17" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="3" y1="-23" x2="6" y2="-20" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
-    <line x1="-3" y1="-23" x2="-6" y2="-20" stroke="#c8972a" stroke-width="1.2" stroke-linecap="round"/>
-  </g>
-</g>
-
-<!-- Diplôme roulé (optionnel, ajoute un plus) -->
-<g transform="translate(50, 63)">
-  <rect x="-18" y="-6" width="36" height="12" rx="2" fill="#faf8f3" stroke="#c8972a" stroke-width="0.8"/>
-  <rect x="-14" y="-2" width="8" height="4" rx="1" fill="#c8972a"/>
-  <rect x="6" y="-2" width="8" height="4" rx="1" fill="#c8972a"/>
-  <text x="0" y="2" font-family="Georgia,serif" font-size="6" fill="#0f2248" text-anchor="middle" font-weight="700">DIPLÔME</text>
-</g>
-          </svg>
-        </div>
+       <div class="att-emblem">
+  <div class="couronne-comores">
+    <span class="lune">☾</span>
+    <span class="etoile e1">★</span>
+    <span class="etoile e2">★</span>
+    <span class="etoile e3">★</span>
+    <span class="etoile e4">★</span>
+  </div>
+</div>
 
 
         <div class="att-eyebrow">ComFormation Training Center</div>
