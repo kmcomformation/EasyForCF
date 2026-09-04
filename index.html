@@ -363,7 +363,9 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .pbar-fill{height:100%;border-radius:3px;transition:width .4s;}
 .print-btn{margin-top:10px;background:linear-gradient(135deg,var(--teal),#1a8f72);color:#fff;border:none;border-radius:8px;padding:9px 16px;font-size:12px;font-weight:700;cursor:pointer;width:100%;transition:opacity .15s;}
 .print-btn:hover{opacity:.9;}
-/* ATTESTATION — Certificat officiel (modèle ComFormation) */
+/* ============================================================
+   ATTESTATION — Certificat officiels (modèle ComFormation) - TAILLE AUGMENTÉE
+   ============================================================ */
 .att-card{position:relative;width:100%;aspect-ratio:3/2;background:#faf8f3;overflow:hidden;border-radius:2px;box-shadow:0 4px 28px rgba(15,34,72,.18);font-family:Georgia,'Times New Roman',serif;container-type:inline-size;}
 .att-corner{position:absolute;width:4.5cqw;height:4.5cqw;border:.12cqw solid #c8972a;}
 .att-corner.tl{top:1.1cqw;left:1.1cqw;border-right:none;border-bottom:none;}
@@ -381,17 +383,17 @@ tr.row-closed td{background:repeating-linear-gradient(45deg,transparent,transpar
 .att-subtitle-row{display:flex;align-items:center;gap:1.2cqw;margin-top:.3cqw;}
 .att-subtitle-row .ln{width:5.5cqw;height:1px;background:#c8972a;}
 .att-subtitle{font-family:'DM Sans',sans-serif;font-size:1.05cqw;font-weight:700;letter-spacing:.45cqw;color:#0f2248;text-transform:uppercase;}
-.att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.35cqw;padding:.3cqw 0 0;max-width:100%;}
-.att-lead{font-size:1.05cqw;color:#3a4a63;font-style:italic;}
-.att-birth{font-size:1.05cqw;color:#0f2248;font-style:italic;margin-top:.05cqw;}
-.att-name{font-family:'Playfair Display',Georgia,serif;font-size:2.5cqw;font-weight:700;color:#0f2248;padding-bottom:.25cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:45%;display:inline-block;}
-.att-course{font-family:'Playfair Display',Georgia,serif;font-size:1.6cqw;font-weight:700;color:#0f2248;margin-top:.1cqw;}
-.att-units-lead{font-family:Georgia,'Times New Roman',serif;font-size:1.05cqw;color:#b42318;font-style:italic;margin-top:.25cqw;margin-bottom:.15cqw;text-align:center;}
-.att-units-grid{display:grid;grid-template-columns:repeat(2,1fr);column-gap:5cqw;row-gap:.2cqw;max-width:75%;margin:0 auto;text-align:left;padding:0;}
+.att-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.6cqw;padding:.3cqw 0 0;max-width:100%;}
+.att-lead{font-size:1.35cqw;color:#3a4a63;font-style:italic;}
+.att-birth{font-size:1.3cqw;color:#0f2248;font-style:italic;margin-top:.05cqw;}
+.att-name{font-family:'Playfair Display',Georgia,serif;font-size:3.2cqw;font-weight:700;color:#0f2248;padding-bottom:.25cqw;border-bottom:.08cqw solid #c8972a;letter-spacing:.05cqw;min-width:45%;display:inline-block;}
+.att-course{font-family:'Playfair Display',Georgia,serif;font-size:2.1cqw;font-weight:700;color:#0f2248;margin-top:.1cqw;}
+.att-units-lead{font-family:Georgia,'Times New Roman',serif;font-size:1.35cqw;color:#b42318;font-style:italic;margin-top:.3cqw;margin-bottom:.2cqw;text-align:center;}
+.att-units-grid{display:grid;grid-template-columns:repeat(2,1fr);column-gap:5cqw;row-gap:.25cqw;max-width:75%;margin:0 auto;text-align:left;padding:0;}
 .att-units-grid.single{grid-template-columns:1fr;text-align:center;}
-.att-unit-item{display:flex;align-items:center;gap:.5cqw;font-family:Georgia,'Times New Roman',serif;font-size:1.05cqw;color:#0f2248;font-weight:600;}
-.att-unit-dot{color:#0f2248;font-size:1.2cqw;line-height:1;font-weight:bold;}
-.att-para{font-size:.95cqw;color:#3a4a63;line-height:1.45;max-width:82%;margin-top:.25cqw;}
+.att-unit-item{display:flex;align-items:center;gap:.5cqw;font-family:Georgia,'Times New Roman',serif;font-size:1.3cqw;color:#0f2248;font-weight:600;}
+.att-unit-dot{color:#0f2248;font-size:1.5cqw;line-height:1;font-weight:bold;}
+.att-para{font-size:1.2cqw;color:#3a4a63;line-height:1.55;max-width:85%;margin-top:.3cqw;}
 .att-footer{width:100%;display:flex;justify-content:space-between;align-items:flex-end;margin-top:auto;padding-top:.4cqw;}
 .att-ref{flex:1;text-align:left;font-family:'DM Sans',sans-serif;font-size:.78cqw;color:#6b7ea4;line-height:1.5;}
 .att-ref b{color:#0f2248;}
@@ -3759,7 +3761,7 @@ function openAttestation(etuId){
           </svg>
         </div>
 
-        <div class="att-eyebrow">Certificat Officiel</div>
+        <div class="att-eyebrow">COMFORMATION TRAINING CENTER</div>
         <div class="att-title">ATTESTATION</div>
         <div class="att-subtitle-row"><span class="ln"></span><span class="att-subtitle">De Formation</span><span class="ln"></span></div>
         <div class="att-body">
@@ -3779,20 +3781,19 @@ function openAttestation(etuId){
               `).join('')}
             </div>
           ` : ''}
-          <div class="att-para">Nous certifions que l'apprenant(e) susnommé(e) a satisfait à l'intégralité des obligations pédagogiques et financières relatives à cette formation, dispensée durant la session ${esc(getSesLabel(e.sesId))}.</div>
+          <div class="att-para">Nous certifions que l’apprenant(e) susnommé(e) a suivi avec assiduité la formation dispensée par **ComFormation Training Center** et a satisfait à l’ensemble des obligations pédagogiques et financières requises.
+</div>
           <div class="att-para" style="margin-top:.2cqw;">La présente attestation lui est délivrée pour servir et valoir ce que de droit.</div>
         </div>
         <div class="att-footer">
           <div class="att-ref">
             Fait à Moroni, le ${now}<br>
-            Matricule de l'apprenant : <b>${esc(e.mat)}</b><br>
-            N° d'attestation : <b>${numero}</b><br>
-            Session : ${esc(getSesLabel(e.sesId))}
+            N° d'attestation : <b>${esc(e.mat)}</b><br>
+            kmcomformation@gmail.com
           </div>
           <div class="att-sign-block">
             <div class="att-sign-title">Le Directeur Général</div>
-            <div class="att-sign-line"></div>
-            <div class="att-sign-name">${esc(centreNom)}</div>
+            
           </div>
         </div>
       </div>
